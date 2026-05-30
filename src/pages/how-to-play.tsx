@@ -1,165 +1,117 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { motion } from "framer-motion";
 
 export default function HowToPlay() {
   return (
-    <div className="min-h-screen bg-background text-foreground pt-24 pb-20">
+    <main className="min-h-screen pt-24 pb-16">
       <div className="container mx-auto px-4 max-w-4xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-16"
-        >
-          <h1 className="text-4xl md:text-6xl font-orbitron font-bold text-primary glow-text-green mb-4">
-            Game Guide
-          </h1>
-          <p className="text-xl text-muted-foreground">
-            Master the arena. Everything you need to know to hit high scores.
-          </p>
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-12">
+          <h1 className="text-4xl md:text-5xl font-display font-black mb-4 text-white">GAME GUIDE</h1>
+          <div className="w-20 h-1 bg-primary rounded-full glow-box-green" />
         </motion.div>
 
-        <div className="space-y-12">
-          {/* Controls */}
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="text-2xl font-orbitron font-bold mb-6 border-b border-border pb-2">1. Controls</h2>
-            <div className="grid md:grid-cols-2 gap-4">
-              <Card className="bg-card border-border">
-                <CardHeader>
-                  <CardTitle className="font-orbitron">Movement</CardTitle>
-                </CardHeader>
-                <CardContent className="flex items-center gap-4">
-                  <div className="flex flex-col items-center gap-1">
-                    <div className="w-10 h-10 border rounded bg-background flex items-center justify-center font-mono">W</div>
-                    <div className="flex gap-1">
-                      <div className="w-10 h-10 border rounded bg-background flex items-center justify-center font-mono">A</div>
-                      <div className="w-10 h-10 border rounded bg-background flex items-center justify-center font-mono">S</div>
-                      <div className="w-10 h-10 border rounded bg-background flex items-center justify-center font-mono">D</div>
-                    </div>
-                  </div>
-                  <div className="text-muted-foreground">or Arrow Keys to move</div>
-                </CardContent>
-              </Card>
-              <Card className="bg-card border-border">
-                <CardHeader>
-                  <CardTitle className="font-orbitron">Actions</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-3">
-                  <div className="flex items-center gap-3">
-                    <kbd className="px-3 py-1 bg-background border rounded font-mono text-sm">Click</kbd>
-                    <span className="text-muted-foreground">or</span>
-                    <kbd className="px-3 py-1 bg-background border rounded font-mono text-sm">Space</kbd>
+        <div className="space-y-16">
+          <section>
+            <h2 className="text-2xl font-display font-bold mb-6 text-primary flex items-center gap-3">
+              <span className="w-6 h-1 bg-primary inline-block" /> CONTROLS
+            </h2>
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="p-6 bg-card rounded-lg border border-white/10">
+                <h3 className="font-bold mb-4">KEYBOARD (Desktop)</h3>
+                <ul className="space-y-3 font-mono text-sm">
+                  <li className="flex justify-between border-b border-white/5 pb-2">
+                    <span className="text-muted-foreground">Move</span>
+                    <span className="text-white bg-white/10 px-2 rounded">W A S D</span>
+                  </li>
+                  <li className="flex justify-between border-b border-white/5 pb-2">
                     <span className="text-muted-foreground">Shoot</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <kbd className="px-3 py-1 bg-background border rounded font-mono text-sm">P</kbd>
+                    <span className="text-white bg-white/10 px-2 rounded">Arrows / Mouse Click</span>
+                  </li>
+                  <li className="flex justify-between">
                     <span className="text-muted-foreground">Pause</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <kbd className="px-3 py-1 bg-background border rounded font-mono text-sm">R</kbd>
-                    <span className="text-muted-foreground">Restart (Game Over)</span>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </motion.section>
-
-          {/* Combo System */}
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="text-2xl font-orbitron font-bold mb-6 border-b border-border pb-2">2. Combo System</h2>
-            <Card className="bg-card border-border">
-              <CardContent className="p-6">
-                <p className="mb-6 text-muted-foreground">
-                  Chaining kills quickly is the key to massive scores. Kill 3 or more enemies within 2 seconds of each other to build your combo multiplier. The multiplier resets if you go 2 seconds without a kill.
-                </p>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                  {[
-                    { mult: "x2", kills: "3+ Kills", color: "text-blue-400" },
-                    { mult: "x3", kills: "10+ Kills", color: "text-green-400" },
-                    { mult: "x5", kills: "25+ Kills", color: "text-yellow-400" },
-                    { mult: "x10", kills: "50+ Kills", color: "text-red-400 animate-pulse" },
-                  ].map((level, i) => (
-                    <div key={i} className="text-center p-4 rounded-lg bg-background border border-border">
-                      <div className={`text-3xl font-black font-orbitron mb-1 ${level.color}`}>{level.mult}</div>
-                      <div className="text-xs font-bold tracking-wider text-muted-foreground uppercase">{level.kills}</div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </motion.section>
-
-          {/* Power-ups */}
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="text-2xl font-orbitron font-bold mb-6 border-b border-border pb-2">3. Power-ups</h2>
-            <div className="grid sm:grid-cols-2 gap-4">
-              {[
-                { icon: "⚡", name: "Speed Boost", desc: "Doubles movement speed", dur: "8 seconds" },
-                { icon: "🔫", name: "Rapid Fire", desc: "3× fire rate", dur: "6 seconds" },
-                { icon: "🛡️", name: "Shield", desc: "Absorbs next hit", dur: "Until hit" },
-                { icon: "💣", name: "Nuke", desc: "Clears all enemies instantly", dur: "One-time use" },
-              ].map((p, i) => (
-                <Card key={i} className="bg-card border-border">
-                  <CardContent className="p-4 flex gap-4 items-start">
-                    <div className="text-3xl p-3 bg-background rounded-xl border border-border">
-                      <span aria-hidden="true">{p.icon}</span>
-                    </div>
-                    <div>
-                      <h3 className="font-orbitron font-bold text-lg">{p.name}</h3>
-                      <p className="text-sm text-muted-foreground mt-1 mb-2">{p.desc}</p>
-                      <span className="text-xs font-mono bg-primary/10 text-primary px-2 py-1 rounded">
-                        Duration: {p.dur}
-                      </span>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </motion.section>
-
-          {/* Pro Tips */}
-          <motion.section
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="text-2xl font-orbitron font-bold mb-6 border-b border-border pb-2">4. Pro Tips</h2>
-            <Card className="bg-card border-border">
-              <CardContent className="p-6">
-                <ul className="space-y-4">
-                  {[
-                    "Keep moving in circles. Never stop in the center of the arena.",
-                    "Save Nukes for Boss Waves (every 5 levels) if possible.",
-                    "Prioritize Red Blobs — their speed makes them the deadliest normal enemy.",
-                    "Don't get greedy for Golden Blobs if it means breaking your combo multiplier.",
-                    "Use the screen edges. Enemies wrap around, so shooting off-screen can hit enemies behind you."
-                  ].map((tip, i) => (
-                    <li key={i} className="flex gap-4">
-                      <span className="font-orbitron font-bold text-primary shrink-0">0{i + 1}</span>
-                      <span className="text-muted-foreground">{tip}</span>
-                    </li>
-                  ))}
+                    <span className="text-white bg-white/10 px-2 rounded">P / ESC</span>
+                  </li>
                 </ul>
-              </CardContent>
-            </Card>
-          </motion.section>
+              </div>
+              <div className="p-6 bg-card rounded-lg border border-white/10">
+                <h3 className="font-bold mb-4">TOUCH (Mobile)</h3>
+                <ul className="space-y-3 font-mono text-sm">
+                  <li className="flex justify-between border-b border-white/5 pb-2">
+                    <span className="text-muted-foreground">Left Side</span>
+                    <span className="text-white">Virtual Joystick (Move)</span>
+                  </li>
+                  <li className="flex justify-between">
+                    <span className="text-muted-foreground">Right Side</span>
+                    <span className="text-white">Virtual Joystick (Aim/Shoot)</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-display font-bold mb-6 text-accent flex items-center gap-3">
+              <span className="w-6 h-1 bg-accent inline-block" /> COMBO SYSTEM
+            </h2>
+            <p className="text-muted-foreground mb-6">String kills together rapidly to build your multiplier. Don't take damage or the combo resets!</p>
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-4 bg-card/50 p-4 rounded border border-white/5">
+                <div className="font-display font-black text-2xl w-16 text-center">x2</div>
+                <div className="flex-1">
+                  <div className="h-2 w-full bg-background rounded-full overflow-hidden">
+                    <div className="h-full bg-white w-1/3" />
+                  </div>
+                  <span className="text-xs text-muted-foreground font-mono mt-2 block">10 KILLS</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 bg-card/50 p-4 rounded border border-accent/20">
+                <div className="font-display font-black text-2xl w-16 text-center text-accent">x3</div>
+                <div className="flex-1">
+                  <div className="h-2 w-full bg-background rounded-full overflow-hidden">
+                    <div className="h-full bg-accent w-2/3" />
+                  </div>
+                  <span className="text-xs text-accent/70 font-mono mt-2 block">25 KILLS</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-4 bg-card/50 p-4 rounded border border-destructive/30 glow-box-green relative overflow-hidden" style={{ borderColor: 'var(--color-destructive)'}}>
+                <div className="absolute inset-0 bg-destructive/10 animate-pulse pointer-events-none" />
+                <div className="font-display font-black text-2xl w-16 text-center text-destructive z-10">x5</div>
+                <div className="flex-1 z-10">
+                  <div className="h-2 w-full bg-background rounded-full overflow-hidden">
+                    <div className="h-full bg-destructive w-full" />
+                  </div>
+                  <span className="text-xs text-destructive font-mono mt-2 block">50 KILLS MAX TIER</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-2xl font-display font-bold mb-6 text-primary flex items-center gap-3">
+              <span className="w-6 h-1 bg-primary inline-block" /> POWER-UPS
+            </h2>
+            <p className="font-mono text-sm mb-6 text-muted-foreground">BASE DROP RATE: 15%</p>
+            <div className="grid md:grid-cols-2 gap-4">
+              <PowerUp icon="🔥" name="Rapid Fire" desc="0.5s → 0.15s fire rate. Lasts 8s." color="360 100% 71%" />
+              <PowerUp icon="✦" name="Triple Shot" desc="3 spread projectiles per shot. Lasts 8s." color="215 100% 65%" />
+              <PowerUp icon="🛡" name="Shield" desc="Absorbs next hit entirely. Lasts 10s." color="127 49% 60%" />
+              <PowerUp icon="×2" name="Score Multiplier" desc="Doubles all points (Stacks!). Lasts 10s." color="48 100% 62%" />
+            </div>
+          </section>
         </div>
+      </div>
+    </main>
+  );
+}
+
+function PowerUp({ icon, name, desc, color }: any) {
+  return (
+    <div className="flex items-center gap-4 p-4 rounded-lg bg-card/30 border border-white/5 hover:border-white/20 transition-colors">
+      <div className="w-12 h-12 rounded bg-background flex items-center justify-center text-xl" style={{ boxShadow: `0 0 15px hsl(${color} / 0.2)`, color: `hsl(${color})`}}>
+        {icon}
+      </div>
+      <div>
+        <h4 className="font-bold font-display" style={{ color: `hsl(${color})` }}>{name}</h4>
+        <p className="text-sm text-muted-foreground">{desc}</p>
       </div>
     </div>
   );

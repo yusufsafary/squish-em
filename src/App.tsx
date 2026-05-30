@@ -1,30 +1,47 @@
-import { Switch, Route, Router as WouterRouter } from "wouter";
+import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import NotFound from "@/pages/not-found";
+
 import Home from "@/pages/home";
-import Play from "@/pages/play";
 import HowToPlay from "@/pages/how-to-play";
 import Roadmap from "@/pages/roadmap";
+import Play from "@/pages/play";
+import NotFound from "@/pages/not-found";
+
 import { Nav } from "@/components/nav";
+import { Footer } from "@/components/footer";
 
 const queryClient = new QueryClient();
 
+function Layout({ children }: { children: React.ReactNode }) {
+  const [location] = useLocation();
+  const isPlayPage = location === "/play";
+
+  if (isPlayPage) {
+    return <>{children}</>;
+  }
+
+  return (
+    <div className="min-h-[100dvh] flex flex-col bg-background text-foreground">
+      <Nav />
+      <div className="flex-1">
+        {children}
+      </div>
+      <Footer />
+    </div>
+  );
+}
+
 function Router() {
   return (
-    <div className="flex flex-col min-h-screen">
-      <Nav />
-      <main className="flex-1">
-        <Switch>
-          <Route path="/" component={Home} />
-          <Route path="/play" component={Play} />
-          <Route path="/how-to-play" component={HowToPlay} />
-          <Route path="/roadmap" component={Roadmap} />
-          <Route component={NotFound} />
-        </Switch>
-      </main>
-    </div>
+    <Switch>
+      <Route path="/" component={Home} />
+      <Route path="/how-to-play" component={HowToPlay} />
+      <Route path="/roadmap" component={Roadmap} />
+      <Route path="/play" component={Play} />
+      <Route component={NotFound} />
+    </Switch>
   );
 }
 
@@ -33,7 +50,9 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-          <Router />
+          <Layout>
+            <Router />
+          </Layout>
         </WouterRouter>
         <Toaster />
       </TooltipProvider>
