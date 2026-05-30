@@ -112,21 +112,24 @@ export default function Home() {
                 >
                   WEB3 ROADMAP
                 </Link>
-                {/* Orvyn badge */}
+                {/* Orynth badge */}
                 <motion.a
-                  href="https://orvyn.vercel.app"
+                  href="https://orynth.dev/projects/squishem"
                   target="_blank"
                   rel="noopener noreferrer"
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.7 }}
-                  whileHover={{ scale: 1.05 }}
-                  className="flex items-center gap-2 px-4 py-2 rounded-full border border-purple-500/40 bg-purple-500/10 hover:bg-purple-500/20 hover:border-purple-400/60 transition-all group shadow-[0_0_12px_rgba(168,85,247,0.15)] hover:shadow-[0_0_20px_rgba(168,85,247,0.3)]"
+                  whileHover={{ scale: 1.04, y: -2 }}
+                  className="transition-all"
                 >
-                  <span className="w-2.5 h-2.5 rounded-full bg-purple-400 shadow-[0_0_8px_#a855f7] animate-pulse" />
-                  <span className="text-sm font-display font-bold text-purple-300 group-hover:text-purple-200 tracking-wider uppercase transition-colors">
-                    Orvyn
-                  </span>
+                  <img
+                    src="https://orynth.dev/api/badge/squishem?theme=light&style=default"
+                    alt="Featured on Orynth"
+                    width={200}
+                    height={62}
+                    className="rounded-lg"
+                  />
                 </motion.a>
               </div>
             </motion.div>
