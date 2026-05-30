@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — SQUISH 'EM!</title>
+<style>
+:root{--bg:#1a1a2e;--bg2:#16213e;--accent:#845EC2;--green:#6BCB77;--red:#FF6B6B;--gold:#FFD93D;--blue:#4D96FF;--text:#e8e8f0;--muted:rgba(232,232,240,0.55);--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.1);}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow-x:hidden;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(16px);background:rgba(26,26,46,0.85);border-bottom:1px solid var(--border);padding:0 5vw;}
+.nav-inner{max-width:1100px;margin:0 auto;height:60px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{font-size:1.25rem;font-weight:800;color:var(--green);text-shadow:0 0 16px rgba(107,203,119,0.5);text-decoration:none;}
+.nav-links{display:flex;gap:8px;list-style:none;}
+.nav-links a{color:var(--muted);text-decoration:none;padding:6px 14px;border-radius:20px;font-size:.9rem;font-weight:500;transition:all .2s;}
+.nav-links a:hover,.nav-links a.active{color:#fff;background:rgba(107,203,119,0.15);}
+.nav-cta{background:var(--green);color:#1a1a2e!important;font-weight:700!important;}
+.nav-cta:hover{background:#4eb85a!important;}
+main{max-width:860px;margin:0 auto;padding:100px 5vw 80px;}
+.page-header{text-align:center;margin-bottom:64px;}
+.page-label{color:var(--green);font-size:.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;}
+.page-title{font-size:clamp(2rem,5vw,3rem);font-weight:900;margin-bottom:16px;}
+.page-desc{color:var(--muted);font-size:1.05rem;line-height:1.7;max-width:600px;margin:0 auto;}
+.section-h2{font-size:1.4rem;font-weight:800;margin:48px 0 20px;padding-top:48px;border-top:1px solid var(--border);}
+.section-h2:first-of-type{border-top:none;padding-top:0;margin-top:0;}
+p.body{color:var(--muted);font-size:.95rem;line-height:1.8;margin-bottom:16px;}
+.tech-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:40px;}
+.tech-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;display:flex;gap:14px;align-items:flex-start;}
+.tech-icon{font-size:1.6rem;flex-shrink:0;}
+.tech-name{font-weight:700;font-size:.93rem;margin-bottom:4px;}
+.tech-desc{color:var(--muted);font-size:.82rem;line-height:1.5;}
+.arch-block{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:28px;margin-bottom:16px;}
+.arch-block h3{font-weight:700;font-size:1rem;margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+.arch-block p{color:var(--muted);font-size:.88rem;line-height:1.6;}
+.arch-block ul{color:var(--muted);font-size:.88rem;line-height:1.7;padding-left:20px;}
+.badge{display:inline-block;padding:2px 10px;border-radius:20px;font-size:.72rem;font-weight:700;text-transform:uppercase;margin-left:6px;}
+.badge-green{background:rgba(107,203,119,0.15);color:var(--green);}
+.badge-blue{background:rgba(77,150,255,0.15);color:var(--blue);}
+.changelog{display:flex;flex-direction:column;gap:0;}
+.cl-entry{display:flex;gap:20px;padding:20px 0;border-bottom:1px solid var(--border);}
+.cl-entry:last-child{border-bottom:none;}
+.cl-ver{min-width:60px;font-weight:800;color:var(--green);font-size:.9rem;}
+.cl-date{min-width:100px;color:var(--muted);font-size:.85rem;}
+.cl-notes{color:var(--muted);font-size:.88rem;line-height:1.7;}
+.cl-notes strong{color:var(--text);}
+.links-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:40px;}
+.link-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;text-decoration:none;color:var(--text);transition:all .2s;display:flex;align-items:center;gap:14px;}
+.link-card:hover{border-color:var(--green);transform:translateY(-3px);}
+.link-card-icon{font-size:1.8rem;}
+.link-card-title{font-weight:700;font-size:.93rem;}
+.link-card-sub{color:var(--muted);font-size:.8rem;margin-top:2px;}
+.faq{display:flex;flex-direction:column;gap:12px;margin-bottom:40px;}
+.faq-item{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;}
+.faq-q{font-weight:700;font-size:.95rem;margin-bottom:8px;color:var(--text);}
+.faq-a{color:var(--muted);font-size:.88rem;line-height:1.6;}
+.cta-bar{background:rgba(107,203,119,0.08);border:1px solid rgba(107,203,119,0.2);border-radius:16px;padding:32px;text-align:center;margin-top:56px;}
+.cta-bar h3{font-size:1.4rem;font-weight:800;margin-bottom:8px;}
+.cta-bar p{color:var(--muted);margin-bottom:20px;}
+.btn{display:inline-block;padding:12px 32px;border-radius:50px;font-size:.95rem;font-weight:700;text-decoration:none;transition:all .25s;}
+.btn-primary{background:var(--green);color:#1a1a2e;}
+.btn-primary:hover{background:#4eb85a;transform:translateY(-2px);}
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 5vw;text-align:center;}
+.footer-inner{max-width:900px;margin:0 auto;}
+.footer-nav{display:flex;gap:24px;justify-content:center;margin-bottom:16px;flex-wrap:wrap;}
+.footer-nav a{color:var(--muted);text-decoration:none;font-size:.88rem;transition:color .2s;}
+.footer-nav a:hover{color:var(--green);}
+.footer-copy{color:var(--muted);font-size:.8rem;}
+@media(max-width:600px){.nav-links{display:none;}.cl-entry{flex-wrap:wrap;gap:6px;}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">SQUISH 'EM!</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="howtoplay.html">How to Play</a></li>
+      <li><a href="about.html" class="active">About</a></li>
+      <li><a href="game.html" class="nav-cta">▶ Play Now</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+  <div class="page-header">
+    <p class="page-label">About</p>
+    <h1 class="page-title">What is SQUISH 'EM!?</h1>
+    <p class="page-desc">A lightweight, dependency-free HTML5 arcade game built entirely with vanilla JavaScript, HTML5 Canvas, and the Web Audio API.</p>
+  </div>
+
+  <h2 class="section-h2" style="border-top:none;padding-top:0;">🎮 The Game</h2>
+  <p class="body">SQUISH 'EM! is a mobile-first blob shooter inspired by classic vertical arcade games. Cute kawaii-style enemies fall from the top of the screen, and your job is to blast them with your sliding cannon before they reach the bottom.</p>
+  <p class="body">The game features progressive difficulty scaling, a combo system, boss battles every 5 levels, four distinct power-ups, and a locally-saved high score. Despite all of this, it runs as a <strong>single HTML file</strong> with zero external dependencies.</p>
+
+  <h2 class="section-h2">🛠️ Technology Stack</h2>
+  <div class="tech-grid">
+    <div class="tech-card">
+      <div class="tech-icon">🖼️</div>
+      <div>
+        <div class="tech-name">HTML5 Canvas API</div>
+        <div class="tech-desc">All rendering — blobs, particles, UI, animations — is drawn each frame using the 2D Canvas API. No DOM elements in the game view.</div>
+      </div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon">🔊</div>
+      <div>
+        <div class="tech-name">Web Audio API</div>
+        <div class="tech-desc">Every sound effect is synthesised at runtime using OscillatorNode and GainNode. No audio files are loaded — zero network requests for sound.</div>
+      </div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon">⚡</div>
+      <div>
+        <div class="tech-name">requestAnimationFrame</div>
+        <div class="tech-desc">The game loop uses rAF for a stable 60fps target. Delta-time capped at 50ms prevents spiral-of-death when the tab is hidden.</div>
+      </div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon">💾</div>
+      <div>
+        <div class="tech-name">localStorage</div>
+        <div class="tech-desc">High scores persist across sessions using the browser's localStorage API — no server or account needed.</div>
+      </div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon">📱</div>
+      <div>
+        <div class="tech-name">Pointer Events</div>
+        <div class="tech-desc">Touch and mouse events are unified with canvas-coordinate scaling so the game works at any screen size and pixel density.</div>
+      </div>
+    </div>
+    <div class="tech-card">
+      <div class="tech-icon">🎨</div>
+      <div>
+        <div class="tech-name">Pure CSS Layout</div>
+        <div class="tech-desc">The surrounding website is built with pure CSS Grid &amp; Flexbox — no frameworks, no preprocessors. A single style block per page.</div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-h2">⚙️ How It Works — Architecture</h2>
+
+  <div class="arch-block">
+    <h3>🔁 Game Loop</h3>
+    <p>The engine runs a fixed <code>requestAnimationFrame</code> loop. Each tick calculates delta-time (<code>dt</code> in seconds, capped at 50ms), then calls <code>update(dt)</code> followed by a full canvas redraw. All physics — positions, timers, animations — are scaled by <code>dt</code> to stay frame-rate independent.</p>
+  </div>
+
+  <div class="arch-block">
+    <h3>🗄️ Object Pools <span class="badge badge-green">Performance</span></h3>
+    <p>Bullets, particles, power-ups, score popups, and boss projectiles are held in plain JavaScript arrays. Objects are spliced out when they expire rather than using a formal pool, keeping allocation low. The maximum active blob count is capped per level (5 → 8 → 12) to prevent runaway spawning.</p>
+  </div>
+
+  <div class="arch-block">
+    <h3>🎨 Blob Rendering</h3>
+    <p>Each blob is drawn procedurally every frame using Canvas arc and quadraticCurve calls:</p>
+    <ul>
+      <li>Drop shadow ellipse (offset 2px, semi-transparent)</li>
+      <li>Main body ellipse (colour per type, white flash on hit)</li>
+      <li>Highlight oval (top-left, 35% white alpha)</li>
+      <li>Eyes: dot arcs + pupils; expression variants for sleepy/angry/smug</li>
+      <li>Mouth: quadratic bezier curve (happy/angry/smug variants)</li>
+      <li>Wobble: sinusoidal Y-scale ±5% driven by a per-blob phase counter</li>
+      <li>Death: deathScale shrinks to 0 while inverse Y-scale expands — the classic "squish" effect</li>
+    </ul>
+  </div>
+
+  <div class="arch-block">
+    <h3>🔊 Procedural Audio</h3>
+    <p>All audio is synthesised on the fly using the Web Audio API:</p>
+    <ul>
+      <li><strong>Shoot</strong> — short 880 Hz sine wave, 70ms, low volume</li>
+      <li><strong>Squish</strong> — 220 Hz sawtooth + 180 Hz square with −200 cent detune</li>
+      <li><strong>Power-up</strong> — ascending four-note chime (440→550→660→880 Hz)</li>
+      <li><strong>Life lost</strong> — 150 Hz sawtooth with −300 cent detune + screen shake</li>
+      <li><strong>Level up</strong> — C–E–G–C fanfare using triangle oscillators</li>
+      <li><strong>Boss appear</strong> — 60 Hz sawtooth, 1 second, high volume</li>
+      <li><strong>Game over</strong> — descending five-note sad tune (C→B→A→G→F)</li>
+    </ul>
+  </div>
+
+  <div class="arch-block">
+    <h3>📐 Canvas Scaling</h3>
+    <p>The logical resolution is fixed at <strong>400×700px</strong>. On mount and window resize, a scale factor is computed as <code>min(window.innerWidth/400, window.innerHeight/700)</code>. The canvas CSS dimensions are set to <code>logical × scale</code>, and all input coordinates are divided by scale to convert back to logical space. This means the game looks sharp on any screen without rewriting any game logic.</p>
+  </div>
+
+  <div class="arch-block">
+    <h3>🎯 Collision Detection</h3>
+    <p>All collisions use simple circle-to-circle distance checks: <code>√(dx²+dy²) &lt; r1+r2</code>. Since blobs are approximately circular and bullets are small, this approximation is visually accurate. No spatial partitioning is needed at the blob counts this game targets (&lt;12 simultaneous enemies).</p>
+  </div>
+
+  <h2 class="section-h2">📋 Changelog</h2>
+  <div class="changelog">
+    <div class="cl-entry">
+      <div class="cl-ver">v1.1</div>
+      <div class="cl-date">May 2025</div>
+      <div class="cl-notes"><strong>Full website launch.</strong> Added landing page, How to Play guide, and About page. Improved game UI, nav bar, and mobile responsiveness.</div>
+    </div>
+    <div class="cl-entry">
+      <div class="cl-ver">v1.0</div>
+      <div class="cl-date">May 2025</div>
+      <div class="cl-notes"><strong>Initial release.</strong> Core game loop, 4 blob types, boss battles, 4 power-ups, combo system, Web Audio API sounds, high score persistence.</div>
+    </div>
+  </div>
+
+  <h2 class="section-h2">❓ FAQ</h2>
+  <div class="faq">
+    <div class="faq-item">
+      <div class="faq-q">Does this game require an internet connection?</div>
+      <div class="faq-a">The game runs entirely client-side. Once the page is loaded, it works offline — there are no API calls, CDN assets, or analytics scripts.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Where is my high score saved?</div>
+      <div class="faq-a">In your browser's <code>localStorage</code> under the key <code>squish_hi</code>. It persists between sessions on the same browser and device. Clearing browser data will reset it.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Why can't I hear any sound?</div>
+      <div class="faq-a">Most browsers require a user interaction before allowing audio playback. Tap or click on the canvas once (e.g., to start the game) and audio will activate. Make sure your device is not muted.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Is the source code available?</div>
+      <div class="faq-a">Yes! The full source is on GitHub — all game logic, rendering, and audio in a single HTML file. View source in your browser or check the repository linked below.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Does it work on mobile?</div>
+      <div class="faq-a">Yes. The game is mobile-first. It was designed for portrait touch screens and tested on iOS Safari and Android Chrome. Drag controls and on-screen buttons are optimised for thumbs.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Is there an end to the game?</div>
+      <div class="faq-a">There's no final level — the game scales infinitely. Blob speed is capped at 300% base speed, but more and more blobs spawn simultaneously. The goal is simply to survive as long as possible and maximise your score.</div>
+    </div>
+  </div>
+
+  <h2 class="section-h2">🔗 Links</h2>
+  <div class="links-grid">
+    <a href="https://github.com/yusufsafary/squish-em" target="_blank" class="link-card">
+      <div class="link-card-icon">🐙</div>
+      <div>
+        <div class="link-card-title">GitHub Repository</div>
+        <div class="link-card-sub">View source code</div>
+      </div>
+    </a>
+    <a href="game.html" class="link-card">
+      <div class="link-card-icon">🎮</div>
+      <div>
+        <div class="link-card-title">Play the Game</div>
+        <div class="link-card-sub">Start squishing now</div>
+      </div>
+    </a>
+    <a href="howtoplay.html" class="link-card">
+      <div class="link-card-icon">📖</div>
+      <div>
+        <div class="link-card-title">How to Play</div>
+        <div class="link-card-sub">Full guide &amp; tips</div>
+      </div>
+    </a>
+  </div>
+
+  <div class="cta-bar">
+    <h3>Enough reading — let's play!</h3>
+    <p>Open the game in your browser. No download, no signup.</p>
+    <a href="game.html" class="btn btn-primary">▶ Play Now</a>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-nav">
+      <a href="index.html">Home</a>
+      <a href="game.html">Play</a>
+      <a href="howtoplay.html">How to Play</a>
+      <a href="about.html">About</a>
+    </div>
+    <p class="footer-copy">SQUISH 'EM! — Built with pure HTML5 Canvas &amp; Web Audio API. No frameworks. No dependencies.</p>
+  </div>
+</footer>
+</body>
+</html>
