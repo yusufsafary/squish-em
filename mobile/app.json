@@ -1,0 +1,45 @@
+{
+  "expo": {
+    "name": "Squish Em!",
+    "slug": "squish-em",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/images/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/images/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FF6B9D"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.squishem.game",
+      "buildNumber": "1"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "backgroundColor": "#FF6B9D"
+      },
+      "package": "com.squishem.game",
+      "versionCode": 1,
+      "permissions": ["VIBRATE"]
+    },
+    "web": {
+      "favicon": "./assets/images/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-screen-orientation",
+        { "initialOrientation": "PORTRAIT" }
+      ]
+    ],
+    "scheme": "squishem",
+    "extra": {
+      "eas": {
+        "projectId": "REPLACE_WITH_EAS_PROJECT_ID"
+      }
+    }
+  }
+}
