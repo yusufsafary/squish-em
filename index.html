@@ -146,7 +146,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:36px 5vw
 .footer-copy a{color:var(--muted);text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.15);transition:color .2s,border-color .2s;}
 .footer-copy a:hover{color:var(--green);border-color:var(--green);}
 
-@media(max-width:640px){
+@media(max-width:768px){
   .nav-links{display:none;}
   .hamburger{display:flex;}
   .hero-title{letter-spacing:0;}
@@ -163,6 +163,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:36px 5vw
       <li><a href="index.html" class="active">Home</a></li>
       <li><a href="howtoplay.html">How to Play</a></li>
       <li><a href="about.html">About</a></li>
+      <li><a href="creator.html">Creator</a></li>
       <li><a href="game.html" class="nav-cta">Play Now</a></li>
     </ul>
     <button class="hamburger" id="hamburger" aria-label="Toggle menu">
@@ -175,6 +176,7 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:36px 5vw
   <a href="index.html">Home</a>
   <a href="howtoplay.html">How to Play</a>
   <a href="about.html">About</a>
+  <a href="creator.html">Creator</a>
   <a href="game.html">Play Now</a>
 </div>
 
@@ -221,46 +223,6 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:36px 5vw
     </div>
   </div>
 </div>
-
-<section class="section">
-  <div class="section-inner reveal">
-    <p class="section-label">Features</p>
-    <h2 class="section-title">Built for the browser,<br>not ported to it</h2>
-    <p class="section-desc">Designed mobile-first from day one. All rendering, physics, and audio run client-side with zero external libs.</p>
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">🎮</div>
-        <div class="feature-title">Touch and Mouse Controls</div>
-        <div class="feature-desc">Drag your cannon with a finger or mouse. On-screen arrow buttons for precision. Works on any screen size without layout shifts.</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🔊</div>
-        <div class="feature-title">Synthesised Audio</div>
-        <div class="feature-desc">Every shot, squish, and level fanfare is generated at runtime via Web Audio API oscillators. No audio files, no network requests for sound.</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <div class="feature-title">60 FPS Rendering</div>
-        <div class="feature-desc">Object pooling and delta-time capping keep the loop stable at 60fps on mid-range phones. requestAnimationFrame throughout.</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🏆</div>
-        <div class="feature-title">Persistent High Score</div>
-        <div class="feature-desc">Your best run is saved to localStorage and shown on the title screen with a golden trophy celebration on each new record.</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">💥</div>
-        <div class="feature-title">Combo Multipliers</div>
-        <div class="feature-desc">Chain kills within 1.5 seconds for up to 3x point multipliers. Stack with Score Multiplier for six-figure runs.</div>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">👾</div>
-        <div class="feature-title">Boss Battles</div>
-        <div class="feature-desc">Every 5 levels a Boss Blob spawns with a live health bar, rage face, speed escalation, and homing projectiles every 2.5 seconds.</div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <section class="enemies-section">
   <div class="section-inner reveal">
@@ -399,12 +361,9 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:36px 5vw
       <a href="game.html">Play</a>
       <a href="howtoplay.html">How to Play</a>
       <a href="about.html">About</a>
-      <a href="https://github.com/yusufsafary/squish-em" target="_blank" rel="noopener">GitHub</a>
+      <a href="creator.html">Creator</a>
     </nav>
-    <p class="footer-copy">
-      SQUISH 'EM! — built with HTML5 Canvas and Web Audio API. No frameworks. No dependencies.<br>
-      <a href="https://github.com/yusufsafary/squish-em" target="_blank" rel="noopener">View source on GitHub</a>
-    </p>
+    <p class="footer-copy">Built with HTML5 Canvas and Web Audio API. No frameworks. No dependencies.</p>
     <div>
       <a href="https://orynth.dev/projects/squishem" target="_blank" rel="noopener">
         <img src="https://orynth.dev/api/badge/squishem?theme=light&style=default" alt="Featured on Orynth" width="220" height="68" style="border-radius:8px;opacity:.82;" loading="lazy">
