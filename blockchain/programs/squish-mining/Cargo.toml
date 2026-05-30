@@ -1,0 +1,20 @@
+[package]
+name = "squish-mining"
+version = "0.1.0"
+description = "SQUISH mining program — validates AI agent sessions and distributes token rewards"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "squish_mining"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+
+[dependencies]
+anchor-lang = "0.30.0"
+anchor-spl = { version = "0.30.0", features = ["token"] }

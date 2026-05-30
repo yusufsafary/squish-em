@@ -1,7 +1,8 @@
 [workspace]
 members = [
   "programs/squish-token",
-  "programs/squish-nft"
+  "programs/squish-nft",
+  "programs/squish-mining"
 ]
 
 [profile.release]

@@ -8,14 +8,17 @@ skip-lint = false
 [programs.localnet]
 squish_token = "SQUISH_PROGRAM_ID_REPLACE_AFTER_DEPLOY"
 squish_nft = "SQUISH_NFT_PROGRAM_ID_REPLACE_AFTER_DEPLOY"
+squish_mining = "SQUISH_MINING_PROGRAM_ID_REPLACE_AFTER_DEPLOY"
 
 [programs.devnet]
 squish_token = "SQUISH_PROGRAM_ID_REPLACE_AFTER_DEPLOY"
 squish_nft = "SQUISH_NFT_PROGRAM_ID_REPLACE_AFTER_DEPLOY"
+squish_mining = "SQUISH_MINING_PROGRAM_ID_REPLACE_AFTER_DEPLOY"
 
 [programs.mainnet]
 squish_token = "SQUISH_PROGRAM_ID_REPLACE_AFTER_DEPLOY"
 squish_nft = "SQUISH_NFT_PROGRAM_ID_REPLACE_AFTER_DEPLOY"
+squish_mining = "SQUISH_MINING_PROGRAM_ID_REPLACE_AFTER_DEPLOY"
 
 [registry]
 url = "https://api.apr.dev"
@@ -30,5 +33,6 @@ test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
 [workspace]
 members = [
   "programs/squish-token",
-  "programs/squish-nft"
+  "programs/squish-nft",
+  "programs/squish-mining"
 ]

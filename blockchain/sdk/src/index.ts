@@ -8,4 +8,5 @@
 export * from "./token";
 export * from "./nft";
 export * from "./leaderboard";
+export * from "./mining";
 export * from "./types";
