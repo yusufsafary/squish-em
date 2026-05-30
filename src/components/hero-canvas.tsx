@@ -6,13 +6,15 @@ interface Blob {
   points: { angle: number; r: number; rTarget: number; rSpeed: number }[];
   rot: number; rotSpeed: number;
   pulsePhase: number; pulseSpeed: number;
-  trail: { x: number; y: number }[];
+  trail: { x: number; y: number; opacity: number }[];
   opacity: number;
+  wobble: number; wobbleSpeed: number;
 }
 
 interface Particle {
   x: number; y: number; vx: number; vy: number;
   life: number; maxLife: number; size: number; hue: number;
+  type: "normal" | "spark" | "ring";
 }
 
 interface Star {
@@ -20,7 +22,11 @@ interface Star {
   opacity: number; twinklePhase: number; twinkleSpeed: number;
 }
 
-/** Draw a smooth closed blob using cubic bezier through radial control points */
+interface ShootingStar {
+  x: number; y: number; vx: number; vy: number;
+  life: number; maxLife: number; len: number;
+}
+
 function drawSmoothBlob(
   ctx: CanvasRenderingContext2D,
   cx: number, cy: number,
@@ -38,10 +44,7 @@ function drawSmoothBlob(
     const curr = coords[i];
     const next = coords[(i + 1) % n];
     const next2 = coords[(i + 2) % n];
-
     if (i === 0) ctx.moveTo(curr.x, curr.y);
-
-    // Catmull-Rom → cubic bezier control points
     const cp1x = curr.x + (next.x - prev.x) / 6;
     const cp1y = curr.y + (next.y - prev.y) / 6;
     const cp2x = next.x - (next2.x - curr.x) / 6;
@@ -57,32 +60,49 @@ const PALETTE = [
   { h: 48,  s: 95, l: 58 },
   { h: 215, s: 88, l: 62 },
   { h: 0,   s: 78, l: 62 },
+  { h: 180, s: 80, l: 55 },
 ];
 
 function makeBlob(width: number, height: number, large: boolean): Blob {
   const p = PALETTE[Math.floor(Math.random() * PALETTE.length)];
-  const nPts = 8;
-  const base = large ? Math.random() * 70 + 70 : Math.random() * 32 + 22;
+  const nPts = 10;
+  const base = large ? Math.random() * 80 + 80 : Math.random() * 36 + 24;
   return {
     x: Math.random() * width,
     y: Math.random() * height,
-    vx: (Math.random() - 0.5) * (large ? 0.5 : 1.2),
-    vy: (Math.random() - 0.5) * (large ? 0.5 : 1.2),
+    vx: (Math.random() - 0.5) * (large ? 0.45 : 1.0),
+    vy: (Math.random() - 0.5) * (large ? 0.45 : 1.0),
     baseSize: base,
-    hue: p.h + (Math.random() - 0.5) * 18,
+    hue: p.h + (Math.random() - 0.5) * 22,
     sat: p.s,
     lit: p.l,
     points: Array.from({ length: nPts }, (_, i) => {
       const angle = (i / nPts) * Math.PI * 2;
-      const r = base * (0.82 + Math.random() * 0.36);
-      return { angle, r, rTarget: r, rSpeed: Math.random() * 0.015 + 0.008 };
+      const r = base * (0.78 + Math.random() * 0.44);
+      return { angle, r, rTarget: r, rSpeed: Math.random() * 0.018 + 0.007 };
     }),
     rot: Math.random() * Math.PI * 2,
-    rotSpeed: (Math.random() - 0.5) * 0.003,
+    rotSpeed: (Math.random() - 0.5) * 0.004,
     pulsePhase: Math.random() * Math.PI * 2,
-    pulseSpeed: Math.random() * 1.2 + 0.6,
+    pulseSpeed: Math.random() * 1.4 + 0.5,
     trail: [],
-    opacity: large ? 0.72 : 0.65,
+    opacity: large ? 0.75 : 0.68,
+    wobble: 0,
+    wobbleSpeed: Math.random() * 2 + 1,
+  };
+}
+
+function makeShootingStar(W: number, H: number): ShootingStar {
+  const angle = Math.PI / 4 + (Math.random() - 0.5) * 0.5;
+  const speed = Math.random() * 8 + 6;
+  return {
+    x: Math.random() * W,
+    y: Math.random() * H * 0.3,
+    vx: Math.cos(angle) * speed,
+    vy: Math.sin(angle) * speed,
+    life: 1,
+    maxLife: Math.random() * 30 + 20,
+    len: Math.random() * 120 + 60,
   };
 }
 
@@ -104,37 +124,64 @@ export function HeroCanvas() {
     window.addEventListener("resize", onResize);
 
     // Stars
-    const stars: Star[] = Array.from({ length: 180 }, () => ({
+    const stars: Star[] = Array.from({ length: 220 }, () => ({
       x: Math.random() * W, y: Math.random() * H,
-      size: Math.random() * 1.6 + 0.2,
-      speed: Math.random() * 0.25 + 0.06,
-      opacity: Math.random() * 0.6 + 0.3,
+      size: Math.random() * 1.8 + 0.2,
+      speed: Math.random() * 0.3 + 0.05,
+      opacity: Math.random() * 0.65 + 0.25,
       twinklePhase: Math.random() * Math.PI * 2,
-      twinkleSpeed: Math.random() * 2 + 0.8,
+      twinkleSpeed: Math.random() * 2.5 + 0.7,
     }));
 
-    // Blobs — 3 large, 6 small
+    // Blobs — 4 large, 10 small
     const blobs: Blob[] = [
-      ...Array.from({ length: 3 }, () => makeBlob(W, H, true)),
-      ...Array.from({ length: 6 }, () => makeBlob(W, H, false)),
+      ...Array.from({ length: 4 }, () => makeBlob(W, H, true)),
+      ...Array.from({ length: 10 }, () => makeBlob(W, H, false)),
     ];
 
-    // Particles
     const particles: Particle[] = [];
+    const shootingStars: ShootingStar[] = [];
     let pTimer = 0;
+    let ssTimer = 0;
 
     function spawnParticles() {
       const b = blobs[Math.floor(Math.random() * blobs.length)];
-      for (let k = 0; k < 3; k++) {
+      for (let k = 0; k < 4; k++) {
+        const type: Particle["type"] = Math.random() < 0.15 ? "spark" : "normal";
         particles.push({
-          x: b.x + (Math.random() - 0.5) * b.baseSize * 0.8,
-          y: b.y + (Math.random() - 0.5) * b.baseSize * 0.8,
-          vx: (Math.random() - 0.5) * 1.2,
-          vy: -Math.random() * 1.0 - 0.4,
-          life: 1, maxLife: Math.random() * 70 + 40,
-          size: Math.random() * 2.5 + 0.8,
+          x: b.x + (Math.random() - 0.5) * b.baseSize,
+          y: b.y + (Math.random() - 0.5) * b.baseSize,
+          vx: (Math.random() - 0.5) * (type === "spark" ? 2.5 : 1.4),
+          vy: -Math.random() * 1.4 - 0.3,
+          life: 1, maxLife: Math.random() * 90 + 40,
+          size: type === "spark" ? Math.random() * 1.5 + 0.5 : Math.random() * 3 + 1,
           hue: b.hue,
+          type,
         });
+      }
+    }
+
+    function drawConnections() {
+      for (let i = 0; i < blobs.length; i++) {
+        for (let j = i + 1; j < blobs.length; j++) {
+          const a = blobs[i], b = blobs[j];
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const threshold = 240;
+          if (dist < threshold) {
+            const alpha = (1 - dist / threshold) * 0.12;
+            const grad = ctx.createLinearGradient(a.x, a.y, b.x, b.y);
+            grad.addColorStop(0, `hsla(${a.hue},${a.sat}%,${a.lit}%,${alpha})`);
+            grad.addColorStop(1, `hsla(${b.hue},${b.sat}%,${b.lit}%,${alpha})`);
+            ctx.globalAlpha = 1;
+            ctx.strokeStyle = grad;
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(a.x, a.y);
+            ctx.lineTo(b.x, b.y);
+            ctx.stroke();
+          }
+        }
       }
     }
 
@@ -145,7 +192,7 @@ export function HeroCanvas() {
       // ── Stars ──
       stars.forEach(s => {
         const tw = 0.5 + 0.5 * Math.sin(t * s.twinkleSpeed + s.twinklePhase);
-        ctx.globalAlpha = s.opacity * (0.4 + 0.6 * tw);
+        ctx.globalAlpha = s.opacity * (0.35 + 0.65 * tw);
         ctx.fillStyle = "#fff";
         ctx.beginPath();
         ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2);
@@ -154,17 +201,40 @@ export function HeroCanvas() {
         if (s.y < -2) { s.y = H + 2; s.x = Math.random() * W; }
       });
 
+      // ── Shooting stars ──
+      ssTimer++;
+      if (ssTimer % 140 === 0 && Math.random() < 0.6) shootingStars.push(makeShootingStar(W, H));
+      for (let i = shootingStars.length - 1; i >= 0; i--) {
+        const ss = shootingStars[i];
+        ss.x += ss.vx; ss.y += ss.vy; ss.life--;
+        if (ss.life <= 0) { shootingStars.splice(i, 1); continue; }
+        const frac = ss.life / ss.maxLife;
+        ctx.globalAlpha = frac * 0.8;
+        const tail = ctx.createLinearGradient(ss.x, ss.y, ss.x - ss.vx * (ss.len / 10), ss.y - ss.vy * (ss.len / 10));
+        tail.addColorStop(0, "rgba(255,255,255,0.9)");
+        tail.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.strokeStyle = tail;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(ss.x, ss.y);
+        ctx.lineTo(ss.x - ss.vx * (ss.len / 10), ss.y - ss.vy * (ss.len / 10));
+        ctx.stroke();
+      }
+
+      // ── Blob connections ──
+      drawConnections();
+
       // ── Blob trails ──
       blobs.forEach(b => {
-        b.trail.push({ x: b.x, y: b.y });
-        if (b.trail.length > 16) b.trail.shift();
+        b.trail.push({ x: b.x, y: b.y, opacity: b.opacity });
+        if (b.trail.length > 22) b.trail.shift();
 
         b.trail.forEach((pt, i) => {
           const frac = i / b.trail.length;
-          const ts = b.baseSize * frac * 0.38;
+          const ts = b.baseSize * frac * 0.42;
           if (ts < 1) return;
           const tg = ctx.createRadialGradient(pt.x, pt.y, 0, pt.x, pt.y, ts);
-          tg.addColorStop(0, `hsla(${b.hue},${b.sat}%,${b.lit}%,${0.18 * frac})`);
+          tg.addColorStop(0, `hsla(${b.hue},${b.sat}%,${b.lit}%,${0.22 * frac})`);
           tg.addColorStop(1, `hsla(${b.hue},${b.sat}%,${b.lit}%,0)`);
           ctx.globalAlpha = 1;
           ctx.fillStyle = tg;
@@ -176,55 +246,52 @@ export function HeroCanvas() {
 
       // ── Blobs ──
       blobs.forEach(b => {
-        // Move
         b.x += b.vx; b.y += b.vy; b.rot += b.rotSpeed;
-        const mg = b.baseSize * 1.6;
+        b.wobble = Math.sin(t * b.wobbleSpeed) * 0.05;
+        const mg = b.baseSize * 1.8;
         if (b.x < -mg) b.x = W + mg;
         if (b.x > W + mg) b.x = -mg;
         if (b.y < -mg) b.y = H + mg;
         if (b.y > H + mg) b.y = -mg;
 
-        // Morph radii
         b.points.forEach(pt => {
           pt.r += (pt.rTarget - pt.r) * pt.rSpeed;
-          if (Math.abs(pt.r - pt.rTarget) < 1) {
-            pt.rTarget = b.baseSize * (0.72 + Math.random() * 0.56);
+          if (Math.abs(pt.r - pt.rTarget) < 1.2) {
+            pt.rTarget = b.baseSize * (0.68 + Math.random() * 0.64);
           }
         });
 
-        // Pulse
-        const pulse = 1 + 0.07 * Math.sin(t * b.pulseSpeed + b.pulsePhase);
-
-        // Build rotated point list
+        const pulse = 1 + (0.08 + b.wobble) * Math.sin(t * b.pulseSpeed + b.pulsePhase);
         const rotPts = b.points.map(pt => ({
           angle: pt.angle + b.rot,
           r: pt.r * pulse,
         }));
 
-        // Outer atmospheric glow
-        const glowR = b.baseSize * 2.4;
-        const gg = ctx.createRadialGradient(b.x, b.y, b.baseSize * 0.2, b.x, b.y, glowR);
-        gg.addColorStop(0, `hsla(${b.hue},${b.sat}%,${b.lit}%,0.15)`);
-        gg.addColorStop(0.5, `hsla(${b.hue},${b.sat}%,${b.lit}%,0.05)`);
-        gg.addColorStop(1, `hsla(${b.hue},${b.sat}%,${b.lit}%,0)`);
+        // Outer atmospheric glow (double ring)
+        const glowR = b.baseSize * 2.6;
+        const gg = ctx.createRadialGradient(b.x, b.y, b.baseSize * 0.1, b.x, b.y, glowR);
+        gg.addColorStop(0,   `hsla(${b.hue},${b.sat}%,${b.lit}%,0.18)`);
+        gg.addColorStop(0.4, `hsla(${b.hue},${b.sat}%,${b.lit}%,0.07)`);
+        gg.addColorStop(0.75,`hsla(${b.hue},${b.sat}%,${b.lit}%,0.02)`);
+        gg.addColorStop(1,   `hsla(${b.hue},${b.sat}%,${b.lit}%,0)`);
         ctx.globalAlpha = 1;
         ctx.fillStyle = gg;
         ctx.beginPath();
         ctx.arc(b.x, b.y, glowR, 0, Math.PI * 2);
         ctx.fill();
 
-        // Body — clip to blob shape, then fill with radial gradient
+        // Body
         ctx.save();
         drawSmoothBlob(ctx, b.x, b.y, rotPts);
         ctx.clip();
 
         const bg = ctx.createRadialGradient(
-          b.x - b.baseSize * 0.3, b.y - b.baseSize * 0.3, 0,
-          b.x, b.y, b.baseSize * 1.1
+          b.x - b.baseSize * 0.32, b.y - b.baseSize * 0.32, 0,
+          b.x, b.y, b.baseSize * 1.15
         );
-        bg.addColorStop(0,   `hsla(${b.hue},${b.sat}%,${Math.min(b.lit + 22, 90)}%,1)`);
-        bg.addColorStop(0.45,`hsla(${b.hue},${b.sat}%,${b.lit}%,1)`);
-        bg.addColorStop(1,   `hsla(${b.hue},${b.sat - 8}%,${Math.max(b.lit - 18, 10)}%,1)`);
+        bg.addColorStop(0,    `hsla(${b.hue},${b.sat}%,${Math.min(b.lit + 28, 92)}%,1)`);
+        bg.addColorStop(0.4,  `hsla(${b.hue},${b.sat}%,${b.lit}%,1)`);
+        bg.addColorStop(1,    `hsla(${b.hue},${b.sat - 10}%,${Math.max(b.lit - 20, 10)}%,1)`);
 
         ctx.globalAlpha = b.opacity;
         ctx.fillStyle = bg;
@@ -232,31 +299,48 @@ export function HeroCanvas() {
 
         // Specular highlight
         const sg = ctx.createRadialGradient(
-          b.x - b.baseSize * 0.3, b.y - b.baseSize * 0.3, 0,
-          b.x - b.baseSize * 0.1, b.y - b.baseSize * 0.1, b.baseSize * 0.5
+          b.x - b.baseSize * 0.32, b.y - b.baseSize * 0.32, 0,
+          b.x - b.baseSize * 0.1,  b.y - b.baseSize * 0.1,  b.baseSize * 0.52
         );
-        sg.addColorStop(0, `hsla(0,0%,100%,0.35)`);
+        sg.addColorStop(0, `hsla(0,0%,100%,0.42)`);
+        sg.addColorStop(0.5, `hsla(0,0%,100%,0.1)`);
         sg.addColorStop(1, `hsla(0,0%,100%,0)`);
-        ctx.globalAlpha = 0.9;
+        ctx.globalAlpha = 0.95;
         ctx.fillStyle = sg;
         ctx.fillRect(b.x - glowR, b.y - glowR, glowR * 2, glowR * 2);
+
+        // Inner rim glow
+        ctx.globalAlpha = 0.3;
+        ctx.strokeStyle = `hsla(${b.hue},${b.sat}%,${Math.min(b.lit + 35, 95)}%,0.6)`;
+        ctx.lineWidth = 2;
+        ctx.stroke();
 
         ctx.restore();
       });
 
       // ── Particles ──
       pTimer++;
-      if (pTimer % 10 === 0) spawnParticles();
+      if (pTimer % 8 === 0) spawnParticles();
       for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
-        p.x += p.vx; p.y += p.vy; p.vy -= 0.01; p.life--;
+        p.x += p.vx; p.y += p.vy; p.vy -= 0.012; p.life--;
         if (p.life <= 0) { particles.splice(i, 1); continue; }
         const frac = p.life / p.maxLife;
-        ctx.globalAlpha = frac * 0.65;
-        ctx.fillStyle = `hsl(${p.hue},80%,72%)`;
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * frac, 0, Math.PI * 2);
-        ctx.fill();
+        if (p.type === "spark") {
+          ctx.globalAlpha = frac * 0.9;
+          ctx.strokeStyle = `hsl(${p.hue},100%,85%)`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(p.x - p.vx * 4, p.y - p.vy * 4);
+          ctx.stroke();
+        } else {
+          ctx.globalAlpha = frac * 0.7;
+          ctx.fillStyle = `hsl(${p.hue},80%,72%)`;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size * frac, 0, Math.PI * 2);
+          ctx.fill();
+        }
       }
 
       ctx.globalAlpha = 1;
@@ -271,7 +355,7 @@ export function HeroCanvas() {
     <canvas
       ref={canvasRef}
       className="absolute inset-0 w-full h-full pointer-events-none"
-      style={{ mixBlendMode: "screen", opacity: 0.9 }}
+      style={{ mixBlendMode: "screen", opacity: 0.92 }}
     />
   );
 }
