@@ -117,13 +117,14 @@ export default function Home() {
                   href="https://orvyn.vercel.app"
                   target="_blank"
                   rel="noopener noreferrer"
-                  initial={{ opacity: 0, y: 4 }}
+                  initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6 }}
-                  className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group"
+                  transition={{ delay: 0.7 }}
+                  whileHover={{ scale: 1.05 }}
+                  className="flex items-center gap-2 px-4 py-2 rounded-full border border-purple-500/40 bg-purple-500/10 hover:bg-purple-500/20 hover:border-purple-400/60 transition-all group shadow-[0_0_12px_rgba(168,85,247,0.15)] hover:shadow-[0_0_20px_rgba(168,85,247,0.3)]"
                 >
-                  <span className="w-2 h-2 rounded-full bg-purple-400 group-hover:shadow-[0_0_6px_#a855f7] transition-all" />
-                  <span className="text-[10px] font-mono text-white/50 group-hover:text-white/80 tracking-widest uppercase transition-colors">
+                  <span className="w-2.5 h-2.5 rounded-full bg-purple-400 shadow-[0_0_8px_#a855f7] animate-pulse" />
+                  <span className="text-sm font-display font-bold text-purple-300 group-hover:text-purple-200 tracking-wider uppercase transition-colors">
                     Orvyn
                   </span>
                 </motion.a>
