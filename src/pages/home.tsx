@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { HeroCanvas } from "@/components/hero-canvas";
 import { Link } from "wouter";
+import { useState, useCallback, useRef } from "react";
 
 const container = {
   hidden: { opacity: 0 },
@@ -11,15 +12,77 @@ const item = {
   show: { y: 0, opacity: 1 }
 };
 
+function useGameSound() {
+  const [muted, setMuted] = useState(false);
+  const ctxRef = useRef<AudioContext | null>(null);
+
+  const getCtx = () => {
+    if (!ctxRef.current) {
+      ctxRef.current = new (window.AudioContext || (window as any).webkitAudioContext)();
+    }
+    return ctxRef.current;
+  };
+
+  const playShoot = useCallback(() => {
+    if (muted) return;
+    const ctx = getCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = "square";
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 0.12);
+    gain.gain.setValueAtTime(0.18, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.14);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.15);
+  }, [muted]);
+
+  const playClick = useCallback(() => {
+    if (muted) return;
+    const ctx = getCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = "square";
+    osc.frequency.setValueAtTime(440, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.06);
+    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.1);
+  }, [muted]);
+
+  return { muted, setMuted, playShoot, playClick };
+}
+
 export default function Home() {
+  const { muted, setMuted, playShoot, playClick } = useGameSound();
+
   return (
     <main className="min-h-screen pt-16 flex flex-col">
+      {/* Sound Toggle — fixed bottom-right */}
+      <motion.button
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 1 }}
+        onClick={() => { setMuted(m => !m); playClick(); }}
+        className="fixed bottom-6 right-6 z-50 w-11 h-11 rounded-full border border-primary/40 bg-background/80 backdrop-blur-md flex items-center justify-center text-lg hover:border-primary hover:glow-box-green transition-all group"
+        title={muted ? "Unmute sounds" : "Mute sounds"}
+      >
+        <span className="group-hover:scale-110 transition-transform">
+          {muted ? "🔇" : "🔊"}
+        </span>
+      </motion.button>
+
       {/* Hero Section */}
       <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden border-b border-white/5">
         <div className="absolute inset-0 bg-background z-0" />
         <HeroCanvas />
         <div className="absolute inset-0 scanline z-0 opacity-20 pointer-events-none" />
-        
+
         <div className="container relative z-10 mx-auto px-4 text-center">
           <motion.div initial="hidden" animate="show" variants={container} className="max-w-3xl mx-auto flex flex-col items-center">
             <motion.h1 variants={item} className="text-5xl md:text-7xl font-display font-black text-white mb-6 tracking-tight glow-text-green">
@@ -28,14 +91,43 @@ export default function Home() {
             <motion.p variants={item} className="text-xl md:text-2xl text-muted-foreground mb-8 font-medium">
               Shoot blobs. Chain combos. Survive the boss waves.
             </motion.p>
-            
+
             <motion.div variants={item} className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto justify-center">
-              <Link href="/play" className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded font-display font-bold text-lg tracking-wider glow-box-green transition-all transform hover:-translate-y-1 inline-block" data-testid="hero-play-btn">
+              <Link
+                href="/play"
+                onClick={playShoot}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-4 rounded font-display font-bold text-lg tracking-wider glow-box-green transition-all transform hover:-translate-y-1 inline-block"
+                data-testid="hero-play-btn"
+              >
                 START PLAYING
               </Link>
-              <Link href="/roadmap" className="bg-secondary/20 hover:bg-secondary/30 text-secondary border border-secondary/50 px-8 py-4 rounded font-display font-bold text-lg tracking-wider transition-all transform hover:-translate-y-1 inline-block" data-testid="hero-roadmap-btn">
-                WEB3 ROADMAP
-              </Link>
+
+              {/* Web3 Roadmap button + Orvyn badge */}
+              <div className="flex flex-col items-center gap-1.5">
+                <Link
+                  href="/roadmap"
+                  onClick={playClick}
+                  className="bg-secondary/20 hover:bg-secondary/30 text-secondary border border-secondary/50 px-8 py-4 rounded font-display font-bold text-lg tracking-wider transition-all transform hover:-translate-y-1 inline-block w-full text-center"
+                  data-testid="hero-roadmap-btn"
+                >
+                  WEB3 ROADMAP
+                </Link>
+                {/* Orvyn badge */}
+                <motion.a
+                  href="https://orvyn.vercel.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 }}
+                  className="flex items-center gap-1.5 px-3 py-1 rounded-full border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20 transition-all group"
+                >
+                  <span className="w-2 h-2 rounded-full bg-purple-400 group-hover:shadow-[0_0_6px_#a855f7] transition-all" />
+                  <span className="text-[10px] font-mono text-white/50 group-hover:text-white/80 tracking-widest uppercase transition-colors">
+                    Orvyn
+                  </span>
+                </motion.a>
+              </div>
             </motion.div>
           </motion.div>
         </div>
@@ -81,7 +173,7 @@ export default function Home() {
             <h2 className="text-3xl font-display font-bold mb-4">PURE PERFORMANCE</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">Built from the ground up with zero bloat. No massive engines, just pure math and pixels.</p>
           </div>
-          
+
           <div className="flex flex-wrap justify-center gap-4 max-w-3xl mx-auto">
             <TechPill>HTML5 Canvas 2D</TechPill>
             <TechPill>Web Audio API</TechPill>
@@ -98,17 +190,16 @@ export default function Home() {
 
 function EnemyCard({ name, hp, speed, pts, desc, color, isBoss = false }: any) {
   return (
-    <motion.div 
+    <motion.div
       whileHover={{ y: -5, scale: 1.02 }}
       className={`relative p-6 rounded-lg border bg-background/50 backdrop-blur-sm overflow-hidden flex flex-col group ${isBoss ? 'md:col-span-2 lg:col-span-3 lg:w-2/3 lg:mx-auto' : ''}`}
       style={{ borderColor: `hsl(${color} / 0.3)` }}
       data-testid={`enemy-card-${name.toLowerCase().replace(' ', '-')}`}
     >
       <div className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-300 pointer-events-none" style={{ backgroundColor: `hsl(${color})` }} />
-      
+
       <div className="flex items-center gap-4 mb-4">
         <div className="w-16 h-16 rounded-full flex items-center justify-center" style={{ backgroundColor: `hsl(${color} / 0.2)`, boxShadow: `0 0 20px hsl(${color} / 0.3)` }}>
-          {/* Simple SVG Blob representation */}
           <div className="w-10 h-10 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] animate-pulse" style={{ backgroundColor: `hsl(${color})` }} />
         </div>
         <div>
@@ -116,7 +207,7 @@ function EnemyCard({ name, hp, speed, pts, desc, color, isBoss = false }: any) {
           <span className="text-xs font-mono text-muted-foreground">{desc}</span>
         </div>
       </div>
-      
+
       <div className="grid grid-cols-3 gap-2 mt-auto font-mono text-sm bg-black/40 p-3 rounded">
         <div className="flex flex-col">
           <span className="text-muted-foreground text-xs">HP</span>
