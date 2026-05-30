@@ -4,17 +4,22 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Play — SQUISH 'EM!</title>
+<meta name="description" content="Play SQUISH 'EM! — HTML5 blob shooter. Free, no download, no login.">
+<meta name="theme-color" content="#1a1a2e">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#1a1a2e;--bg2:#16213e;--green:#6BCB77;--text:#e8e8f0;--muted:rgba(232,232,240,0.55);--border:rgba(255,255,255,0.1);}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow:hidden;height:100vh;display:flex;flex-direction:column;}
-nav{flex-shrink:0;backdrop-filter:blur(16px);background:rgba(26,26,46,0.9);border-bottom:1px solid var(--border);padding:0 4vw;z-index:10;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;overflow:hidden;height:100vh;display:flex;flex-direction:column;}
+nav{flex-shrink:0;backdrop-filter:blur(20px);background:rgba(22,22,46,0.92);border-bottom:1px solid var(--border);padding:0 4vw;z-index:10;}
 .nav-inner{max-width:1100px;margin:0 auto;height:52px;display:flex;align-items:center;justify-content:space-between;}
-.nav-logo{font-size:1.1rem;font-weight:800;color:var(--green);text-shadow:0 0 14px rgba(107,203,119,0.5);text-decoration:none;}
-.nav-links{display:flex;gap:6px;list-style:none;}
-.nav-links a{color:var(--muted);text-decoration:none;padding:5px 12px;border-radius:16px;font-size:.85rem;font-weight:500;transition:all .2s;}
+.nav-logo{font-family:'Orbitron',sans-serif;font-size:.95rem;font-weight:900;color:var(--green);text-shadow:0 0 16px rgba(107,203,119,0.5);text-decoration:none;letter-spacing:1.5px;}
+.nav-links{display:flex;gap:4px;list-style:none;}
+.nav-links a{color:var(--muted);text-decoration:none;padding:5px 12px;border-radius:16px;font-size:.84rem;font-weight:500;transition:all .2s;}
 .nav-links a:hover{color:#fff;background:rgba(107,203,119,0.12);}
-.nav-back{color:var(--muted);text-decoration:none;font-size:.85rem;display:flex;align-items:center;gap:6px;}
+.nav-back{color:var(--muted);text-decoration:none;font-size:.84rem;display:flex;align-items:center;gap:6px;font-weight:500;transition:color .2s;}
 .nav-back:hover{color:var(--green);}
 .game-wrap{flex:1;display:flex;align-items:center;justify-content:center;overflow:hidden;touch-action:none;}
 canvas{display:block;image-rendering:pixelated;}
