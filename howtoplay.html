@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Play — SQUISH 'EM!</title>
+<style>
+:root{--bg:#1a1a2e;--bg2:#16213e;--accent:#845EC2;--green:#6BCB77;--red:#FF6B6B;--gold:#FFD93D;--blue:#4D96FF;--text:#e8e8f0;--muted:rgba(232,232,240,0.55);--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.1);}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;overflow-x:hidden;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(16px);background:rgba(26,26,46,0.85);border-bottom:1px solid var(--border);padding:0 5vw;}
+.nav-inner{max-width:1100px;margin:0 auto;height:60px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{font-size:1.25rem;font-weight:800;color:var(--green);text-shadow:0 0 16px rgba(107,203,119,0.5);text-decoration:none;}
+.nav-links{display:flex;gap:8px;list-style:none;}
+.nav-links a{color:var(--muted);text-decoration:none;padding:6px 14px;border-radius:20px;font-size:.9rem;font-weight:500;transition:all .2s;}
+.nav-links a:hover,.nav-links a.active{color:#fff;background:rgba(107,203,119,0.15);}
+.nav-cta{background:var(--green);color:#1a1a2e!important;font-weight:700!important;}
+.nav-cta:hover{background:#4eb85a!important;color:#fff!important;}
+main{max-width:860px;margin:0 auto;padding:100px 5vw 80px;}
+.page-header{text-align:center;margin-bottom:64px;}
+.page-label{color:var(--green);font-size:.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;}
+.page-title{font-size:clamp(2rem,5vw,3rem);font-weight:900;margin-bottom:16px;}
+.page-desc{color:var(--muted);font-size:1.05rem;line-height:1.7;}
+.step-list{display:flex;flex-direction:column;gap:16px;margin-bottom:56px;}
+.step{display:flex;gap:20px;align-items:flex-start;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;}
+.step-num{width:40px;height:40px;border-radius:12px;background:rgba(107,203,119,0.15);border:1px solid rgba(107,203,119,0.3);color:var(--green);font-weight:800;font-size:1.1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.step-body{}
+.step-title{font-weight:700;font-size:1rem;margin-bottom:6px;}
+.step-desc{color:var(--muted);font-size:.9rem;line-height:1.6;}
+.tip{background:rgba(255,217,61,0.07);border:1px solid rgba(255,217,61,0.2);border-radius:12px;padding:14px 18px;font-size:.88rem;color:var(--text);display:flex;gap:10px;align-items:flex-start;}
+.tip-icon{font-size:1.1rem;flex-shrink:0;}
+.section-h2{font-size:1.5rem;font-weight:800;margin-bottom:24px;padding-top:48px;border-top:1px solid var(--border);}
+.controls-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:40px;}
+.control-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;}
+.control-icon{font-size:1.8rem;margin-bottom:10px;}
+.control-title{font-weight:700;font-size:.95rem;margin-bottom:6px;}
+.control-desc{color:var(--muted);font-size:.85rem;line-height:1.5;}
+.scoring-table{width:100%;border-collapse:collapse;margin-bottom:40px;}
+.scoring-table th{text-align:left;padding:10px 14px;font-size:.8rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);border-bottom:1px solid var(--border);}
+.scoring-table td{padding:12px 14px;font-size:.9rem;border-bottom:1px solid rgba(255,255,255,0.04);}
+.scoring-table tr:hover td{background:var(--card);}
+.combo-table{width:100%;border-collapse:collapse;margin-bottom:40px;}
+.combo-table th{text-align:left;padding:10px 14px;font-size:.8rem;text-transform:uppercase;letter-spacing:1px;color:var(--muted);border-bottom:1px solid var(--border);}
+.combo-table td{padding:12px 14px;font-size:.9rem;border-bottom:1px solid rgba(255,255,255,0.04);}
+.hl{color:var(--gold);font-weight:700;}
+.green{color:var(--green);}
+.red{color:var(--red);}
+.blue{color:var(--blue);}
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px;margin-bottom:40px;}
+.tip-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;}
+.tip-card-icon{font-size:1.6rem;margin-bottom:10px;}
+.tip-card-title{font-weight:700;font-size:.93rem;margin-bottom:6px;}
+.tip-card-desc{color:var(--muted);font-size:.85rem;line-height:1.5;}
+.cta-bar{background:rgba(107,203,119,0.08);border:1px solid rgba(107,203,119,0.2);border-radius:16px;padding:32px;text-align:center;margin-top:56px;}
+.cta-bar h3{font-size:1.4rem;font-weight:800;margin-bottom:8px;}
+.cta-bar p{color:var(--muted);margin-bottom:20px;}
+.btn{display:inline-block;padding:12px 32px;border-radius:50px;font-size:.95rem;font-weight:700;text-decoration:none;transition:all .25s;}
+.btn-primary{background:var(--green);color:#1a1a2e;box-shadow:0 0 24px rgba(107,203,119,0.3);}
+.btn-primary:hover{background:#4eb85a;transform:translateY(-2px);}
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:32px 5vw;text-align:center;}
+.footer-inner{max-width:900px;margin:0 auto;}
+.footer-nav{display:flex;gap:24px;justify-content:center;margin-bottom:16px;flex-wrap:wrap;}
+.footer-nav a{color:var(--muted);text-decoration:none;font-size:.88rem;transition:color .2s;}
+.footer-nav a:hover{color:var(--green);}
+.footer-copy{color:var(--muted);font-size:.8rem;}
+@media(max-width:600px){.nav-links{display:none;}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">SQUISH 'EM!</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="howtoplay.html" class="active">How to Play</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="game.html" class="nav-cta">▶ Play Now</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+  <div class="page-header">
+    <p class="page-label">Guide</p>
+    <h1 class="page-title">How to Play SQUISH 'EM!</h1>
+    <p class="page-desc">Master the basics in 60 seconds. Become a blob-squishing legend in an hour.</p>
+  </div>
+
+  <h2 class="section-h2" style="border-top:none;padding-top:0;">🎯 The Objective</h2>
+  <div class="step-list">
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Blobs fall from the top</div>
+        <div class="step-desc">Colourful blob enemies spawn at the top of the screen and slowly drift downward. They each have different speeds, HP, and behaviours.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Shoot them before they reach the bottom</div>
+        <div class="step-desc">Your cannon auto-fires every 0.5 seconds. Move it left and right so bullets hit blobs. If a blob reaches the bottom, you lose a life ❤️.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Survive and score as high as possible</div>
+        <div class="step-desc">You start with 3 lives. Collect power-ups, chain combos, and defeat bosses to rack up points. The game ends when you run out of lives.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tip">
+    <span class="tip-icon">💡</span>
+    <span>Your cannon fires automatically — you just need to focus on moving into position. No button mashing required.</span>
+  </div>
+
+  <h2 class="section-h2">🕹️ Controls</h2>
+  <div class="controls-grid">
+    <div class="control-card">
+      <div class="control-icon">👆</div>
+      <div class="control-title">Touch Drag</div>
+      <div class="control-desc">Touch and drag anywhere on the rail or cannon to move it left and right. Works on any touchscreen.</div>
+    </div>
+    <div class="control-card">
+      <div class="control-icon">🖱️</div>
+      <div class="control-title">Mouse Drag</div>
+      <div class="control-desc">Click and drag the cannon or rail with your mouse. Works on desktop and laptop.</div>
+    </div>
+    <div class="control-card">
+      <div class="control-icon">⌨️</div>
+      <div class="control-title">Arrow Keys</div>
+      <div class="control-desc">Use ← → arrow keys on keyboard to slide the cannon. Also works while dragging.</div>
+    </div>
+    <div class="control-card">
+      <div class="control-icon">◀▶</div>
+      <div class="control-title">On-Screen Buttons</div>
+      <div class="control-desc">Tap the ◀ ▶ arrow buttons shown at the bottom of the game screen.</div>
+    </div>
+    <div class="control-card">
+      <div class="control-icon">⏸</div>
+      <div class="control-title">Pause</div>
+      <div class="control-desc">Press <strong>P</strong> or <strong>Escape</strong> on keyboard to pause and resume the game.</div>
+    </div>
+  </div>
+
+  <h2 class="section-h2">📊 Scoring</h2>
+  <table class="scoring-table">
+    <thead><tr><th>Enemy</th><th>Base Points</th><th>Notes</th></tr></thead>
+    <tbody>
+      <tr><td>🟢 Green Blob</td><td class="hl">10 pts</td><td>Most common — your bread and butter</td></tr>
+      <tr><td>🔵 Blue Blob</td><td class="hl">20 pts</td><td>Takes 2 hits — don't let it through</td></tr>
+      <tr><td>🔴 Red Blob</td><td class="hl">30 pts</td><td>Fast! Prioritise these when they spawn</td></tr>
+      <tr><td>⭐ Golden Blob</td><td class="hl">100 pts</td><td>Rare (5%), zigzags — worth chasing</td></tr>
+      <tr><td>💀 Boss Blob</td><td class="hl">500 pts</td><td>20 HP, appears every 5 levels</td></tr>
+    </tbody>
+  </table>
+
+  <h2 class="section-h2">🔥 Combo System</h2>
+  <p style="color:var(--muted);font-size:.9rem;margin-bottom:16px;line-height:1.6;">Kill multiple blobs within <strong>1.5 seconds</strong> of each other to trigger a combo multiplier. The counter resets if you go 1.5s without a kill.</p>
+  <table class="combo-table">
+    <thead><tr><th>Chain</th><th>Multiplier</th><th>Example (Green Blob)</th></tr></thead>
+    <tbody>
+      <tr><td>1 kill</td><td class="green">×1</td><td>10 pts</td></tr>
+      <tr><td>2 kills</td><td class="green">×1.5</td><td>15 pts per kill</td></tr>
+      <tr><td>3 kills</td><td class="hl">×2</td><td>20 pts per kill</td></tr>
+      <tr><td>4+ kills</td><td class="red">×3</td><td>30 pts per kill</td></tr>
+    </tbody>
+  </table>
+  <div class="tip" style="margin-bottom:40px;">
+    <span class="tip-icon">💡</span>
+    <span>Stacking a ×3 combo with the Score Multiplier power-up gives you a <strong class="hl">×6</strong> multiplier. Golden Blob during that = <strong class="hl">600 points!</strong></span>
+  </div>
+
+  <h2 class="section-h2">⬆️ Progression</h2>
+  <div class="step-list">
+    <div class="step">
+      <div class="step-num" style="background:rgba(77,150,255,0.15);border-color:rgba(77,150,255,0.3);color:var(--blue);">L</div>
+      <div class="step-body">
+        <div class="step-title">Level Up every 15 kills</div>
+        <div class="step-desc">Each new level unlocks faster and tougher blob types, and increases the maximum number of blobs on screen simultaneously.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num" style="background:rgba(255,107,107,0.15);border-color:rgba(255,107,107,0.3);color:var(--red);">S</div>
+      <div class="step-body">
+        <div class="step-title">Speed scales every 10 kills</div>
+        <div class="step-desc">Every 10 kills, all blobs get 10% faster. Speed is capped at 300% of base — but by that point, things are truly hectic.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num" style="background:rgba(255,107,107,0.15);border-color:rgba(255,107,107,0.3);color:var(--red);">B</div>
+      <div class="step-body">
+        <div class="step-title">Boss at levels 5, 10, 15…</div>
+        <div class="step-desc">A massive Boss Blob with 20 HP appears. Its speed accelerates as you chip away its health. It shoots projectiles every ~2.5 seconds — dodge or use your Shield!</div>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-h2">⚡ Power-up Tips</h2>
+  <div class="tips-grid">
+    <div class="tip-card">
+      <div class="tip-card-icon">🔥</div>
+      <div class="tip-card-title">Rapid Fire + Combo</div>
+      <div class="tip-card-desc">Activate Rapid Fire then chain as many kills as possible in 1.5s to maximise your combo multiplier.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-card-icon">✦✦✦</div>
+      <div class="tip-card-title">Triple Shot for Crowds</div>
+      <div class="tip-card-desc">When many blobs cluster, Triple Shot clears columns efficiently. Also excellent for hitting zigzagging Golden Blobs.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-card-icon">🛡</div>
+      <div class="tip-card-title">Save Shield for Boss</div>
+      <div class="tip-card-desc">The Shield absorbs one boss projectile or one blob that reaches the bottom — ideal insurance during a boss fight.</div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-card-icon">×2</div>
+      <div class="tip-card-title">Score Mult + Boss Kill</div>
+      <div class="tip-card-desc">Try to have Score Multiplier active when you land the killing blow on a Boss. 500 pts becomes 1000 pts instantly.</div>
+    </div>
+  </div>
+
+  <h2 class="section-h2">🏆 Pro Tips</h2>
+  <div class="step-list">
+    <div class="step">
+      <div class="step-num">★</div>
+      <div class="step-body">
+        <div class="step-title">Prioritise by threat, not proximity</div>
+        <div class="step-desc">Red blobs are fast — they reach the bottom quickly even if spawned late. Target them before the slow Blue blob that's been floating for a while.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">★</div>
+      <div class="step-body">
+        <div class="step-title">Centre position = maximum coverage</div>
+        <div class="step-desc">Staying near the centre lets you reach any blob quickly. Only move far to the edges when a blob is about to escape at that side.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">★</div>
+      <div class="step-body">
+        <div class="step-title">Hunt Golden Blobs immediately</div>
+        <div class="step-desc">A Golden Blob is worth 10 Green Blobs. They zigzag but have 1 HP — a single bullet kills them. Always divert to intercept them.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">★</div>
+      <div class="step-body">
+        <div class="step-title">During a boss fight — keep moving</div>
+        <div class="step-desc">Boss projectiles travel at a fixed trajectory. Moving constantly means they're less likely to align with your cannon's position.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cta-bar">
+    <h3>Ready to put this into practice?</h3>
+    <p>Start a game now and apply what you've learned.</p>
+    <a href="game.html" class="btn btn-primary">▶ Start Playing</a>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-nav">
+      <a href="index.html">Home</a>
+      <a href="game.html">Play</a>
+      <a href="howtoplay.html">How to Play</a>
+      <a href="about.html">About</a>
+    </div>
+    <p class="footer-copy">SQUISH 'EM! — Built with pure HTML5 Canvas &amp; Web Audio API.</p>
+  </div>
+</footer>
+</body>
+</html>
