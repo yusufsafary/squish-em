@@ -11,9 +11,10 @@ export default function Play() {
         <span>←</span> EXIT
       </Link>
       <iframe 
-        src="https://yusufsafary.github.io/squish-em/game.html" 
+        src="/game.html"
         className="w-full h-full border-none"
         title="SQUISH 'EM! Game"
+        allow="autoplay"
       />
     </div>
   );

@@ -17,6 +17,12 @@ export default defineConfig({
   build: {
     outDir: "dist/public",
     emptyOutDir: true,
+    rollupOptions: {
+      input: {
+        main: path.resolve(__dirname, "index.html"),
+        game: path.resolve(__dirname, "game.html"),
+      },
+    },
   },
   server: {
     port: 3000,
