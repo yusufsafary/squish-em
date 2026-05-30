@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Creator — SQUISH 'EM!</title>
+<meta name="description" content="Meet the creator of SQUISH 'EM! — @oroimho on X. One developer, pure HTML5, zero frameworks.">
+<meta name="theme-color" content="#1a1a2e">
+<meta property="og:title" content="Creator — SQUISH 'EM!">
+<meta property="og:description" content="Meet the solo developer behind SQUISH 'EM! — @oroimho on X.">
+<meta property="og:type" content="website">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#1a1a2e;--bg2:#16213e;--accent:#845EC2;--green:#6BCB77;--red:#FF6B6B;--gold:#FFD93D;--blue:#4D96FF;--text:#e8e8f0;--muted:rgba(232,232,240,0.55);--card:rgba(255,255,255,0.05);--border:rgba(255,255,255,0.1);}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'Inter',system-ui,sans-serif;overflow-x:hidden;}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;backdrop-filter:blur(20px);background:rgba(22,22,46,0.9);border-bottom:1px solid var(--border);padding:0 5vw;}
+.nav-inner{max-width:1100px;margin:0 auto;height:60px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{font-family:'Orbitron',sans-serif;font-size:1rem;font-weight:900;color:var(--green);text-shadow:0 0 18px rgba(107,203,119,0.55);text-decoration:none;letter-spacing:1.5px;}
+.nav-links{display:flex;gap:4px;list-style:none;align-items:center;}
+.nav-links a{color:var(--muted);text-decoration:none;padding:6px 14px;border-radius:20px;font-size:.87rem;font-weight:500;transition:all .2s;}
+.nav-links a:hover,.nav-links a.active{color:#fff;background:rgba(107,203,119,0.12);}
+.nav-cta{background:var(--green)!important;color:#1a1a2e!important;font-weight:700!important;}
+.nav-cta:hover{background:#53c160!important;transform:translateY(-1px);}
+
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;border:none;background:transparent;}
+.hamburger span{display:block;width:22px;height:2px;background:var(--text);border-radius:2px;transition:all .25s;}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.mobile-menu{display:none;position:fixed;top:60px;left:0;right:0;background:rgba(20,20,44,0.98);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);z-index:99;padding:16px 5vw 20px;}
+.mobile-menu.open{display:block;}
+.mobile-menu a{display:block;color:var(--text);text-decoration:none;padding:12px 0;border-bottom:1px solid var(--border);font-size:.95rem;font-weight:500;transition:color .2s;}
+.mobile-menu a:last-child{border-bottom:none;color:var(--green);font-weight:700;margin-top:4px;}
+.mobile-menu a:hover{color:var(--green);}
+
+main{max-width:760px;margin:0 auto;padding:100px 5vw 80px;}
+
+.page-header{text-align:center;margin-bottom:56px;}
+.page-label{color:var(--green);font-size:.7rem;font-weight:700;letter-spacing:2.8px;text-transform:uppercase;margin-bottom:12px;}
+.page-title{font-family:'Orbitron',sans-serif;font-size:clamp(1.8rem,5vw,2.8rem);font-weight:700;margin-bottom:14px;}
+.page-desc{color:var(--muted);font-size:1rem;line-height:1.72;max-width:480px;margin:0 auto;}
+
+.creator-card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:40px 36px;display:flex;gap:32px;align-items:flex-start;margin-bottom:28px;transition:border-color .25s;}
+.creator-card:hover{border-color:rgba(107,203,119,0.28);}
+.avatar-wrap{flex-shrink:0;}
+.avatar{width:88px;height:88px;border-radius:50%;background:linear-gradient(135deg,#1d1d35 0%,#2a2a4a 100%);border:2px solid rgba(107,203,119,0.35);display:flex;align-items:center;justify-content:center;font-family:'Orbitron',sans-serif;font-size:2rem;font-weight:900;color:var(--green);text-shadow:0 0 20px rgba(107,203,119,0.5);overflow:hidden;}
+.avatar img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
+.creator-body{flex:1;min-width:0;}
+.creator-handle{font-family:'Orbitron',sans-serif;font-size:1.35rem;font-weight:700;color:var(--text);margin-bottom:6px;}
+.creator-role{color:var(--green);font-size:.8rem;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;margin-bottom:14px;}
+.creator-bio{color:var(--muted);font-size:.93rem;line-height:1.75;margin-bottom:22px;}
+.x-btn{display:inline-flex;align-items:center;gap:9px;background:#000;color:#fff;text-decoration:none;padding:11px 22px;border-radius:50px;font-size:.88rem;font-weight:700;transition:all .2s;border:1.5px solid rgba(255,255,255,0.15);}
+.x-btn:hover{background:#111;transform:translateY(-2px);border-color:rgba(255,255,255,0.3);}
+.x-icon{width:17px;height:17px;fill:#fff;flex-shrink:0;}
+
+.stat-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:28px;}
+.stat-box{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px 18px;text-align:center;}
+.stat-box-num{font-family:'Orbitron',sans-serif;font-size:1.6rem;font-weight:700;color:var(--green);margin-bottom:4px;}
+.stat-box-lbl{color:var(--muted);font-size:.72rem;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;}
+
+.quote-block{background:rgba(107,203,119,0.06);border:1px solid rgba(107,203,119,0.2);border-radius:16px;padding:26px 28px;margin-bottom:28px;position:relative;}
+.quote-block::before{content:'"';position:absolute;top:-2px;left:18px;font-size:4rem;color:rgba(107,203,119,0.18);font-family:Georgia,serif;line-height:1;}
+.quote-text{color:var(--text);font-size:1rem;line-height:1.78;font-style:italic;padding-top:18px;}
+.quote-attr{color:var(--muted);font-size:.8rem;margin-top:12px;font-weight:600;}
+
+.game-cta{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:32px;text-align:center;margin-bottom:28px;}
+.game-cta h2{font-family:'Orbitron',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:10px;}
+.game-cta p{color:var(--muted);font-size:.9rem;margin-bottom:22px;line-height:1.65;}
+.btn{display:inline-block;padding:12px 32px;border-radius:50px;font-size:.93rem;font-weight:700;text-decoration:none;transition:all .25s;font-family:'Inter',sans-serif;}
+.btn-primary{background:var(--green);color:#1a1a2e;box-shadow:0 0 24px rgba(107,203,119,0.22);}
+.btn-primary:hover{background:#53c160;transform:translateY(-2px);}
+.btn-secondary{background:transparent;color:var(--text);border:1.5px solid var(--border);margin-left:10px;}
+.btn-secondary:hover{border-color:var(--green);color:var(--green);transform:translateY(-2px);}
+
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:36px 5vw;}
+.footer-inner{max-width:900px;margin:0 auto;display:flex;flex-direction:column;align-items:center;gap:16px;}
+.footer-nav{display:flex;gap:20px;flex-wrap:wrap;justify-content:center;}
+.footer-nav a{color:var(--muted);text-decoration:none;font-size:.85rem;font-weight:500;transition:color .2s;}
+.footer-nav a:hover{color:var(--green);}
+.footer-copy{color:var(--muted);font-size:.77rem;text-align:center;line-height:1.65;}
+
+@media(max-width:768px){
+  .nav-links{display:none;}
+  .hamburger{display:flex;}
+  .creator-card{flex-direction:column;align-items:center;text-align:center;padding:30px 22px;}
+  .creator-body{width:100%;}
+  .btn-secondary{margin-left:0;margin-top:10px;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-logo">SQUISH 'EM!</a>
+    <ul class="nav-links">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="howtoplay.html">How to Play</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><a href="creator.html" class="active">Creator</a></li>
+      <li><a href="game.html" class="nav-cta">Play Now</a></li>
+    </ul>
+    <button class="hamburger" id="hamburger" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="mobile-menu" id="mobile-menu">
+  <a href="index.html">Home</a>
+  <a href="howtoplay.html">How to Play</a>
+  <a href="about.html">About</a>
+  <a href="creator.html">Creator</a>
+  <a href="game.html">Play Now</a>
+</div>
+
+<main>
+
+  <div class="page-header">
+    <p class="page-label">Behind the Game</p>
+    <h1 class="page-title">Meet the Creator</h1>
+    <p class="page-desc">One developer. Pure HTML5. Zero frameworks. Built from scratch in the browser.</p>
+  </div>
+
+  <div class="creator-card">
+    <div class="avatar-wrap">
+      <div class="avatar">
+        <img src="https://unavatar.io/x/oroimho" alt="@oroimho avatar" onerror="this.style.display='none'">
+        <span style="display:none" id="avatar-fallback">O</span>
+      </div>
+    </div>
+    <div class="creator-body">
+      <div class="creator-handle">@oroimho</div>
+      <div class="creator-role">Founder &amp; Developer</div>
+      <p class="creator-bio">Solo developer and the mind behind SQUISH 'EM! — a blob shooter built entirely with vanilla HTML5 Canvas and Web Audio API, with no frameworks and no dependencies. Every pixel, every sound, every line of game logic: handcrafted.</p>
+      <a href="https://x.com/oroimho" target="_blank" rel="noopener" class="x-btn">
+        <svg class="x-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/>
+        </svg>
+        Follow on X
+      </a>
+    </div>
+  </div>
+
+  <div class="stat-strip">
+    <div class="stat-box">
+      <div class="stat-box-num">1</div>
+      <div class="stat-box-lbl">Developer</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-box-num">1</div>
+      <div class="stat-box-lbl">HTML File</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-box-num">0</div>
+      <div class="stat-box-lbl">Frameworks</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-box-num">0</div>
+      <div class="stat-box-lbl">Dependencies</div>
+    </div>
+  </div>
+
+  <div class="quote-block">
+    <p class="quote-text">The entire game ships as a single HTML file. No build step, no bundler, no CDN. Just open it and play.</p>
+    <p class="quote-attr">On the design philosophy of SQUISH 'EM!</p>
+  </div>
+
+  <div class="game-cta">
+    <h2>Play the game</h2>
+    <p>Free, instant, no login. Open it and start squishing blobs right now.</p>
+    <a href="game.html" class="btn btn-primary">Play Now</a>
+    <a href="howtoplay.html" class="btn btn-secondary">How to Play</a>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <nav class="footer-nav">
+      <a href="index.html">Home</a>
+      <a href="game.html">Play</a>
+      <a href="howtoplay.html">How to Play</a>
+      <a href="about.html">About</a>
+      <a href="creator.html">Creator</a>
+    </nav>
+    <p class="footer-copy">Built with HTML5 Canvas and Web Audio API. No frameworks. No dependencies.</p>
+    <div>
+      <a href="https://orynth.dev/projects/squishem" target="_blank" rel="noopener">
+        <img src="https://orynth.dev/api/badge/squishem?theme=light&style=default" alt="Featured on Orynth" width="220" height="68" style="border-radius:8px;opacity:.82;" loading="lazy">
+      </a>
+    </div>
+  </div>
+</footer>
+
+<script>
+const ham=document.getElementById('hamburger');
+const mob=document.getElementById('mobile-menu');
+ham.addEventListener('click',()=>{
+  ham.classList.toggle('open');
+  mob.classList.toggle('open');
+});
+const img=document.querySelector('.avatar img');
+const fb=document.getElementById('avatar-fallback');
+if(img){
+  img.addEventListener('load',()=>{fb.style.display='none';img.style.display='block';});
+  img.addEventListener('error',()=>{img.remove();fb.style.display='inline';});
+}
+</script>
+</body>
+</html>
