@@ -18,7 +18,7 @@ export function Footer() {
             </div>
             <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
               AI-powered arcade shooter on Solana. Squish blobs, chain combos, and let the RL agent mine{" "}
-              <span className="text-primary/80 font-mono">$SQUISH</span> for you — no install, runs in the browser.
+              <span className="text-primary/80 font-mono">$SQUISH</span> for you - no install, runs in the browser.
             </p>
             <div className="mt-5 flex items-center gap-2 text-xs font-mono text-muted-foreground/40">
               <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block animate-pulse" />
@@ -60,7 +60,7 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="border-t border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="text-xs text-muted-foreground/40 font-mono">© 2026 SQUISH 'EM! — HTML5 Canvas Arcade</span>
+          <span className="text-xs text-muted-foreground/40 font-mono">© 2026 SQUISH 'EM! - HTML5 Canvas Arcade</span>
           <motion.a
             href="https://orynth.dev/projects/squishem"
             target="_blank"
