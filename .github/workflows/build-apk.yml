@@ -36,9 +36,7 @@ jobs:
       - name: Prepare www directory
         run: |
           mkdir -p www
-          # Use game.html as the app entry point
           cp game.html www/index.html
-          # Copy supporting assets
           [ -f favicon.svg ] && cp favicon.svg www/
           [ -f manifest.json ] && cp manifest.json www/
           [ -f service-worker.js ] && cp service-worker.js www/ || true
@@ -75,7 +73,7 @@ jobs:
 
       - name: Customize Android branding
         run: |
-          # Remove Capacitor-generated ic_launcher_background.xml to avoid
+          # Fix 1: Remove Capacitor-generated ic_launcher_background.xml to avoid
           # duplicate resource conflict with colors.xml below
           rm -f android/app/src/main/res/values/ic_launcher_background.xml
 
@@ -90,9 +88,17 @@ jobs:
           </resources>
           XML
 
-          # App name
-          sed -i 's/<string name="app_name">.*<\/string>/<string name="app_name">SQUISH \x27EM<\/string>/' \
-            android/app/src/main/res/values/strings.xml || true
+          # Fix 2: Write strings.xml directly instead of using sed with \x27
+          # Android XML requires \' to escape apostrophes in string values
+          cat > android/app/src/main/res/values/strings.xml << 'XML'
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+              <string name="app_name">SQUISH \'EM</string>
+              <string name="title_activity_main">SQUISH \'EM</string>
+              <string name="package_name">fun.squishem.app</string>
+              <string name="custom_url_scheme">fun.squishem.app</string>
+          </resources>
+          XML
 
           # Allow HTTP for dev builds
           echo '<?xml version="1.0" encoding="utf-8"?><network-security-config><base-config cleartextTrafficPermitted="true"><trust-anchors><certificates src="system"/></trust-anchors></base-config></network-security-config>' \
