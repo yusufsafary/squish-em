@@ -221,11 +221,11 @@ function spawnPopup(x,y,txt,col='#FFD93D'){
 
 // ─── Blob Types ──────────────────────────────────────────────────────────────
 const BT = {
-  green:  {col:'#6BCB77',glow:'rgba(107,203,119,.6)',hp:1,spd:.72, pts:10, sz:22,expr:'happy', sw:.52},
-  blue:   {col:'#4D96FF',glow:'rgba(77,150,255,.6)', hp:2,spd:.42, pts:20, sz:28,expr:'sleepy',sw:.22},
-  red:    {col:'#FF6B6B',glow:'rgba(255,107,107,.6)',hp:1,spd:1.45,pts:30, sz:17,expr:'angry', sw:.18},
-  gold:   {col:'#FFD93D',glow:'rgba(255,217,61,.6)', hp:1,spd:.95, pts:100,sz:22,expr:'smug',  sw:.04},
-  phantom:{col:'#9B59B6',glow:'rgba(155,89,182,.8)', hp:2,spd:1.1, pts:50, sz:20,expr:'smug',  sw:.09},
+  green:  {col:'#22c55e',glow:'rgba(34,197,94,.75)',  hp:1,spd:.72, pts:10, sz:25,expr:'happy', sw:.52},
+  blue:   {col:'#3b82f6',glow:'rgba(59,130,246,.75)', hp:2,spd:.42, pts:20, sz:30,expr:'sleepy',sw:.22},
+  red:    {col:'#ef4444',glow:'rgba(239,68,68,.75)',  hp:1,spd:1.45,pts:30, sz:20,expr:'angry', sw:.18},
+  gold:   {col:'#eab308',glow:'rgba(234,179,8,.75)',  hp:1,spd:.95, pts:100,sz:25,expr:'smug',  sw:.04},
+  phantom:{col:'#a855f7',glow:'rgba(168,85,247,.85)', hp:2,spd:1.1, pts:50, sz:23,expr:'smug',  sw:.09},
 };
 
 function availTypes(){
@@ -566,7 +566,7 @@ function drawBg(){
 // ─── Draw blob ────────────────────────────────────────────────────────────────
 function drawBlob(b, isTitle=false){
   const s=b.sz;
-  const pulse=1+0.06*Math.sin(b.wobble);
+  const pulse=1+0.07*Math.sin(b.wobble);
   const rx=s*(b.dying?b.dScale:1);
   const ry=s*(b.dying?1/Math.max(b.dScale,0.1):pulse);
   const col=b.flash>0?'#ffffff':b.col;
@@ -574,7 +574,7 @@ function drawBlob(b, isTitle=false){
   if(!isTitle&&!b.dying){
     b.trail.forEach((pt,i)=>{
       const frac=i/b.trail.length;
-      ctx.globalAlpha=frac*0.18;
+      ctx.globalAlpha=frac*0.15;
       ctx.fillStyle=b.col;
       ctx.beginPath();ctx.ellipse(pt.x,pt.y,s*frac*0.5,s*frac*0.35,0,0,Math.PI*2);ctx.fill();
     });
@@ -582,34 +582,65 @@ function drawBlob(b, isTitle=false){
   }
 
   const isPhantom=b.type==='phantom';
-  if(isPhantom){ctx.save();ctx.globalAlpha=0.68+0.2*Math.sin(b.wobble*2.2);}
+  if(isPhantom){ctx.save();ctx.globalAlpha=0.7+0.18*Math.sin(b.wobble*2.2);}
+
+  // ── Outer ambient glow ──────────────────────────────────────────────────────
   ctx.save();
   ctx.shadowColor=b.glow||b.col;
-  ctx.shadowBlur=b.type==='gold'?28:isPhantom?38:18;
+  ctx.shadowBlur=b.type==='gold'?40:isPhantom?52:30;
 
+  // ── Main body gradient (deep 3D shading) ────────────────────────────────────
   pathBlob(b.x,b.y,b.blobPts,b.rot,rx,ry);
-  const bg=ctx.createRadialGradient(b.x-rx*.3,b.y-ry*.3,0,b.x,b.y,rx*1.1);
-  bg.addColorStop(0,lighten(col,40));
-  bg.addColorStop(0.5,col);
-  bg.addColorStop(1,darken(col,20));
-  ctx.fillStyle=bg;ctx.fill();
-
-  ctx.strokeStyle=lighten(col,25);ctx.lineWidth=1.5;ctx.stroke();
+  const bg=ctx.createRadialGradient(b.x-rx*.32,b.y-ry*.32,0,b.x+rx*.1,b.y+ry*.1,rx*1.35);
+  bg.addColorStop(0,   lighten(col,60));
+  bg.addColorStop(0.28,lighten(col,18));
+  bg.addColorStop(0.6, col);
+  bg.addColorStop(0.85,darken(col,28));
+  bg.addColorStop(1,   darken(col,50));
+  ctx.fillStyle=bg; ctx.fill();
+  ctx.strokeStyle=lighten(col,30); ctx.lineWidth=2; ctx.stroke();
   ctx.shadowBlur=0;
 
+  // ── Inner specular sheen (clipped) ──────────────────────────────────────────
   pathBlob(b.x,b.y,b.blobPts,b.rot,rx,ry);
   ctx.clip();
-  const sg=ctx.createRadialGradient(b.x-rx*.35,b.y-ry*.38,0,b.x-rx*.1,b.y-ry*.1,rx*.55);
-  sg.addColorStop(0,'rgba(255,255,255,.42)');
-  sg.addColorStop(0.6,'rgba(255,255,255,.08)');
+  const sg=ctx.createRadialGradient(b.x-rx*.38,b.y-ry*.42,0,b.x-rx*.12,b.y-ry*.18,rx*.68);
+  sg.addColorStop(0,'rgba(255,255,255,.60)');
+  sg.addColorStop(0.4,'rgba(255,255,255,.14)');
   sg.addColorStop(1,'rgba(255,255,255,0)');
-  ctx.fillStyle=sg;ctx.fill();
+  ctx.fillStyle=sg; ctx.fill();
   ctx.restore();
 
+  // ── Tiny specular dot — Pixar sheen ─────────────────────────────────────────
+  ctx.save();
+  ctx.beginPath();
+  ctx.arc(b.x-rx*.28,b.y-ry*.3,rx*.11,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,255,255,.92)'; ctx.fill();
+  ctx.restore();
+
+  // ── Surface bumps around perimeter ──────────────────────────────────────────
+  const nB=8;
+  for(let i=0;i<nB;i++){
+    const a=(Math.PI*2/nB)*i+b.rot*0.6;
+    const bx=b.x+Math.cos(a)*rx*.84;
+    const by=b.y+Math.sin(a)*ry*.84;
+    const br=rx*.13;
+    ctx.save();
+    ctx.shadowColor=b.glow; ctx.shadowBlur=5;
+    const bG=ctx.createRadialGradient(bx-br*.35,by-br*.35,0,bx,by,br);
+    bG.addColorStop(0,lighten(col,42));
+    bG.addColorStop(1,darken(col,12));
+    ctx.beginPath(); ctx.arc(bx,by,br,0,Math.PI*2);
+    ctx.fillStyle=bG; ctx.fill();
+    ctx.strokeStyle=lighten(col,25); ctx.lineWidth=0.8; ctx.stroke();
+    ctx.restore();
+  }
+
+  // ── HP dots ─────────────────────────────────────────────────────────────────
   if(b.maxHp>1&&b.hp>0){
     for(let i=0;i<b.hp;i++){
-      ctx.beginPath();ctx.arc(b.x-4+i*8,b.y+ry*.68,3,0,Math.PI*2);
-      ctx.fillStyle='rgba(255,255,255,.85)';ctx.fill();
+      ctx.beginPath();ctx.arc(b.x-5+i*10,b.y+ry*.74,3.5,0,Math.PI*2);
+      ctx.fillStyle='rgba(255,255,255,.92)';ctx.fill();
     }
   }
 
@@ -618,37 +649,55 @@ function drawBlob(b, isTitle=false){
 }
 
 function drawBlobFace(cx,cy,s,rx,ry,expr,wobble,col){
-  const ey=cy-ry*.1;
-  const ex1=cx-rx*.28, ex2=cx+rx*.28;
-  const ew=rx*.18, eh=ry*.2;
+  const ey=cy-ry*.08;
+  const ex1=cx-rx*.3, ex2=cx+rx*.3;
+  const ew=rx*.23, eh=ry*.26;
+
+  // ── White sclera ────────────────────────────────────────────────────────────
+  ctx.fillStyle='rgba(255,255,255,.97)';
+  ctx.beginPath();ctx.ellipse(ex1,ey,ew,eh,0,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.ellipse(ex2,ey,ew,eh,0,0,Math.PI*2);ctx.fill();
+
+  // ── Dark pupil ──────────────────────────────────────────────────────────────
   ctx.fillStyle='#0d0d1a';
   if(expr==='sleepy'){
-    ctx.beginPath();ctx.ellipse(ex1,ey,ew,eh,0,0,Math.PI*2);ctx.fill();
-    ctx.beginPath();ctx.ellipse(ex2,ey,ew,eh,0,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.ellipse(ex1,ey+eh*.18,ew*.68,eh*.58,0,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.ellipse(ex2,ey+eh*.18,ew*.68,eh*.58,0,0,Math.PI*2);ctx.fill();
     ctx.fillStyle=col;
-    ctx.fillRect(ex1-ew-1,ey-eh-1,ew*2+2,eh+1);
-    ctx.fillRect(ex2-ew-1,ey-eh-1,ew*2+2,eh+1);
+    ctx.fillRect(ex1-ew-1,ey-eh-2,ew*2+2,eh+2);
+    ctx.fillRect(ex2-ew-1,ey-eh-2,ew*2+2,eh+2);
   } else {
-    ctx.beginPath();ctx.ellipse(ex1,ey,ew,eh,0,0,Math.PI*2);ctx.fill();
-    ctx.beginPath();ctx.ellipse(ex2,ey,ew,eh,0,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle='rgba(255,255,255,.6)';
-    ctx.beginPath();ctx.arc(ex1+ew*.3,ey-eh*.28,ew*.28,0,Math.PI*2);ctx.fill();
-    ctx.beginPath();ctx.arc(ex2+ew*.3,ey-eh*.28,ew*.28,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.ellipse(ex1+ew*.1,ey+eh*.1,ew*.64,eh*.68,0,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.ellipse(ex2+ew*.1,ey+eh*.1,ew*.64,eh*.68,0,0,Math.PI*2);ctx.fill();
   }
+
+  // ── Eye specular highlights ──────────────────────────────────────────────────
+  ctx.fillStyle='rgba(255,255,255,.92)';
+  ctx.beginPath();ctx.arc(ex1-ew*.2,ey-eh*.2,ew*.3,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(ex2-ew*.2,ey-eh*.2,ew*.3,0,Math.PI*2);ctx.fill();
+  // Tiny secondary dot
+  ctx.fillStyle='rgba(255,255,255,.55)';
+  ctx.beginPath();ctx.arc(ex1+ew*.22,ey+eh*.18,ew*.12,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.arc(ex2+ew*.22,ey+eh*.18,ew*.12,0,Math.PI*2);ctx.fill();
+
+  // ── Angry brows ─────────────────────────────────────────────────────────────
   if(expr==='angry'){
-    ctx.strokeStyle='#0d0d1a';ctx.lineWidth=2.5;
-    ctx.beginPath();ctx.moveTo(ex1-ew*1.2,ey-eh*2.2);ctx.lineTo(ex1+ew*.4,ey-eh*1.1);ctx.stroke();
-    ctx.beginPath();ctx.moveTo(ex2+ew*1.2,ey-eh*2.2);ctx.lineTo(ex2-ew*.4,ey-eh*1.1);ctx.stroke();
+    ctx.strokeStyle='#0d0d1a';ctx.lineWidth=2.8;
+    ctx.beginPath();ctx.moveTo(ex1-ew*1.2,ey-eh*2.1);ctx.lineTo(ex1+ew*.5,ey-eh*1.0);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(ex2+ew*1.2,ey-eh*2.1);ctx.lineTo(ex2-ew*.5,ey-eh*1.0);ctx.stroke();
   }
-  ctx.strokeStyle='#0d0d1a';ctx.lineWidth=2;
+
+  // ── Mouth ───────────────────────────────────────────────────────────────────
+  ctx.strokeStyle='#0d0d1a';ctx.lineWidth=2.5;
+  ctx.lineCap='round';
   ctx.beginPath();
-  const my=cy+ry*.34;
+  const my=cy+ry*.38;
   if(expr==='angry'){
-    ctx.moveTo(cx-rx*.3,my+4);ctx.quadraticCurveTo(cx,my-5,cx+rx*.3,my+4);
+    ctx.moveTo(cx-rx*.3,my+4);ctx.quadraticCurveTo(cx,my-6,cx+rx*.3,my+4);
   } else if(expr==='smug'){
-    ctx.moveTo(cx-rx*.2,my);ctx.quadraticCurveTo(cx+rx*.15,my+9,cx+rx*.3,my-2);
+    ctx.moveTo(cx-rx*.2,my);ctx.quadraticCurveTo(cx+rx*.18,my+10,cx+rx*.32,my-3);
   } else {
-    ctx.moveTo(cx-rx*.3,my);ctx.quadraticCurveTo(cx,my+ry*.2,cx+rx*.3,my);
+    ctx.moveTo(cx-rx*.32,my);ctx.quadraticCurveTo(cx,my+ry*.24,cx+rx*.32,my);
   }
   ctx.stroke();
 }
