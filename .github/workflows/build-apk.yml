@@ -9,6 +9,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout
@@ -73,7 +75,7 @@ jobs:
 
       - name: Customize Android branding
         run: |
-          # Fix 1: Remove Capacitor-generated ic_launcher_background.xml to avoid
+          # Remove Capacitor-generated ic_launcher_background.xml to avoid
           # duplicate resource conflict with colors.xml below
           rm -f android/app/src/main/res/values/ic_launcher_background.xml
 
@@ -88,8 +90,8 @@ jobs:
           </resources>
           XML
 
-          # Fix 2: Write strings.xml directly instead of using sed with \x27
-          # Android XML requires \' to escape apostrophes in string values
+          # Write strings.xml directly with properly escaped apostrophe
+          # (Android XML requires \' for apostrophes in string values)
           cat > android/app/src/main/res/values/strings.xml << 'XML'
           <?xml version="1.0" encoding="utf-8"?>
           <resources>
