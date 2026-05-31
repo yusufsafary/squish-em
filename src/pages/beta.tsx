@@ -27,14 +27,11 @@ async function getCount(key: string): Promise<number> {
   }
 }
 
-async function hitCount(key: string): Promise<number> {
+async function hitCount(key: string): Promise<void> {
   try {
-    const r = await fetch(`https://api.countapi.xyz/hit/${NS}/${key}`);
-    if (!r.ok) return 0;
-    const data: { value: number } = await r.json();
-    return data.value ?? 0;
+    await fetch(`https://api.countapi.xyz/hit/${NS}/${key}`);
   } catch {
-    return 0;
+    /* silent */
   }
 }
 
@@ -61,7 +58,6 @@ export default function Beta() {
   const [tweeted, setTweeted] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const [tweetCount, setTweetCount] = useState<number | null>(null);
-  const [dlCount, setDlCount] = useState<number | null>(null);
 
   const tweetCopy = useMemo(
     () => TWEET_TEMPLATES[Math.floor(Math.random() * TWEET_TEMPLATES.length)],
@@ -73,7 +69,6 @@ export default function Beta() {
   useEffect(() => {
     if (localStorage.getItem(STORAGE_KEY) === "1") setTweeted(true);
     getCount("beta-tweets").then(setTweetCount);
-    getCount("beta-downloads").then(setDlCount);
   }, []);
 
   const handleTweet = () => {
@@ -81,13 +76,13 @@ export default function Beta() {
     setTimeout(() => {
       setTweeted(true);
       localStorage.setItem(STORAGE_KEY, "1");
-      hitCount("beta-tweets").then(setTweetCount);
+      getCount("beta-tweets").then(setTweetCount);
     }, 2000);
   };
 
   const handleDownload = () => {
     setDownloading(true);
-    hitCount("beta-downloads").then(setDlCount);
+    hitCount("beta-downloads");
     const a = document.createElement("a");
     a.href = APK_URL;
     a.download = "squish-em-beta.apk";
@@ -99,32 +94,34 @@ export default function Beta() {
 
   return (
     <main className="min-h-screen pt-24 pb-20 px-4 relative overflow-hidden">
+      {/* Ambient background */}
       <div className="fixed inset-0 pointer-events-none" aria-hidden>
         <div
           className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px]"
           style={{
             background:
-              "radial-gradient(ellipse at center top, hsl(48 100% 62% / 0.05) 0%, transparent 65%)",
+              "radial-gradient(ellipse at center top, hsl(48 100% 62% / 0.06) 0%, transparent 65%)",
           }}
         />
         <div
           className="absolute bottom-1/4 left-1/4 w-[500px] h-[500px] rounded-full"
           style={{
             background:
-              "radial-gradient(circle, hsl(127 49% 60% / 0.04) 0%, transparent 65%)",
+              "radial-gradient(circle, hsl(127 49% 60% / 0.05) 0%, transparent 65%)",
           }}
         />
       </div>
 
       <div className="relative z-10 w-full max-w-xl mx-auto">
+
         {/* Banner */}
         <motion.div
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="flex items-center justify-center gap-2 mb-8"
+          className="flex items-center justify-center mb-8"
         >
-          <div className="flex items-center gap-2 border border-amber-500/30 bg-amber-500/8 text-amber-300 px-4 py-2 rounded-full font-mono text-[11px] tracking-widest">
+          <div className="flex items-center gap-2 border border-amber-500/40 bg-amber-500/10 text-amber-300 px-4 py-2 rounded-full font-mono text-[11px] tracking-widest">
             <PulseDot />
             ANDROID TESTING PHASE
           </div>
@@ -149,40 +146,31 @@ export default function Beta() {
               'EM
             </span>
           </h1>
-          <p className="font-display font-bold text-muted-foreground text-sm tracking-widest">
+          <p className="font-display font-bold text-white/70 text-sm tracking-widest">
             BETA APK FOR ANDROID
           </p>
         </motion.div>
 
-        {/* Stats row */}
+        {/* Stats row — 3 cards, TESTERS removed */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.15, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="grid grid-cols-4 gap-2 mb-8"
+          className="grid grid-cols-3 gap-3 mb-8"
         >
           {[
             { label: "SIZE", value: "~4.5 MB" },
             { label: "ANDROID", value: "8.0+" },
             { label: "PRICE", value: "FREE" },
-            {
-              label: "TESTERS",
-              value:
-                dlCount !== null
-                  ? dlCount > 0
-                    ? dlCount.toLocaleString()
-                    : "0"
-                  : "...",
-            },
           ].map(({ label, value }) => (
             <div
               key={label}
-              className="border border-white/8 rounded-xl bg-card/40 p-3 text-center"
+              className="border border-white/10 rounded-xl bg-card/50 p-4 text-center"
             >
-              <p className="font-mono text-[9px] text-muted-foreground/50 tracking-widest mb-1">
+              <p className="font-mono text-[9px] text-white/50 tracking-widest mb-1.5">
                 {label}
               </p>
-              <p className="font-display font-bold text-white text-xs">{value}</p>
+              <p className="font-display font-bold text-white text-sm">{value}</p>
             </div>
           ))}
         </motion.div>
@@ -195,10 +183,10 @@ export default function Beta() {
           className="rounded-2xl mb-5"
           style={{
             background:
-              "linear-gradient(135deg, hsl(232 28% 16%) 0%, hsl(232 30% 19%) 100%)",
+              "linear-gradient(135deg, hsl(232 28% 17%) 0%, hsl(232 30% 20%) 100%)",
             border: tweeted
-              ? "1px solid hsl(127 49% 60% / 0.28)"
-              : "1px solid hsl(48 100% 62% / 0.18)",
+              ? "1px solid hsl(127 49% 60% / 0.35)"
+              : "1px solid hsl(48 100% 62% / 0.25)",
             transition: "border 0.5s ease",
           }}
         >
@@ -212,23 +200,24 @@ export default function Beta() {
                 transition={{ duration: 0.3 }}
                 className="p-8 text-center"
               >
-                <div className="w-16 h-16 rounded-2xl border border-amber-500/20 bg-amber-500/8 flex items-center justify-center mx-auto mb-5">
+                <div className="w-16 h-16 rounded-2xl border border-amber-500/30 bg-amber-500/10 flex items-center justify-center mx-auto mb-5">
                   <XLogo className="w-8 h-8 text-amber-400" />
                 </div>
 
                 <h2 className="font-display font-black text-xl text-white mb-2">
                   POST ON X TO UNLOCK
                 </h2>
-                <p className="text-muted-foreground text-sm mb-6 max-w-xs mx-auto leading-relaxed">
+                <p className="text-white/65 text-sm mb-6 max-w-xs mx-auto leading-relaxed">
                   Share with your followers and unlock the free APK. Every post
                   helps support @oroimho and the $SQUISH community on @orynth.
                 </p>
 
-                <div className="border border-white/8 rounded-xl bg-white/3 p-4 mb-6 text-left">
-                  <p className="font-mono text-[10px] text-muted-foreground/50 tracking-widest mb-2">
+                {/* Tweet preview */}
+                <div className="border border-white/10 rounded-xl bg-white/5 p-4 mb-6 text-left">
+                  <p className="font-mono text-[10px] text-white/50 tracking-widest mb-2">
                     YOUR POST WILL SAY
                   </p>
-                  <p className="text-xs text-muted-foreground/80 leading-relaxed whitespace-pre-line">
+                  <p className="text-xs text-white/75 leading-relaxed whitespace-pre-line">
                     {tweetCopy}
                   </p>
                 </div>
@@ -237,8 +226,7 @@ export default function Beta() {
                   onClick={handleTweet}
                   className="inline-flex items-center gap-2.5 text-white px-7 py-3.5 rounded-xl font-display font-bold text-sm tracking-wider transition-all duration-200 hover:scale-105 active:scale-95 w-full justify-center"
                   style={{
-                    background:
-                      "linear-gradient(135deg, #1d9bf0 0%, #0d8de3 100%)",
+                    background: "linear-gradient(135deg, #1d9bf0 0%, #0d8de3 100%)",
                     boxShadow: "0 4px 20px rgba(29,155,240,0.35)",
                   }}
                 >
@@ -246,12 +234,12 @@ export default function Beta() {
                   POST ON X AND UNLOCK DOWNLOAD
                 </button>
 
-                <p className="mt-3 font-mono text-[10px] text-muted-foreground/35 tracking-wide">
+                <p className="mt-3 font-mono text-[10px] text-white/45 tracking-wide">
                   X will open in a new window — return here after posting
                 </p>
 
                 {tweetCount !== null && tweetCount > 0 && (
-                  <p className="mt-2 font-mono text-[10px] text-amber-400/50 tracking-wide">
+                  <p className="mt-2 font-mono text-[10px] text-amber-400/80 tracking-wide">
                     {tweetCount.toLocaleString()} people already shared this
                   </p>
                 )}
@@ -267,14 +255,9 @@ export default function Beta() {
                 <motion.div
                   initial={{ scale: 0, rotate: -15 }}
                   animate={{ scale: 1, rotate: 0 }}
-                  transition={{
-                    type: "spring",
-                    stiffness: 380,
-                    damping: 20,
-                    delay: 0.1,
-                  }}
-                  className="w-16 h-16 rounded-2xl border border-primary/30 bg-primary/10 flex items-center justify-center mx-auto mb-5"
-                  style={{ boxShadow: "0 0 28px hsl(127 49% 60% / 0.18)" }}
+                  transition={{ type: "spring", stiffness: 380, damping: 20, delay: 0.1 }}
+                  className="w-16 h-16 rounded-2xl border border-primary/40 bg-primary/15 flex items-center justify-center mx-auto mb-5"
+                  style={{ boxShadow: "0 0 28px hsl(127 49% 60% / 0.22)" }}
                 >
                   <svg
                     className="w-8 h-8 text-primary"
@@ -284,18 +267,14 @@ export default function Beta() {
                     viewBox="0 0 24 24"
                     aria-hidden
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4.5 12.75l6 6 9-13.5"
-                    />
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
                   </svg>
                 </motion.div>
 
                 <h2 className="font-display font-black text-xl text-white mb-2">
                   DOWNLOAD UNLOCKED
                 </h2>
-                <p className="text-muted-foreground text-sm mb-6 max-w-xs mx-auto">
+                <p className="text-white/65 text-sm mb-6 max-w-xs mx-auto">
                   Thanks for supporting $SQUISH. Your APK is ready.
                 </p>
 
@@ -341,7 +320,7 @@ export default function Beta() {
                   )}
                 </motion.button>
 
-                <p className="mt-3 font-mono text-[10px] text-muted-foreground/35 tracking-wide">
+                <p className="mt-3 font-mono text-[10px] text-white/45 tracking-wide">
                   ~4.5 MB · Android 8.0 and above
                 </p>
               </motion.div>
@@ -357,11 +336,11 @@ export default function Beta() {
           className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6"
         >
           {/* Testing phase notice */}
-          <div className="border border-amber-500/15 rounded-xl bg-amber-500/4 p-5">
-            <p className="font-mono text-[9px] text-amber-400/60 tracking-widest mb-3">
+          <div className="border border-amber-500/20 rounded-xl bg-amber-500/6 p-5">
+            <p className="font-mono text-[9px] text-amber-400 tracking-widest mb-3">
               TESTING PHASE
             </p>
-            <ul className="space-y-2">
+            <ul className="space-y-2.5">
               {[
                 "Pre-release build — bugs may occur",
                 "Your feedback shapes the game",
@@ -371,7 +350,7 @@ export default function Beta() {
                     href="https://x.com/oroimho"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-amber-400 hover:text-amber-300 transition-colors"
+                    className="text-amber-400 hover:text-amber-300 transition-colors underline underline-offset-2"
                   >
                     @oroimho
                   </a>{" "}
@@ -383,15 +362,15 @@ export default function Beta() {
                     href="https://x.com/oroimho"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-amber-400 hover:text-amber-300 transition-colors"
+                    className="text-amber-400 hover:text-amber-300 transition-colors underline underline-offset-2"
                   >
                     @oroimho
                   </a>{" "}
                   for updates
                 </>,
               ].map((item, i) => (
-                <li key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
-                  <span className="text-amber-400/70 mt-0.5 flex-shrink-0">!</span>
+                <li key={i} className="flex items-start gap-2 text-xs text-white/70">
+                  <span className="text-amber-400 mt-0.5 flex-shrink-0">!</span>
                   <span>{item}</span>
                 </li>
               ))}
@@ -399,19 +378,19 @@ export default function Beta() {
           </div>
 
           {/* Install guide */}
-          <div className="border border-white/8 rounded-xl bg-card/30 p-5">
-            <p className="font-mono text-[9px] text-muted-foreground/50 tracking-widest mb-3">
+          <div className="border border-white/10 rounded-xl bg-card/30 p-5">
+            <p className="font-mono text-[9px] text-white/50 tracking-widest mb-3">
               HOW TO INSTALL
             </p>
-            <ol className="space-y-2">
+            <ol className="space-y-2.5">
               {[
                 "Download the APK file above",
                 "Open Settings on your Android device",
                 "Go to Security and allow unknown apps",
                 "Open the APK file and tap Install",
               ].map((step, i) => (
-                <li key={i} className="flex items-start gap-2.5 text-xs text-muted-foreground">
-                  <span className="font-mono text-[9px] text-primary/60 bg-primary/10 rounded px-1.5 py-0.5 flex-shrink-0 font-bold mt-0.5">
+                <li key={i} className="flex items-start gap-2.5 text-xs text-white/70">
+                  <span className="font-mono text-[9px] text-primary bg-primary/15 rounded px-1.5 py-0.5 flex-shrink-0 font-bold mt-0.5">
                     {i + 1}
                   </span>
                   {step}
@@ -426,12 +405,12 @@ export default function Beta() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          className="border border-white/8 rounded-xl bg-card/20 p-5 mb-6"
+          className="border border-white/10 rounded-xl bg-card/20 p-5 mb-6"
         >
-          <p className="font-mono text-[9px] text-muted-foreground/50 tracking-widest mb-3">
+          <p className="font-mono text-[9px] text-white/50 tracking-widest mb-4">
             WHAT IS IN THIS BUILD
           </p>
-          <div className="grid grid-cols-2 gap-x-6 gap-y-2">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-2.5">
             {[
               "Full offline gameplay",
               "All 6 blob types",
@@ -440,8 +419,8 @@ export default function Beta() {
               "Combo multiplier system",
               "Screen shake and effects",
             ].map((item, i) => (
-              <p key={i} className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span className="text-primary text-[10px]">+</span>
+              <p key={i} className="flex items-center gap-2 text-xs text-white/70">
+                <span className="text-primary">+</span>
                 {item}
               </p>
             ))}
@@ -453,12 +432,12 @@ export default function Beta() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          className="border border-white/8 rounded-xl bg-card/20 p-5 mb-6 text-center"
+          className="border border-white/10 rounded-xl bg-card/20 p-5 mb-6 text-center"
         >
-          <p className="font-mono text-[9px] text-muted-foreground/50 tracking-widest mb-2">
+          <p className="font-mono text-[9px] text-white/50 tracking-widest mb-2">
             SEND FEEDBACK
           </p>
-          <p className="text-xs text-muted-foreground leading-relaxed mb-4">
+          <p className="text-sm text-white/65 leading-relaxed mb-4">
             Found a bug? Got a feature idea? Reach out directly to the founder —
             your device info is attached automatically.
           </p>
@@ -467,7 +446,7 @@ export default function Beta() {
             className="inline-flex items-center gap-2.5 text-white px-6 py-2.5 rounded-xl font-display font-bold text-xs tracking-wider transition-all duration-200 hover:scale-105 active:scale-95"
             style={{
               background: "#000",
-              border: "1px solid rgba(255,255,255,0.15)",
+              border: "1px solid rgba(255,255,255,0.2)",
               boxShadow: "0 2px 12px rgba(0,0,0,0.4)",
             }}
           >
@@ -480,7 +459,7 @@ export default function Beta() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.65 }}
-          className="text-center font-mono text-[10px] text-muted-foreground/30 tracking-wide"
+          className="text-center font-mono text-[10px] text-white/35 tracking-wide"
         >
           SQUISH 'EM BETA · ANDROID TESTING PHASE · NOT FOR REDISTRIBUTION
         </motion.p>
