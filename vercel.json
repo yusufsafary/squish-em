@@ -8,6 +8,9 @@
     { "src": "/assets/(.*)", "dest": "/assets/$1" },
     { "src": "/favicon\\.svg", "dest": "/favicon.svg" },
     { "src": "/og-image\\.png", "dest": "/og-image.png" },
+    { "src": "/changelog\\.json", "dest": "/changelog.json" },
+    { "src": "/manifest\\.json", "dest": "/manifest.json" },
+    { "src": "/sw\\.js", "dest": "/sw.js" },
     { "src": "/(.*)", "dest": "/index.html", "status": 200 }
   ],
   "headers": [

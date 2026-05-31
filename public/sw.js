@@ -1,4 +1,4 @@
-const CACHE = 'squish-em-v1';
+const CACHE = 'squish-em-v2';
 const PRECACHE = ['/', '/index.html', '/game.html', '/howtoplay.html', '/about.html', '/favicon.svg', '/manifest.json'];
 
 self.addEventListener('install', e => {
@@ -20,6 +20,7 @@ self.addEventListener('fetch', e => {
   if (!e.request.url.startsWith(self.location.origin)) return;
   const url = new URL(e.request.url);
   if (url.pathname.startsWith('/api/')) return;
+  if (url.pathname === '/changelog.json') return;
 
   e.respondWith(
     fetch(e.request, { cache: 'no-store' })
