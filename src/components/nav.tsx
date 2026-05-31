@@ -1,18 +1,25 @@
 import { Link, useLocation } from "wouter";
 import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
+import { useLang, type Lang } from "@/lib/i18n";
 
 export function Nav() {
   const [location] = useLocation();
   const [open, setOpen] = useState(false);
+  const { lang, setLang, t } = useLang();
 
   const links = [
-    { href: "/", label: "Home" },
-    { href: "/how-to-play", label: "Guide" },
-    { href: "/roadmap", label: "Roadmap" },
-    { href: "/tech", label: "Tech" },
-    { href: "/ai-agent", label: "AI Agent" },
-    { href: "/changelog", label: "Changelog" },
+    { href: "/", label: t.navHome },
+    { href: "/how-to-play", label: t.navGuide },
+    { href: "/roadmap", label: t.navRoadmap },
+    { href: "/tech", label: t.navTech },
+    { href: "/ai-agent", label: t.navAiAgent },
+    { href: "/changelog", label: t.navChangelog },
+  ];
+
+  const langs: { id: Lang; flag: string }[] = [
+    { id: "en", flag: "EN" },
+    { id: "ja", flag: "日本語" },
   ];
 
   return (
@@ -41,12 +48,30 @@ export function Nav() {
               </Link>
             ))}
           </div>
+
+          {/* Language toggle */}
+          <div className="hidden md:flex items-center gap-1 border border-white/10 rounded-lg overflow-hidden">
+            {langs.map(l => (
+              <button
+                key={l.id}
+                onClick={() => setLang(l.id)}
+                className={`px-2 py-1 text-[10px] font-mono font-bold tracking-wide transition-all ${
+                  lang === l.id
+                    ? "bg-primary/20 text-primary"
+                    : "text-muted-foreground/50 hover:text-white/70"
+                }`}
+              >
+                {l.flag}
+              </button>
+            ))}
+          </div>
+
           <Link
             href="/play"
             className="hidden md:inline-flex bg-primary hover:bg-primary/80 text-primary-foreground px-6 py-2 rounded font-display font-bold text-sm tracking-wider glow-box-green transition-all"
             data-testid="nav-play-btn"
           >
-            PLAY NOW
+            {t.navPlayNow}
           </Link>
 
           <button
@@ -84,12 +109,28 @@ export function Nav() {
                   {link.label}
                 </Link>
               ))}
+              {/* Mobile language toggle */}
+              <div className="flex gap-2 py-3 border-b border-white/5">
+                {langs.map(l => (
+                  <button
+                    key={l.id}
+                    onClick={() => setLang(l.id)}
+                    className={`px-3 py-1.5 rounded border text-[11px] font-mono font-bold transition-all ${
+                      lang === l.id
+                        ? "border-primary/50 bg-primary/15 text-primary"
+                        : "border-white/10 text-muted-foreground/50 hover:text-white/70"
+                    }`}
+                  >
+                    {l.flag}
+                  </button>
+                ))}
+              </div>
               <Link
                 href="/play"
                 onClick={() => setOpen(false)}
                 className="mt-3 bg-primary hover:bg-primary/80 text-primary-foreground px-6 py-3 rounded font-display font-bold text-sm tracking-wider glow-box-green text-center transition-all"
               >
-                PLAY NOW
+                {t.navPlayNow}
               </Link>
             </div>
           </motion.div>
