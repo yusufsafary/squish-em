@@ -40,6 +40,7 @@ export function Footer() {
           <div>
             <h4 className="font-display font-bold text-[10px] tracking-widest text-muted-foreground/50 mb-4 uppercase">Discover</h4>
             <ul className="space-y-3">
+              <FooterLink href="/about">📄 About</FooterLink>
               <FooterLink href="/roadmap">🗺 Web3 Roadmap</FooterLink>
               <FooterLink href="/tech">🧠 AI Architecture</FooterLink>
               <FooterLink href="/ai-agent">⚡ Live Simulator</FooterLink>
@@ -60,7 +61,17 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="border-t border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <span className="text-xs text-muted-foreground/40 font-mono">© 2026 SQUISH 'EM! - HTML5 Canvas Arcade</span>
+          <div className="flex flex-col sm:flex-row items-center gap-4">
+            <span className="text-xs text-muted-foreground/40 font-mono">© 2026 SQUISH 'EM! - HTML5 Canvas Arcade</span>
+            <span className="hidden sm:block text-white/10">|</span>
+            <Link href="/cookies" className="text-xs text-muted-foreground/40 hover:text-primary font-mono transition-colors">
+              Cookie Policy
+            </Link>
+            <span className="hidden sm:block text-white/10">|</span>
+            <Link href="/about" className="text-xs text-muted-foreground/40 hover:text-primary font-mono transition-colors">
+              About
+            </Link>
+          </div>
           <motion.a
             href="https://orynth.dev/projects/squishem"
             target="_blank"
