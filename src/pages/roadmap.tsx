@@ -32,7 +32,7 @@ export default function Roadmap() {
               "4 enemy types + Boss system",
               "Power-ups system",
               "Local Leaderboard & Hall of Fame",
-              "PWA Support — installable offline",
+              "PWA Support - installable offline",
               "2P Local Multiplayer (same device)",
               "AI Mining Agent: Greedy, Combo & RL-DQN strategies",
             ]}
@@ -67,7 +67,7 @@ export default function Roadmap() {
               "Phantom / Solflare wallet connect",
               "On-chain global leaderboard",
               "$SQUISH SPL token integration",
-              "NFT Blob Skins — mint unique avatars",
+              "NFT Blob Skins - mint unique avatars",
               "Squish-Mining program with anti-cheat session proofs",
               "Weekend SOL tournament prize pools",
               "Verifiable high scores",
