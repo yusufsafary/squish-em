@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>SQUISH 'EM — Beta APK Download</title>
+<meta name="description" content="Download the SQUISH 'EM Beta APK for Android and play offline.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --col-bg:#05031a;
+  --col-card:rgba(18,10,45,0.92);
+  --col-border:rgba(168,85,247,0.28);
+  --col-purple:#a855f7;
+  --col-amber:#f59e0b;
+  --col-green:#22c55e;
+  --col-text:rgba(220,210,255,0.9);
+  --col-muted:rgba(180,160,240,0.45);
+}
+html,body{height:100%;background:var(--col-bg);color:var(--col-text);font-family:'Orbitron',sans-serif;overflow-x:hidden}
+#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+/* ── Layout ── */
+.page{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:24px 16px 48px}
+nav{width:100%;max-width:480px;display:flex;justify-content:space-between;align-items:center;margin-bottom:36px}
+.nav-logo{font-size:13px;font-weight:900;color:var(--col-purple);letter-spacing:2px;text-decoration:none}
+.nav-back{font-size:9px;color:var(--col-muted);text-decoration:none;letter-spacing:1px;border:1px solid rgba(168,85,247,0.2);padding:6px 12px;border-radius:20px;transition:all .2s}
+.nav-back:hover{color:var(--col-purple);border-color:var(--col-purple)}
+
+/* ── Card ── */
+.card{width:100%;max-width:420px;background:var(--col-card);border:1px solid var(--col-border);border-radius:24px;padding:32px 28px;backdrop-filter:blur(24px);box-shadow:0 0 80px rgba(168,85,247,0.12),0 32px 64px rgba(0,0,0,0.6);position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;inset:0;border-radius:24px;background:linear-gradient(135deg,rgba(168,85,247,0.06) 0%,transparent 50%,rgba(59,130,246,0.04) 100%);pointer-events:none}
+.card-accent{position:absolute;top:0;left:50%;transform:translateX(-50%);width:60%;height:2px;background:linear-gradient(90deg,transparent,var(--col-purple),transparent);border-radius:0 0 4px 4px}
+
+/* ── App identity ── */
+.app-icon{width:72px;height:72px;margin:0 auto 16px;position:relative}
+.app-icon canvas{border-radius:18px;box-shadow:0 0 32px rgba(168,85,247,0.4)}
+.app-title{text-align:center;font-size:22px;font-weight:900;letter-spacing:3px;color:#fff;margin-bottom:4px}
+.app-sub{text-align:center;font-size:8px;letter-spacing:4px;color:var(--col-purple);margin-bottom:16px}
+.badges{display:flex;justify-content:center;gap:8px;margin-bottom:28px;flex-wrap:wrap}
+.badge{font-size:7px;letter-spacing:1.5px;padding:4px 10px;border-radius:20px;border:1px solid;font-weight:700}
+.badge-beta{color:#f59e0b;border-color:rgba(245,158,11,0.35);background:rgba(245,158,11,0.08)}
+.badge-android{color:#22c55e;border-color:rgba(34,197,94,0.35);background:rgba(34,197,94,0.08)}
+.badge-size{color:var(--col-muted);border-color:rgba(180,160,240,0.2);background:rgba(180,160,240,0.05)}
+
+/* ── Divider ── */
+.divider{height:1px;background:linear-gradient(90deg,transparent,rgba(168,85,247,0.25),transparent);margin:0 -28px 24px}
+
+/* ── Steps ── */
+.step{padding:20px;border-radius:16px;border:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.025);margin-bottom:12px;transition:all .4s}
+.step-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.step-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:900;flex-shrink:0}
+.step-num-1{background:rgba(245,158,11,0.15);border:1px solid rgba(245,158,11,0.4);color:#f59e0b}
+.step-num-2{background:rgba(180,160,240,0.08);border:1px solid rgba(180,160,240,0.2);color:var(--col-muted)}
+.step-num-done{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.4);color:#22c55e}
+.step-label{font-size:8px;letter-spacing:2px;color:var(--col-muted)}
+.step-title{font-size:12px;font-weight:700;letter-spacing:1px}
+.step-desc{font-size:8px;color:var(--col-muted);line-height:1.7;letter-spacing:.5px;margin-bottom:16px}
+.step-1-active{border-color:rgba(245,158,11,0.25);background:rgba(245,158,11,0.04)}
+.step-2-active{border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.04)}
+.step-done{opacity:.55}
+
+/* ── Buttons ── */
+.btn{width:100%;padding:14px 20px;border-radius:12px;border:none;cursor:pointer;font-family:'Orbitron',sans-serif;font-weight:700;letter-spacing:2px;font-size:10px;display:flex;align-items:center;justify-content:center;gap:10px;transition:all .25s;position:relative;overflow:hidden;text-decoration:none}
+.btn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.08),transparent);pointer-events:none}
+.btn-twitter{background:#000;color:#fff;border:1px solid rgba(255,255,255,0.15)}
+.btn-twitter:hover{background:#111;transform:translateY(-1px);box-shadow:0 8px 24px rgba(0,0,0,0.5)}
+.btn-twitter:active{transform:translateY(0)}
+.btn-download-locked{background:rgba(34,197,94,0.05);color:rgba(34,197,94,0.25);border:1px solid rgba(34,197,94,0.1);cursor:not-allowed;pointer-events:none}
+.btn-download-ready{background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;border:none;pointer-events:auto;cursor:pointer;box-shadow:0 0 32px rgba(34,197,94,0.35)}
+.btn-download-ready:hover{transform:translateY(-2px);box-shadow:0 0 48px rgba(34,197,94,0.5)}
+.btn-download-ready:active{transform:translateY(0)}
+
+/* ── X logo SVG ── */
+.x-logo{width:16px;height:16px;fill:currentColor;flex-shrink:0}
+.lock-icon{font-size:14px;opacity:.3;transition:all .4s}
+.lock-open{opacity:1;animation:popIn .4s cubic-bezier(.175,.885,.32,1.275)}
+@keyframes popIn{0%{transform:scale(0.5);opacity:0}100%{transform:scale(1);opacity:1}}
+
+/* ── Check mark animation ── */
+.check-wrap{display:inline-flex;align-items:center;gap:6px;color:#22c55e;font-size:8px;letter-spacing:1px;animation:fadeIn .4s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ── Confetti ── */
+.confetti-container{position:fixed;inset:0;pointer-events:none;z-index:100;overflow:hidden}
+.confetti-piece{position:absolute;width:8px;height:8px;border-radius:2px;animation:fall linear forwards}
+@keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:1}100%{transform:translateY(110vh) rotate(720deg);opacity:0}}
+
+/* ── File info ── */
+.file-info{display:flex;justify-content:center;gap:20px;margin-top:12px;font-size:7px;color:var(--col-muted);letter-spacing:1px}
+.file-info-item{display:flex;align-items:center;gap:5px}
+
+/* ── Footer ── */
+.footer{margin-top:32px;text-align:center;max-width:420px}
+.footer-warn{font-size:8px;color:var(--col-muted);line-height:1.8;letter-spacing:.5px;border:1px solid rgba(245,158,11,0.15);background:rgba(245,158,11,0.04);padding:12px 16px;border-radius:10px;margin-bottom:16px}
+.footer-links{display:flex;justify-content:center;gap:24px}
+.footer-link{font-size:8px;color:var(--col-muted);text-decoration:none;letter-spacing:1px;transition:color .2s}
+.footer-link:hover{color:var(--col-purple)}
+</style>
+</head>
+<body>
+<canvas id="bg"></canvas>
+<div class="confetti-container" id="confetti"></div>
+
+<div class="page">
+  <nav>
+    <a class="nav-logo" href="/">SQUISH 'EM</a>
+    <a class="nav-back" href="/">← BACK TO GAME</a>
+  </nav>
+
+  <div class="card">
+    <div class="card-accent"></div>
+
+    <!-- App icon -->
+    <div class="app-icon"><canvas id="iconCanvas" width="72" height="72"></canvas></div>
+    <div class="app-title">SQUISH 'EM</div>
+    <div class="app-sub">BETA PROGRAM</div>
+    <div class="badges">
+      <span class="badge badge-beta">v1.0-BETA</span>
+      <span class="badge badge-android">ANDROID 8.0+</span>
+      <span class="badge badge-size">~12 MB</span>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- STEP 1 -->
+    <div class="step step-1-active" id="step1">
+      <div class="step-header">
+        <div class="step-num step-num-1" id="step1Num">1</div>
+        <div>
+          <div class="step-label">STEP 1 OF 2</div>
+          <div class="step-title" style="color:#f59e0b">SHARE TO UNLOCK</div>
+        </div>
+      </div>
+      <div class="step-desc" id="step1Desc">Spread the word about SQUISH 'EM to unlock the Beta APK download. One tap — we'll open X (Twitter) with a pre-written post.</div>
+      <div id="step1Btn">
+        <button class="btn btn-twitter" onclick="shareOnTwitter()">
+          <svg class="x-logo" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          SHARE ON X TO UNLOCK
+        </button>
+      </div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="step" id="step2">
+      <div class="step-header">
+        <div class="step-num step-num-2" id="step2Num">2</div>
+        <div>
+          <div class="step-label">STEP 2 OF 2</div>
+          <div class="step-title" id="step2Title" style="color:var(--col-muted)">DOWNLOAD APK</div>
+        </div>
+      </div>
+      <div class="step-desc">The Beta APK runs offline on any Android device. Enable <strong style="color:rgba(220,210,255,0.7)">"Install unknown apps"</strong> in Settings before installing.</div>
+      <a id="dlBtn" class="btn btn-download-locked" href="#" onclick="return false">
+        <span id="lockIcon" class="lock-icon">🔒</span>
+        <span id="dlBtnText">LOCKED — SHARE FIRST</span>
+      </a>
+      <div class="file-info">
+        <span class="file-info-item">📦 squish-em-beta.apk</span>
+        <span class="file-info-item">🤖 Android 8.0 Oreo+</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-warn">
+      ⚠️ &nbsp;This is pre-release software. Bugs are expected and welcomed. <br>
+      Report issues: <span style="color:rgba(168,85,247,.8)">@squishem_fun</span>
+    </div>
+    <div class="footer-links">
+      <a class="footer-link" href="/">Play in Browser</a>
+      <a class="footer-link" href="/howtoplay.html">How to Play</a>
+      <a class="footer-link" href="/about.html">About</a>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Config ───────────────────────────────────────────────────────────────────
+const APK_URL = 'https://github.com/yusufsafary/squish-em/releases/latest/download/squish-em-beta.apk';
+const TWEET_TEXT = encodeURIComponent(
+  `The on-chain record is immutable. The network effects are compounding. Also it's genuinely very fun to squish blobs.\n\nJust unlocked the Beta APK. 🟥👑\n\nsquishem.fun/download\n\n$SQUISH`
+);
+const TWITTER_URL = `https://twitter.com/intent/tweet?text=${TWEET_TEXT}`;
+const STORAGE_KEY = 'squish_shared_v1';
+
+// ── Background canvas ────────────────────────────────────────────────────────
+const bgCanvas = document.getElementById('bg');
+const bgCtx = bgCanvas.getContext('2d');
+let W, H, blobs = [], stars = [];
+
+function resizeBg(){
+  W = bgCanvas.width = window.innerWidth;
+  H = bgCanvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeBg); resizeBg();
+
+const BLOB_COLS = ['#a855f7','#3b82f6','#22c55e','#ef4444','#eab308','#8b5cf6'];
+for(let i=0;i<9;i++){
+  const col = BLOB_COLS[i % BLOB_COLS.length];
+  blobs.push({
+    x: Math.random()*window.innerWidth, y: Math.random()*window.innerHeight,
+    r: 18+Math.random()*28, vx: (Math.random()-.5)*0.35, vy: (Math.random()-.5)*0.35,
+    col, alpha: 0.06+Math.random()*0.1, wobble: Math.random()*Math.PI*2,
+    driftP: Math.random()*Math.PI*2, driftA: 0.12+Math.random()*0.15
+  });
+}
+for(let i=0;i<80;i++){
+  stars.push({x:Math.random()*2000,y:Math.random()*2000,r:Math.random()*1.2,a:Math.random()*.5+.1});
+}
+
+function drawBgBlob(ctx, x, y, r, col, alpha){
+  const g = ctx.createRadialGradient(x,y,0,x,y,r);
+  g.addColorStop(0, col.replace(')',' / '+alpha+')').replace('rgb','rgba').replace('#','').replace(/^([0-9a-f]{6})(.*)$/,(_,h,rest)=>{
+    const n=parseInt(h,16); return `rgba(${n>>16},${(n>>8)&255},${n&255},${alpha})`;
+  }));
+  g.addColorStop(1,'rgba(0,0,0,0)');
+  // Simpler:
+  ctx.globalAlpha = alpha;
+  ctx.fillStyle = col;
+  ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
+  ctx.globalAlpha = 1;
+}
+
+function animBg(ts){
+  bgCtx.clearRect(0,0,W,H);
+  // Stars
+  stars.forEach(s=>{
+    bgCtx.globalAlpha = s.a * (0.5+0.5*Math.sin(ts*.0008+s.x));
+    bgCtx.fillStyle='#fff';
+    bgCtx.beginPath();bgCtx.arc(s.x%W,s.y%H,s.r,0,Math.PI*2);bgCtx.fill();
+  });
+  bgCtx.globalAlpha=1;
+  // Blobs
+  blobs.forEach(b=>{
+    b.wobble += 0.012;
+    b.driftP += 0.008;
+    b.x += b.vx + Math.sin(b.driftP)*b.driftA;
+    b.y += b.vy;
+    if(b.x<-b.r*2) b.x=W+b.r; if(b.x>W+b.r*2) b.x=-b.r;
+    if(b.y<-b.r*2) b.y=H+b.r; if(b.y>H+b.r*2) b.y=-b.r;
+    const pulse = 1+0.12*Math.sin(b.wobble);
+    bgCtx.globalAlpha = b.alpha;
+    // glow
+    const g=bgCtx.createRadialGradient(b.x,b.y,0,b.x,b.y,b.r*2.5*pulse);
+    const hex=b.col.replace('#','');
+    const rr=parseInt(hex.slice(0,2),16),gg=parseInt(hex.slice(2,4),16),bb=parseInt(hex.slice(4,6),16);
+    g.addColorStop(0,`rgba(${rr},${gg},${bb},0.5)`);
+    g.addColorStop(1,`rgba(${rr},${gg},${bb},0)`);
+    bgCtx.fillStyle=g;
+    bgCtx.beginPath();bgCtx.arc(b.x,b.y,b.r*2.5*pulse,0,Math.PI*2);bgCtx.fill();
+  });
+  bgCtx.globalAlpha=1;
+  requestAnimationFrame(animBg);
+}
+requestAnimationFrame(animBg);
+
+// ── App icon ─────────────────────────────────────────────────────────────────
+(function drawIcon(){
+  const c = document.getElementById('iconCanvas');
+  const ctx = c.getContext('2d');
+  const s = 72;
+  // bg
+  ctx.fillStyle='#0d0520';ctx.roundRect(0,0,s,s,18);ctx.fill();
+  // blob
+  const cx=s/2,cy=s/2-2,r=26;
+  const g=ctx.createRadialGradient(cx-5,cy-7,0,cx,cy,r);
+  g.addColorStop(0,'#d946ef');g.addColorStop(0.6,'#a855f7');g.addColorStop(1,'#7c3aed');
+  ctx.fillStyle=g;
+  ctx.shadowColor='#a855f7';ctx.shadowBlur=18;
+  ctx.beginPath();
+  // Organic blob shape
+  ctx.moveTo(cx+r,cy);
+  for(let i=0;i<8;i++){
+    const a1=(i/8)*Math.PI*2;const a2=((i+1)/8)*Math.PI*2;
+    const noisy=[0.92,1.06,0.97,1.04,0.94,1.07,0.98,1.03];
+    const r1=r*noisy[i],r2=r*noisy[(i+1)%8];
+    ctx.quadraticCurveTo(cx+Math.cos((a1+a2)/2)*r1*1.2,cy+Math.sin((a1+a2)/2)*r1*1.2,cx+Math.cos(a2)*r2,cy+Math.sin(a2)*r2);
+  }
+  ctx.fill();ctx.shadowBlur=0;
+  // Eyes
+  ctx.fillStyle='#0d0520';
+  ctx.beginPath();ctx.ellipse(cx-8,cy-4,4,5,-.2,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.ellipse(cx+8,cy-4,4,5,.2,0,Math.PI*2);ctx.fill();
+  // Shine
+  ctx.fillStyle='rgba(255,255,255,0.9)';
+  ctx.beginPath();ctx.ellipse(cx-6,cy-6,1.5,2,-.3,0,Math.PI*2);ctx.fill();
+  ctx.beginPath();ctx.ellipse(cx+10,cy-6,1.5,2,-.3,0,Math.PI*2);ctx.fill();
+  // Smile
+  ctx.strokeStyle='#0d0520';ctx.lineWidth=2;ctx.lineCap='round';
+  ctx.beginPath();ctx.moveTo(cx-7,cy+7);ctx.quadraticCurveTo(cx,cy+13,cx+7,cy+7);ctx.stroke();
+})();
+
+// ── Twitter share gate ───────────────────────────────────────────────────────
+function checkAlreadyShared(){
+  if(localStorage.getItem(STORAGE_KEY) === '1') unlockDownload(false);
+}
+
+function shareOnTwitter(){
+  localStorage.setItem(STORAGE_KEY,'1');
+  window.open(TWITTER_URL,'_blank','noopener,noreferrer,width=600,height=500');
+  setTimeout(()=>unlockDownload(true), 800);
+}
+
+function unlockDownload(animate){
+  // Step 1: mark done
+  const s1 = document.getElementById('step1');
+  s1.classList.remove('step-1-active');
+  s1.classList.add('step-done');
+  document.getElementById('step1Num').className='step-num step-num-done';
+  document.getElementById('step1Num').textContent='✓';
+  document.getElementById('step1Desc').innerHTML=
+    '<span class="check-wrap">✓ &nbsp;Shared on X — thank you!</span>';
+  document.getElementById('step1Btn').innerHTML=
+    '<span class="check-wrap" style="justify-content:center;padding:10px 0">✓ &nbsp;STEP COMPLETE</span>';
+
+  // Step 2: unlock
+  const s2 = document.getElementById('step2');
+  s2.classList.add('step-2-active');
+  document.getElementById('step2Num').className='step-num step-num-done';
+  document.getElementById('step2Num').textContent='✓';
+  document.getElementById('step2Title').style.color='#22c55e';
+
+  const btn = document.getElementById('dlBtn');
+  btn.href = APK_URL;
+  btn.onclick = null;
+  btn.removeAttribute('onclick');
+  btn.className='btn btn-download-ready';
+  document.getElementById('lockIcon').textContent='⬇';
+  document.getElementById('lockIcon').classList.add('lock-open');
+  document.getElementById('dlBtnText').textContent='DOWNLOAD BETA APK';
+
+  if(animate) fireConfetti();
+}
+
+// ── Confetti ─────────────────────────────────────────────────────────────────
+function fireConfetti(){
+  const container = document.getElementById('confetti');
+  const colors=['#a855f7','#22c55e','#f59e0b','#3b82f6','#ef4444','#06b6d4'];
+  for(let i=0;i<60;i++){
+    const el = document.createElement('div');
+    el.className='confetti-piece';
+    const col = colors[Math.floor(Math.random()*colors.length)];
+    const size = 5+Math.random()*8;
+    el.style.cssText=`
+      left:${20+Math.random()*60}%;
+      background:${col};
+      width:${size}px;height:${size}px;
+      border-radius:${Math.random()>.5?'50%':'2px'};
+      animation-duration:${1.5+Math.random()*2}s;
+      animation-delay:${Math.random()*0.6}s;
+    `;
+    container.appendChild(el);
+    setTimeout(()=>el.remove(), 4000);
+  }
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+checkAlreadyShared();
+</script>
+</body>
+</html>
