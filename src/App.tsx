@@ -7,6 +7,7 @@ import Home from "@/pages/home";
 import HowToPlay from "@/pages/how-to-play";
 import Roadmap from "@/pages/roadmap";
 import Play from "@/pages/play";
+import Changelog from "@/pages/changelog";
 import NotFound from "@/pages/not-found";
 
 import { Nav } from "@/components/nav";
@@ -42,6 +43,7 @@ function Router() {
       <Route path="/how-to-play" component={HowToPlay} />
       <Route path="/roadmap" component={Roadmap} />
       <Route path="/play" component={Play} />
+      <Route path="/changelog" component={Changelog} />
       <Route component={NotFound} />
     </Switch>
   );
