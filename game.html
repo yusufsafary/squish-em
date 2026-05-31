@@ -86,7 +86,7 @@ const sfxGameOver = () => [440,392,349,311,277,246].forEach((f,i)=>setTimeout(()
 const sfxCombo    = (n) => beep(440+n*80,'sine',0.08,0.14);
 
 // ─── State ──────────────────────────────────────────────────────────────────
-const SCR = {TITLE:0,GAME:1,PAUSE:2,OVER:3};
+const SCR = {TITLE:0,GAME:1,PAUSE:2,OVER:3,UPGRADE:4};
 let screen = SCR.TITLE;
 let score=0, hiScore=parseInt(localStorage.getItem('squish_hi')||'0');
 let hofScores=JSON.parse(localStorage.getItem('squish_hof')||'[]');
@@ -133,6 +133,19 @@ let streakCount=0, streakTimer=0;
 let levelFlashTimer=0, levelFlashNum=1;
 let nukeFlashTimer=0, nukeLines=[];
 let prevScoreMilestone=0;
+
+// ─── Upgrade System ───────────────────────────────────────────────────────────
+const UPGRADE_POOL=[
+  {id:'fireRate',  icon:'⚡', title:'RAPID FIRE',  desc:'+20% fire rate',       col:'#f59e0b',glow:'rgba(245,158,11,.75)',max:5},
+  {id:'bulCount2', icon:'❋❋', title:'DOUBLE SHOT', desc:'Fire 2 bullets',        col:'#8b5cf6',glow:'rgba(139,92,246,.75)', max:1},
+  {id:'bulCount3', icon:'❋❋❋',title:'TRIPLE SHOT', desc:'Fan spread of 3 bullets',col:'#a855f7',glow:'rgba(168,85,247,.75)',max:1},
+  {id:'bulSize',   icon:'◉',  title:'BIG BULLET',  desc:'Bullet size +35%',      col:'#ef4444',glow:'rgba(239,68,68,.75)',  max:3},
+  {id:'bulSpeed',  icon:'↑↑', title:'FAST BULLET', desc:'Bullet speed +25%',     col:'#3b82f6',glow:'rgba(59,130,246,.75)', max:3},
+  {id:'pierce',    icon:'➤',  title:'PIERCE',      desc:'Bullets pierce blobs',  col:'#06b6d4',glow:'rgba(6,182,212,.75)',  max:2},
+  {id:'explosive', icon:'💥', title:'EXPLOSIVE',   desc:'Bullets explode on hit',col:'#f97316',glow:'rgba(249,115,22,.75)', max:1},
+];
+let upgrades={fireRate:0,bulCount:1,bulSize:0,bulSpeed:0,pierce:0,explosive:false};
+let upgradeCards=[],upgCardRects=[],upgradeAnimTimer=0;
 
 // ─── 2P Local Multiplayer ────────────────────────────────────────────────────
 let gameMode=0; // 0=1P solo, 1=2P local
@@ -272,13 +285,21 @@ function spawnBoss(){
 }
 
 // ─── Fire ────────────────────────────────────────────────────────────────────
+function makeBullet(x,y,vx,vy){
+  const r=5+upgrades.bulSize*2.2;
+  const spd=upgrades.bulSpeed*2.8;
+  return {x,y,vx,vy:vy-spd,r,trail:[],pierce:upgrades.pierce,pierced:0,expl:upgrades.explosive};
+}
 function fire(){
   const tip={x:cannonX,y:RAIL_Y-52};
-  if(triActive){
+  if(triActive||upgrades.bulCount>=3){
     for(const a of[-0.22,0,0.22])
-      bullets.push({x:tip.x,y:tip.y,vx:Math.sin(a)*6,vy:-13,r:5,trail:[]});
+      bullets.push(makeBullet(tip.x,tip.y,Math.sin(a)*6,-13));
+  } else if(upgrades.bulCount>=2){
+    bullets.push(makeBullet(tip.x,tip.y,-2.8,-13));
+    bullets.push(makeBullet(tip.x,tip.y, 2.8,-13));
   } else {
-    bullets.push({x:tip.x,y:tip.y,vx:0,vy:-13,r:5,trail:[]});
+    bullets.push(makeBullet(tip.x,tip.y,0,-13));
   }
   recoil=6; sfxShoot(); muzzleFlash=7;
   spawnSparks(tip.x,tip.y,'#c9a8ff',4);
@@ -287,11 +308,14 @@ function fire(){
 // ─── Fire P2 ──────────────────────────────────────────────────────────────────
 function fire2(){
   const tip={x:cannonX2,y:RAIL_Y-52};
-  if(triActive){
+  if(triActive||upgrades.bulCount>=3){
     for(const a of[-0.22,0,0.22])
-      bullets2.push({x:tip.x,y:tip.y,vx:Math.sin(a)*6,vy:-13,r:5,trail:[]});
+      bullets2.push(makeBullet(tip.x,tip.y,Math.sin(a)*6,-13));
+  } else if(upgrades.bulCount>=2){
+    bullets2.push(makeBullet(tip.x,tip.y,-2.8,-13));
+    bullets2.push(makeBullet(tip.x,tip.y, 2.8,-13));
   } else {
-    bullets2.push({x:tip.x,y:tip.y,vx:0,vy:-13,r:5,trail:[]});
+    bullets2.push(makeBullet(tip.x,tip.y,0,-13));
   }
   recoil2=6; muzzleFlash2=7;
   spawnSparks(tip.x,tip.y,'#4FFFBF',4);
@@ -400,6 +424,7 @@ function addKill(pts,x,y,player=1){
     level++; lvlKills=0; sfxLevelUp();
     levelFlashTimer=1.8; levelFlashNum=level;
     if(level%5===0&&!bossPresent) spawnBoss();
+    showUpgradeScreen();
   }
 }
 
@@ -456,6 +481,11 @@ function handleClick(x,y){
   const hit=r=>r&&x>=r.x&&x<=r.x+r.w&&y>=r.y&&y<=r.y+r.h;
   if(screen===SCR.OVER){if(hit(btnRects.again))startGame();if(hit(btnRects.menu))screen=SCR.TITLE;}
   if(screen===SCR.PAUSE){if(hit(btnRects.resume))screen=SCR.GAME;if(hit(btnRects.menuP))screen=SCR.TITLE;}
+  if(screen===SCR.UPGRADE){
+    for(let i=0;i<upgCardRects.length;i++){
+      if(hit(upgCardRects[i])){applyUpgrade(upgradeCards[i]);return;}
+    }
+  }
 }
 
 document.addEventListener('keydown',e=>{
@@ -492,6 +522,8 @@ function startGame(){
   rfTimer=triTimer=shTimer=mxTimer=fzTimer=lsTimer=0;
   nukeFlashTimer=0; nukeLines=[];
   prevScoreMilestone=0;
+  upgrades={fireRate:0,bulCount:1,bulSize:0,bulSpeed:0,pierce:0,explosive:false};
+  upgradeCards=[];upgCardRects=[];upgradeAnimTimer=0;
   // 2P reset
   score2=0;cannonX2=3*W/4;recoil2=0;shootTimer2=0;muzzleFlash2=0;
   bullets2=[];p2LeftBtn=false;p2RightBtn=false;p2DragOn=false;
@@ -1386,7 +1418,7 @@ function update(d){
   if(rightBtn)cannonX=Math.min(gameMode===1?W/2-22:W-22,cannonX+6);
   if(recoil>0)recoil=Math.max(0,recoil-.65);
 
-  const rate=rfActive?.14:.5;
+  const rate=rfActive?.14:(0.5*Math.pow(0.82,upgrades.fireRate));
   shootTimer+=dt;
   if(shootTimer>=rate){shootTimer=0;fire();}
 
@@ -1535,8 +1567,20 @@ function update(d){
       if(bl.dying)continue;
       const dx=b.x-bl.x,dy=b.y-bl.y;
       if(Math.sqrt(dx*dx+dy*dy)<bl.sz+b.r){
-        bullets.splice(i,1);bl.hp--;bl.flash=.32;
+        bl.hp--;bl.flash=.32;
         spawnSparks(b.x,b.y,bl.col,3);
+        // Pierce: don't remove bullet until pierced quota used
+        if(b.pierce>0&&b.pierced<b.pierce){b.pierced++;}
+        else{bullets.splice(i,1);}
+        // Explosive radius
+        if(b.expl){
+          for(let k=blobs.length-1;k>=0;k--){
+            if(blobs[k]===bl||blobs[k].dying)continue;
+            const ex=blobs[k].x-b.x,ey2=blobs[k].y-b.y;
+            if(Math.sqrt(ex*ex+ey2*ey2)<48){blobs[k].hp--;blobs[k].flash=0.4;spawnSparks(blobs[k].x,blobs[k].y,bl.col,4);if(blobs[k].hp<=0){blobs[k].dying=true;sfxSquish();spawnParticles(blobs[k].x,blobs[k].y,blobs[k].col,8);spawnRing(blobs[k].x,blobs[k].y,blobs[k].col);dropPowerup(blobs[k].x,blobs[k].y);addKill(blobs[k].pts,blobs[k].x,blobs[k].y);}}
+          }
+          spawnRing(b.x,b.y,'#f97316');screenFlash(0.12,'#f97316');
+        }
         if(bl.hp<=0){
           bl.dying=true; sfxSquish();
           spawnParticles(bl.x,bl.y,bl.col,10+Math.floor(Math.random()*5));
@@ -1560,7 +1604,9 @@ function update(d){
             }
           }
         }
-        hit=true;break;
+        // Only stop checking blobs if bullet was consumed (not piercing)
+        const bulletStillAlive=bullets[i]&&bullets[i].pierced>0&&bullets[i].pierce>0;
+        if(!bulletStillAlive){hit=true;break;}
       }
     }
   }
@@ -1938,6 +1984,165 @@ function drawGame(){
   }
 }
 
+// ─── Upgrade Screen Functions ─────────────────────────────────────────────────
+function showUpgradeScreen(){
+  const pool=UPGRADE_POOL.filter(u=>{
+    if(u.id==='bulCount2') return upgrades.bulCount<2;
+    if(u.id==='bulCount3') return upgrades.bulCount<3;
+    if(u.id==='fireRate')  return upgrades.fireRate<u.max;
+    if(u.id==='bulSize')   return upgrades.bulSize<u.max;
+    if(u.id==='bulSpeed')  return upgrades.bulSpeed<u.max;
+    if(u.id==='pierce')    return upgrades.pierce<u.max;
+    if(u.id==='explosive') return !upgrades.explosive;
+    return true;
+  });
+  if(!pool.length){return;} // all maxed — skip screen
+  for(let i=pool.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[pool[i],pool[j]]=[pool[j],pool[i]];}
+  upgradeCards=pool.slice(0,Math.min(3,pool.length));
+  upgradeAnimTimer=0;
+  screen=SCR.UPGRADE;
+}
+
+function applyUpgrade(u){
+  if(!u)return;
+  if(u.id==='fireRate')  upgrades.fireRate=Math.min(5,upgrades.fireRate+1);
+  if(u.id==='bulCount2') upgrades.bulCount=Math.max(2,upgrades.bulCount);
+  if(u.id==='bulCount3') upgrades.bulCount=3;
+  if(u.id==='bulSize')   upgrades.bulSize=Math.min(3,upgrades.bulSize+1);
+  if(u.id==='bulSpeed')  upgrades.bulSpeed=Math.min(3,upgrades.bulSpeed+1);
+  if(u.id==='pierce')    upgrades.pierce=Math.min(2,upgrades.pierce+1);
+  if(u.id==='explosive') upgrades.explosive=true;
+  upgradeCards=[];upgCardRects=[];
+  screen=SCR.GAME;
+  [523,659,784,1047].forEach((f,i)=>setTimeout(()=>beep(f,'sine',0.12,0.16),i*55));
+  screenFlash(0.4,'#a855f7');
+}
+
+function drawUpgradeScreen(){
+  upgradeAnimTimer=Math.min(1,upgradeAnimTimer+dt*2.6);
+  const easeOut=t=>1-Math.pow(1-t,3);
+  const prog=easeOut(upgradeAnimTimer);
+
+  // Dark overlay
+  ctx.fillStyle=`rgba(8,5,20,${0.91*prog})`;
+  ctx.fillRect(0,0,W,H);
+
+  ctx.save();
+  ctx.globalAlpha=prog;
+
+  // ── Title ──
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.shadowColor='#a855f7';ctx.shadowBlur=28;
+  ctx.fillStyle='#ffffff';ctx.font="bold 30px 'Orbitron',sans-serif";
+  ctx.fillText('LEVEL  UP!',W/2,68);
+  ctx.shadowBlur=0;
+  ctx.fillStyle='rgba(200,180,255,.65)';ctx.font="12px 'Orbitron',sans-serif";
+  ctx.fillText('CHOOSE AN UPGRADE',W/2,96);
+
+  // Current build summary
+  const stats=[];
+  if(upgrades.fireRate>0)stats.push('⚡×'+upgrades.fireRate);
+  if(upgrades.bulCount===2)stats.push('❋❋');
+  if(upgrades.bulCount===3)stats.push('❋❋❋');
+  if(upgrades.bulSize>0)stats.push('◉×'+upgrades.bulSize);
+  if(upgrades.bulSpeed>0)stats.push('↑↑×'+upgrades.bulSpeed);
+  if(upgrades.pierce>0)stats.push('➤×'+upgrades.pierce);
+  if(upgrades.explosive)stats.push('💥');
+  if(stats.length){
+    ctx.fillStyle='rgba(168,85,247,.5)';ctx.font="10px 'Orbitron',sans-serif";
+    ctx.fillText(stats.join('  '),W/2,114);
+  }
+
+  ctx.restore();
+
+  // ── Cards ──
+  const cw=344,ch=106,cx0=(W-cw)/2;
+  const totalH=upgradeCards.length*ch+(upgradeCards.length-1)*12;
+  const cy0=Math.round((H-totalH)/2)+8;
+  upgCardRects=[];
+
+  upgradeCards.forEach((u,i)=>{
+    const slideY=(1-prog)*50;
+    const cardX=cx0;
+    const cardY=cy0+i*(ch+12)+slideY;
+    upgCardRects.push({x:cardX,y:cardY-slideY,w:cw,h:ch});
+
+    ctx.save();
+    ctx.globalAlpha=Math.min(prog*(1+i*0.18),1)*0.97;
+
+    // Card glow
+    ctx.shadowColor=u.glow;ctx.shadowBlur=22;
+
+    // Card bg
+    const bg=ctx.createLinearGradient(cardX,cardY,cardX+cw,cardY+ch);
+    bg.addColorStop(0,'rgba(22,14,46,.97)');
+    bg.addColorStop(1,'rgba(14,8,30,.99)');
+    rr(cardX,cardY,cw,ch,14,bg,u.col,2.5);
+
+    ctx.shadowBlur=0;
+
+    // Icon circle
+    ctx.shadowColor=u.glow;ctx.shadowBlur=14;
+    ctx.beginPath();ctx.arc(cardX+42,cardY+ch/2,26,0,Math.PI*2);
+    const ig=ctx.createRadialGradient(cardX+40,cardY+ch/2-4,0,cardX+42,cardY+ch/2,26);
+    ig.addColorStop(0,u.col+'55');ig.addColorStop(1,u.col+'18');
+    ctx.fillStyle=ig;ctx.fill();
+    ctx.shadowBlur=0;
+
+    ctx.font="22px 'Segoe UI Emoji',sans-serif";
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(u.icon,cardX+42,cardY+ch/2+1);
+
+    // Title
+    ctx.shadowColor=u.glow;ctx.shadowBlur=8;
+    ctx.font="bold 14px 'Orbitron',sans-serif";
+    ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.fillStyle=u.col;
+    ctx.fillText(u.title,cardX+78,cardY+ch/2-16);
+    ctx.shadowBlur=0;
+
+    // Description
+    ctx.fillStyle='rgba(220,210,255,.72)';
+    ctx.font="11px 'Orbitron',sans-serif";
+    ctx.fillText(u.desc,cardX+78,cardY+ch/2+4);
+
+    // Level dots (for stackable upgrades)
+    let curLvl=0;
+    if(u.id==='fireRate') curLvl=upgrades.fireRate;
+    else if(u.id==='bulSize') curLvl=upgrades.bulSize;
+    else if(u.id==='bulSpeed') curLvl=upgrades.bulSpeed;
+    else if(u.id==='pierce') curLvl=upgrades.pierce;
+    if(u.max>1){
+      ctx.textAlign='left';ctx.textBaseline='middle';
+      ctx.fillStyle='rgba(200,180,255,.45)';
+      ctx.font="9px 'Orbitron',sans-serif";
+      ctx.fillText('LVL',cardX+78,cardY+ch/2+21);
+      for(let d=0;d<u.max;d++){
+        ctx.beginPath();ctx.arc(cardX+104+d*14,cardY+ch/2+21,4.5,0,Math.PI*2);
+        ctx.fillStyle=d<curLvl?u.col:'rgba(255,255,255,.15)';
+        if(d<curLvl){ctx.shadowColor=u.glow;ctx.shadowBlur=6;}
+        ctx.fill();ctx.shadowBlur=0;
+      }
+    }
+
+    // Arrow hint
+    ctx.textAlign='right';ctx.textBaseline='middle';
+    ctx.fillStyle=u.col+'bb';
+    ctx.font="16px sans-serif";
+    ctx.fillText('›',cardX+cw-14,cardY+ch/2);
+
+    ctx.restore();
+  });
+
+  // Footer hint
+  ctx.save();
+  ctx.globalAlpha=prog*0.45;
+  ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillStyle='#fff';ctx.font="10px 'Orbitron',sans-serif";
+  ctx.fillText('TAP A CARD TO UPGRADE',W/2,cy0+totalH+26);
+  ctx.restore();
+}
+
 // ─── Utilities ────────────────────────────────────────────────────────────────
 function rr(x,y,w,h,r,fill,stroke,sw=2){
   ctx.beginPath();ctx.roundRect(x,y,w,h,r);
@@ -1976,6 +2181,7 @@ function loop(now){
   else if(screen===SCR.GAME)drawGame();
   else if(screen===SCR.PAUSE){drawGame();drawPause();}
   else if(screen===SCR.OVER)drawGameOver();
+  else if(screen===SCR.UPGRADE){drawGame();drawUpgradeScreen();}
   ctx.restore();
   requestAnimationFrame(loop);
 }
