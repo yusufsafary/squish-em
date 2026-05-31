@@ -77,7 +77,7 @@ export default function Cookies() {
             className="mt-16 pt-8 border-t border-white/8"
           >
             <p className="text-white/30 font-mono text-xs">
-              SQUISH 'EM! is an independent project by Yusuf Safary (@oroimho), Bandung, Indonesia.
+              SQUISH 'EM! is an independent project by Yusuf Safary (@oroimho).
               For legal inquiries contact via x.com/oroimho.
             </p>
           </motion.div>
