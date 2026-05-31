@@ -121,7 +121,7 @@ export default function Feedback() {
           </h1>
           <p className="text-sm text-muted-foreground leading-relaxed max-w-sm mx-auto">
             Found a bug, got a crash, or have an idea? Your report goes directly
-            to the founder — device info is attached automatically.
+            to the founder - device info is attached automatically.
           </p>
         </motion.div>
 
@@ -167,7 +167,7 @@ export default function Feedback() {
             <textarea
               value={message}
               onChange={e => setMessage(e.target.value)}
-              placeholder="What happened? Be as specific as possible — level reached, what you tapped, what went wrong..."
+              placeholder="What happened? Be as specific as possible - level reached, what you tapped, what went wrong..."
               rows={4}
               maxLength={240}
               className="w-full rounded-xl border border-white/8 bg-white/4 text-sm text-white placeholder:text-muted-foreground/30 px-4 py-3 resize-none focus:outline-none focus:border-primary/40 transition-colors leading-relaxed"
