@@ -1,0 +1,83 @@
+name: Vercel Cache Purge
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  purge-cache:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Wait for Vercel deployment to be ready
+        id: wait_deploy
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          PROJECT_ID="prj_TWBhQOii25LVnSgtS4Wk1Ahlrune"
+          COMMIT_SHA="${{ github.sha }}"
+          echo "Waiting for deployment of commit: $COMMIT_SHA"
+
+          for i in $(seq 1 30); do
+            RESPONSE=$(curl -s \
+              -H "Authorization: Bearer $VERCEL_TOKEN" \
+              "https://api.vercel.com/v6/deployments?projectId=$PROJECT_ID&limit=5")
+
+            STATE=$(echo "$RESPONSE" | node -e "
+              const chunks = [];
+              process.stdin.on('data', d => chunks.push(d));
+              process.stdin.on('end', () => {
+                const data = JSON.parse(chunks.join(''));
+                const deploy = (data.deployments || []).find(d =>
+                  d.meta && d.meta.githubCommitSha && d.meta.githubCommitSha.startsWith('$COMMIT_SHA'.slice(0,8))
+                ) || data.deployments?.[0];
+                if (deploy) {
+                  console.log(deploy.state + '|' + deploy.url);
+                } else {
+                  console.log('PENDING|');
+                }
+              });
+            ")
+
+            DEPLOY_STATE=$(echo "$STATE" | cut -d'|' -f1)
+            DEPLOY_URL=$(echo "$STATE" | cut -d'|' -f2)
+
+            echo "Attempt $i: State = $DEPLOY_STATE | URL = $DEPLOY_URL"
+
+            if [ "$DEPLOY_STATE" = "READY" ]; then
+              echo "DEPLOY_URL=$DEPLOY_URL" >> $GITHUB_OUTPUT
+              echo "✅ Deployment is READY: $DEPLOY_URL"
+              break
+            elif [ "$DEPLOY_STATE" = "ERROR" ] || [ "$DEPLOY_STATE" = "CANCELED" ]; then
+              echo "❌ Deployment failed with state: $DEPLOY_STATE"
+              exit 1
+            fi
+
+            sleep 10
+          done
+
+      - name: Purge Vercel Edge Cache for squishem.fun
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+        run: |
+          echo "Purging edge cache for squishem.fun and www.squishem.fun..."
+
+          # Force fresh fetch from Vercel edge for main pages
+          for URL in "https://www.squishem.fun/" "https://www.squishem.fun/index.html" "https://www.squishem.fun/game.html" "https://www.squishem.fun/about.html" "https://www.squishem.fun/howtoplay.html" "https://www.squishem.fun/creator.html"; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+              -H "Cache-Control: no-cache, no-store" \
+              -H "Pragma: no-cache" \
+              "$URL")
+            echo "Purged $URL → HTTP $STATUS"
+          done
+
+          echo "✅ Cache purge complete"
+
+      - name: Deployment summary
+        run: |
+          echo "## 🚀 Vercel Deployment Done" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- **Site:** https://www.squishem.fun" >> $GITHUB_STEP_SUMMARY
+          echo "- **Commit:** ${{ github.event.head_commit.message }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Cache:** Purged ✅" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Situs sudah live dan cache sudah dibersihkan!" >> $GITHUB_STEP_SUMMARY
