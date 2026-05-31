@@ -1,42 +1,44 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
-const STORAGE_KEY = "squish_notif_asked";
+const STORAGE_KEY = "squish_pwa_asked";
+
+function isIos() {
+  return /iphone|ipad|ipod/i.test(navigator.userAgent) && !(window as any).MSStream;
+}
+function isInStandaloneMode() {
+  return (window.navigator as any).standalone === true
+    || window.matchMedia("(display-mode: standalone)").matches;
+}
 
 export function PwaPrompt() {
   const [show, setShow] = useState(false);
-  const [installing, setInstalling] = useState(false);
+  const [isIosDevice, setIsIosDevice] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [installing, setInstalling] = useState(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
-
-    // Don't show if already asked
     if (localStorage.getItem(STORAGE_KEY)) return;
+    if (isInStandaloneMode()) return; // already installed
 
-    // Check notification support
-    const notifSupported = "Notification" in window && "serviceWorker" in navigator;
-    if (!notifSupported) return;
+    const ios = isIos();
+    setIsIosDevice(ios);
 
-    // Don't show if already granted or denied
-    if (Notification.permission !== "default") {
-      localStorage.setItem(STORAGE_KEY, "done");
-      return;
+    if (ios) {
+      // iOS: show manual install hint after delay
+      const t = setTimeout(() => setShow(true), 5000);
+      return () => clearTimeout(t);
     }
 
-    // Show after 8 seconds
-    const timer = setTimeout(() => setShow(true), 8000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  // Capture install prompt
-  useEffect(() => {
-    const handler = (e: Event) => {
+    // Android / Chrome: wait for browser install event
+    const onPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e);
+      setTimeout(() => setShow(true), 4000);
     };
-    window.addEventListener("beforeinstallprompt", handler);
-    return () => window.removeEventListener("beforeinstallprompt", handler);
+    window.addEventListener("beforeinstallprompt", onPrompt);
+    return () => window.removeEventListener("beforeinstallprompt", onPrompt);
   }, []);
 
   const dismiss = () => {
@@ -44,16 +46,18 @@ export function PwaPrompt() {
     setShow(false);
   };
 
-  const enable = async () => {
+  const install = async () => {
+    if (isIosDevice) { dismiss(); return; }
+    if (!deferredPrompt) { dismiss(); return; }
     setInstalling(true);
     try {
-      const perm = await Notification.requestPermission();
-      if (perm === "granted" && deferredPrompt) {
-        deferredPrompt.prompt();
-        await deferredPrompt.userChoice;
-      }
-    } catch (_) {}
-    localStorage.setItem(STORAGE_KEY, "done");
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === "accepted") localStorage.setItem(STORAGE_KEY, "installed");
+      else localStorage.setItem(STORAGE_KEY, "dismissed");
+    } catch (_) {
+      localStorage.setItem(STORAGE_KEY, "dismissed");
+    }
     setShow(false);
     setInstalling(false);
   };
@@ -62,79 +66,93 @@ export function PwaPrompt() {
     <AnimatePresence>
       {show && (
         <motion.div
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          exit={{ y: 100, opacity: 0 }}
-          transition={{ type: "spring", stiffness: 320, damping: 28 }}
-          className="fixed bottom-20 left-4 right-4 sm:left-auto sm:right-6 sm:w-80 z-50"
+          initial={{ y: 80, opacity: 0, scale: 0.97 }}
+          animate={{ y: 0, opacity: 1, scale: 1 }}
+          exit={{ y: 80, opacity: 0, scale: 0.97 }}
+          transition={{ type: "spring", stiffness: 340, damping: 30 }}
+          className="fixed bottom-6 left-4 right-4 sm:left-auto sm:right-6 sm:w-72 z-50"
           role="dialog"
-          aria-label="Enable notifications"
+          aria-label="Install app"
         >
-          <div className="relative rounded-xl border border-primary/25 bg-[#0d1a0d]/95 backdrop-blur-xl shadow-2xl overflow-hidden">
-            {/* Top accent line */}
-            <div className="h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent opacity-60" />
+          <div className="rounded-2xl border border-white/10 bg-[#0c160c]/96 backdrop-blur-2xl shadow-[0_8px_40px_rgba(0,0,0,0.6)] overflow-hidden">
+            {/* Accent line */}
+            <div className="h-[1.5px] bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
 
-            <div className="p-4">
-              <div className="flex items-start gap-3">
-                {/* Icon */}
-                <div className="flex-shrink-0 w-9 h-9 rounded-lg bg-primary/12 border border-primary/20 flex items-center justify-center text-base mt-0.5">
-                  <motion.span
-                    animate={{ rotate: [0, -10, 10, 0] }}
-                    transition={{ duration: 1.2, repeat: Infinity, repeatDelay: 2 }}
-                  >
-                    🎮
-                  </motion.span>
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 min-w-0">
-                  <p className="font-display font-bold text-xs tracking-wider text-white mb-0.5">
-                    STAY IN THE GAME
-                  </p>
-                  <p className="text-[11px] text-muted-foreground leading-relaxed">
-                    Get notified when new boss waves and features drop. No spam, ever.
-                  </p>
-                </div>
-
-                {/* Close */}
-                <button
-                  onClick={dismiss}
-                  className="flex-shrink-0 w-6 h-6 rounded-full flex items-center justify-center text-muted-foreground/50 hover:text-white hover:bg-white/10 transition-all text-xs mt-0.5"
-                  aria-label="Dismiss"
-                >
-                  ✕
-                </button>
+            <div className="p-4 flex items-start gap-3">
+              {/* App icon */}
+              <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-primary/15 border border-primary/25 flex items-center justify-center text-xl">
+                🎮
               </div>
 
-              {/* Actions */}
-              <div className="flex gap-2 mt-3">
+              {/* Text */}
+              <div className="flex-1 min-w-0 pt-0.5">
+                <p className="font-display font-bold text-[11px] tracking-widest text-white/90 mb-0.5">
+                  INSTALL APP
+                </p>
+                {isIosDevice ? (
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    Tap <span className="inline-block text-white">⬆</span> Share, lalu{" "}
+                    <span className="text-primary font-semibold">Add to Home Screen</span>{" "}
+                    untuk main offline.
+                  </p>
+                ) : (
+                  <p className="text-[11px] text-muted-foreground leading-relaxed">
+                    Main offline, layar penuh,{" "}
+                    <span className="text-primary font-semibold">tanpa browser</span>.
+                    Simpan ke home screen.
+                  </p>
+                )}
+              </div>
+
+              {/* Close */}
+              <button
+                onClick={dismiss}
+                className="flex-shrink-0 w-5 h-5 flex items-center justify-center text-muted-foreground/40 hover:text-white/70 transition-colors text-xs mt-0.5"
+                aria-label="Tutup"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Buttons */}
+            {!isIosDevice && (
+              <div className="px-4 pb-4 flex gap-2">
                 <button
-                  onClick={enable}
+                  onClick={install}
                   disabled={installing}
-                  className="flex-1 flex items-center justify-center gap-1.5 bg-primary hover:bg-primary/90 text-primary-foreground text-xs font-display font-bold tracking-wider px-3 py-2 rounded-lg transition-all disabled:opacity-60"
+                  className="flex-1 flex items-center justify-center gap-1.5 bg-primary hover:bg-primary/90 disabled:opacity-60 text-primary-foreground text-[11px] font-display font-bold tracking-wider py-2 rounded-lg transition-all"
                 >
                   {installing ? (
                     <motion.span
                       animate={{ rotate: 360 }}
-                      transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
+                      transition={{ duration: 0.7, repeat: Infinity, ease: "linear" }}
+                      className="inline-block"
                     >
-                      ◌
+                      ○
                     </motion.span>
                   ) : (
-                    <>
-                      <span className="w-1.5 h-1.5 rounded-full bg-primary-foreground inline-block" />
-                      ENABLE
-                    </>
+                    "INSTALL"
                   )}
                 </button>
                 <button
                   onClick={dismiss}
-                  className="px-3 py-2 text-xs font-mono text-muted-foreground hover:text-white border border-white/10 hover:border-white/20 rounded-lg transition-all"
+                  className="px-3 py-2 text-[11px] font-mono text-muted-foreground/60 hover:text-white/80 border border-white/8 hover:border-white/18 rounded-lg transition-all"
                 >
-                  Later
+                  Nanti
                 </button>
               </div>
-            </div>
+            )}
+
+            {isIosDevice && (
+              <div className="px-4 pb-4">
+                <button
+                  onClick={dismiss}
+                  className="w-full py-2 text-[11px] font-mono text-muted-foreground/50 hover:text-white/70 border border-white/8 hover:border-white/15 rounded-lg transition-all"
+                >
+                  Mengerti
+                </button>
+              </div>
+            )}
           </div>
         </motion.div>
       )}
