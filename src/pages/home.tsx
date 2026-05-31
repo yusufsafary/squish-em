@@ -112,7 +112,7 @@ const FEATURES = [
     icon: "∞",
     iconColor: "hsl(127 49% 60%)",
     title: "Infinite Levels",
-    desc: "Every 15 kills advances a level. Speed and blob count scale endlessly — no ceiling, no escape.",
+    desc: "Every 15 kills advances a level. Speed and blob count scale endlessly. No ceiling, no escape.",
     border: "127 49% 60%",
     delay: 0,
   },
@@ -128,7 +128,7 @@ const FEATURES = [
     icon: "⚡",
     iconColor: "hsl(48 95% 58%)",
     title: "4 Power-Ups",
-    desc: "Rapid Fire, Triple Shot, Shield, Score ×2 — drop from enemies, expire fast, stack smart.",
+    desc: "Rapid Fire, Triple Shot, Shield, Score ×2, and NUKE. Drops from enemies, expire fast, stack smart.",
     border: "48 95% 58%",
     delay: 0.2,
   },
@@ -136,7 +136,7 @@ const FEATURES = [
     icon: "⚠",
     iconColor: "hsl(0 100% 67%)",
     title: "Boss Waves",
-    desc: "Every 5 levels a Boss erupts — 20 HP, projectile attacks, and triple the reward.",
+    desc: "Every 5 levels a Boss erupts: 20 HP, projectile attacks, and triple the reward.",
     border: "0 100% 67%",
     delay: 0.3,
   },
@@ -152,7 +152,7 @@ const FEATURES = [
     icon: "💥",
     iconColor: "hsl(263 44% 56%)",
     title: "Splash Kills",
-    desc: "When a blob dies, nearby blobs take splash damage — chain explosions for massive combos.",
+    desc: "When a blob dies, nearby blobs take splash damage. Chain explosions for massive combos.",
     border: "263 44% 56%",
     delay: 0.5,
   },
@@ -540,8 +540,8 @@ export default function Home() {
             <div className="flex flex-wrap justify-center gap-4 mb-10">
               {[
                 { label: "PHASE 1", status: "LIVE NOW", color: "127 49% 60%" },
-                { label: "PHASE 2", status: "IN PROGRESS — JUNE 2026", color: "48 100% 62%" },
-                { label: "PHASE 3", status: "SOLANA — Q3 2026", color: "263 44% 56%" },
+                { label: "PHASE 2", status: "IN PROGRESS / JUNE 2026", color: "48 100% 62%" },
+                { label: "PHASE 3", status: "SOLANA / Q3 2026", color: "263 44% 56%" },
               ].map((p, i) => (
                 <motion.div
                   key={p.label}
