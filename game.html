@@ -104,6 +104,17 @@ let rfActive=false, rfTimer=0;
 let triActive=false, triTimer=0;
 let shActive=false, shTimer=0;
 let mxActive=false, mxTimer=0;
+let fzActive=false, fzTimer=0;
+let difficulty=parseInt(localStorage.getItem('squish_diff')||'1'); // 0=easy,1=normal,2=hard
+const DIFF_SPD=[0.62,1,1.5];
+const DIFF_SPAWN=[0.55,1,1.75];
+const DIFF_LABELS=['EASY','NORMAL','HARD'];
+const DIFF_COLS=['#6BCB77','#FFD93D','#FF6B6B'];
+let diffBtnRects=[];
+// Daily challenge
+const _dc=(()=>{const d=new Date();const day=d.getDate();const base=[120,150,200,180,250,300,220,270,350,400,180,230,300,380,450,320,260,200,300,420,500,350,280,240,320,480,400,350,420,500,550];return base[(day-1)%base.length];})();
+const _dcKey='squish_daily_'+new Date().toDateString();
+let dailyDone=localStorage.getItem(_dcKey)==='1';
 let bossPresent=false, boss=null;
 let blobs=[], bullets=[], particles=[], powerups=[], popups=[], bossShots=[];
 let cannonX=W/2, recoil=0, shootTimer=0;
@@ -230,7 +241,7 @@ function spawnBlob(){
   for(let i=0;i<types.length;i++){cum+=weights[i];if(r<=cum){chosen=types[i];break;}}
   const bt=BT[chosen];
   const spdScale=1+Math.floor(kills/10)*.1;
-  const spd=Math.min(bt.spd*spdScale,bt.spd*3);
+  const spd=Math.min(bt.spd*spdScale,bt.spd*3)*DIFF_SPD[difficulty];
   blobs.push({
     x:bt.sz+Math.random()*(W-bt.sz*2), y:-bt.sz-20,
     type:chosen,col:bt.col,glow:bt.glow,hp:bt.hp,maxHp:bt.hp,
@@ -288,6 +299,7 @@ function dropPowerup(x,y){
     {type:'shield',col:'#00BCD4',icon:'🛡',   glow:'rgba(0,188,212,.6)',  w:1},
     {type:'mult',  col:'#FFD93D',icon:'×2',   glow:'rgba(255,217,61,.6)', w:1},
     {type:'nuke',  col:'#FF4500',icon:'💣',   glow:'rgba(255,80,0,.8)',   w:0.28},
+    {type:'freeze',col:'#00E5FF',icon:'❄',   glow:'rgba(0,229,255,.7)', w:0.75},
   ];
   const tot=PW.reduce((s,p)=>s+p.w,0);
   let r=Math.random()*tot,c=0,pw=PW[0];
@@ -301,6 +313,7 @@ function applyPowerup(t){
   if(t==='shield'){shActive=true;shTimer=10;}
   if(t==='mult')  {mxActive=true;mxTimer=10;}
   if(t==='nuke')  {nukeAllBlobs();}
+  if(t==='freeze'){fzActive=true;fzTimer=6;screenFlash(0.35,'#00E5FF');}
 }
 function nukeAllBlobs(){
   const alive=blobs.filter(b=>!b.dying);
@@ -388,6 +401,13 @@ function cpos(cx,cy){
 function pDown(x,y){
   resumeAC();
   if(screen===SCR.TITLE){
+    // Check difficulty buttons first
+    for(let i=0;i<diffBtnRects.length;i++){
+      const r=diffBtnRects[i];
+      if(r&&x>=r.x&&x<=r.x+r.w&&y>=r.y&&y<=r.y+r.h){
+        difficulty=i; localStorage.setItem('squish_diff',i); return;
+      }
+    }
     const mr=modeBtnRect;
     if(mr.w&&x>=mr.x&&x<=mr.x+mr.w&&y>=mr.y&&y<=mr.y+mr.h){gameMode=1;}
     else{gameMode=0;}
@@ -458,7 +478,8 @@ function startGame(){
   streakCount=0;streakTimer=0;
   levelFlashTimer=0;levelFlashNum=1;
   achBannerTimer=0;achBannerMsg='';
-  rfActive=triActive=shActive=mxActive=false;
+  rfActive=triActive=shActive=mxActive=fzActive=false;
+  rfTimer=triTimer=shTimer=mxTimer=fzTimer=0;
   nukeFlashTimer=0; nukeLines=[];
   prevScoreMilestone=0;
   // 2P reset
@@ -470,6 +491,11 @@ function gameOver(){
   if(score>hiScore){hiScore=score;localStorage.setItem('squish_hi',hiScore);}
   saveHof(score);
   if(level>=10)unlockAch('survivor');
+  // Daily challenge check
+  if(!dailyDone){
+    const dcGoal=Math.round(_dc*(difficulty===0?.55:difficulty===2?1.6:1));
+    if(score>=dcGoal){dailyDone=true;localStorage.setItem(_dcKey,'1');spawnPopup(W/2,H/2-60,'📅 DAILY DONE!','#b27af7');}
+  }
   sfxGameOver(); shake(14,600); screenFlash(0.8,'#ff0000');
 }
 function saveHof(s){
@@ -948,6 +974,7 @@ function drawHUD(){
   bar('✦ TRIPLE',triTimer,8,'#9B59B6','rgba(155,89,182,.6)');
   bar('🛡 SHIELD',shTimer,10,'#00BCD4','rgba(0,188,212,.6)');
   bar('× ×2 SCORE',mxTimer,10,'#FFD93D','rgba(255,217,61,.6)');
+  bar('❄ FREEZE',fzTimer,6,'#00E5FF','rgba(0,229,255,.6)');
 
   // ── Boss HP bar (below HUD bar, full width) ──
   if(bossPresent&&boss){
@@ -1038,14 +1065,42 @@ function drawTitle(){
   ctx.font=F.body;ctx.fillText('BLOB SHOOTER',W/2,152);
   ctx.restore();
 
+  // ── Difficulty selector buttons ──
+  diffBtnRects=[];
+  const dbW=88,dbH=26,dbGap=8;
+  const dbTotalW=dbW*3+dbGap*2;
+  const dbX0=(W-dbTotalW)/2;
+  const dbY=374;
+  ctx.save();
+  ctx.font=F.xs;ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillStyle='rgba(255,255,255,.35)';ctx.font=F.xs;
+  ctx.fillText('DIFFICULTY',W/2,dbY-12);
+  for(let i=0;i<3;i++){
+    const bx=dbX0+i*(dbW+dbGap);
+    diffBtnRects[i]={x:bx,y:dbY,w:dbW,h:dbH};
+    const sel=difficulty===i;
+    const col=DIFF_COLS[i];
+    ctx.save();
+    if(sel){ctx.shadowColor=col;ctx.shadowBlur=14;}
+    rr(bx,dbY,dbW,dbH,13,
+      sel?col+'33':'rgba(255,255,255,.06)',
+      sel?col:'rgba(255,255,255,.15)',1.2);
+    ctx.fillStyle=sel?col:'rgba(255,255,255,.5)';
+    ctx.font=sel?`bold 10px 'Orbitron',sans-serif`:`9px 'Orbitron',sans-serif`;
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText(DIFF_LABELS[i],bx+dbW/2,dbY+dbH/2);
+    ctx.restore();
+  }
+  ctx.restore();
+
   // Tap to play (blinking)
   titleBlink+=.04;
   if(Math.sin(titleBlink)>0){
     ctx.save();
-    ctx.shadowColor='#fff';ctx.shadowBlur=18;
-    ctx.fillStyle='#ffffff';ctx.font=F.h3;
+    ctx.shadowColor='#fff';ctx.shadowBlur=14;
+    ctx.fillStyle='rgba(255,255,255,.9)';ctx.font=F.body;
     ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText('TAP ANYWHERE  ·  1 PLAYER',W/2,425);
+    ctx.fillText('TAP ANYWHERE TO START',W/2,415);
     ctx.restore();
   }
 
@@ -1085,19 +1140,30 @@ function drawTitle(){
   ctx.fillText('Auto-fires  •  P = pause  •  ESC = pause',W/2,559);
   ctx.restore();
 
+  // ── Daily Challenge ──
+  const dcGoal=Math.round(_dc*(difficulty===0?.55:difficulty===2?1.6:1));
+  ctx.save();
+  rr(W/2-100,596,200,46,10,'rgba(30,20,60,.6)','rgba(100,80,180,.2)',1);
+  ctx.fillStyle='rgba(180,160,240,.7)';ctx.font=F.xs;ctx.textAlign='center';ctx.textBaseline='top';
+  ctx.fillText('📅  DAILY CHALLENGE',W/2,602);
+  ctx.fillStyle=dailyDone?'#6BCB77':'rgba(255,255,255,.85)';
+  ctx.font=F.sm;
+  ctx.fillText(dailyDone?'✅  COMPLETED!':'Score '+dcGoal+' pts to complete',W/2,616);
+  ctx.restore();
+
   // Blob legend at very bottom
   const types=[{col:'#6BCB77',label:'10'},{col:'#4D96FF',label:'20'},{col:'#FF6B6B',label:'30'},{col:'#FFD93D',label:'100'}];
-  const lw=70, startX=(W-lw*(types.length))/2+lw/2;
+  const lw=62, startX=(W-lw*(types.length))/2+lw/2;
   for(let i=0;i<types.length;i++){
-    const tx=startX+i*lw, ty=620;
+    const tx=startX+i*lw, ty=654;
     ctx.save();
-    ctx.shadowColor=types[i].col;ctx.shadowBlur=10;
+    ctx.shadowColor=types[i].col;ctx.shadowBlur=8;
     ctx.fillStyle=types[i].col;
-    ctx.beginPath();ctx.arc(tx,ty,8,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(tx,ty,7,0,Math.PI*2);ctx.fill();
     ctx.shadowBlur=0;
-    ctx.fillStyle='rgba(255,255,255,.65)';ctx.font=F.xs;
+    ctx.fillStyle='rgba(255,255,255,.6)';ctx.font=F.xs;
     ctx.textAlign='center';ctx.textBaseline='top';
-    ctx.fillText(types[i].label+' PTS',tx,ty+11);
+    ctx.fillText(types[i].label+' PTS',tx,ty+10);
     ctx.restore();
   }
 }
@@ -1248,6 +1314,7 @@ function update(d){
   if(triActive){triTimer-=dt;if(triTimer<=0)triActive=false;}
   if(shActive){shTimer-=dt;if(shTimer<=0)shActive=false;}
   if(mxActive){mxTimer-=dt;if(mxTimer<=0)mxActive=false;}
+  if(fzActive){fzTimer-=dt;if(fzTimer<=0)fzActive=false;}
   if(combo>0){comboTimer-=dt;if(comboTimer<=0){combo=0;comboMult=1;}}
   if(streakTimer>0){streakTimer-=dt;if(streakTimer<=0)streakCount=0;}
   if(levelFlashTimer>0)levelFlashTimer-=dt;
@@ -1255,7 +1322,7 @@ function update(d){
   if(achBannerTimer>0)achBannerTimer-=dt;
   else showNextAch();
 
-  if(Math.random()<.028+level*.005)spawnBlob();
+  if(Math.random()<(.028+level*.005)*DIFF_SPAWN[difficulty])spawnBlob();
 
   for(let i=blobs.length-1;i>=0;i--){
     const b=blobs[i];
@@ -1270,8 +1337,9 @@ function update(d){
       if(b.dScale<=0)blobs.splice(i,1);
       continue;
     }
-    b.y+=b.spd;
-    if(b.zz){b.zzPhase+=.045;b.x+=Math.sin(b.zzPhase)*2;b.x=Math.max(b.sz,Math.min(W-b.sz,b.x));}
+    const fzMult=fzActive?0.12:1;
+    b.y+=b.spd*fzMult;
+    if(b.zz){b.zzPhase+=.045*fzMult;b.x+=Math.sin(b.zzPhase)*2*fzMult;b.x=Math.max(b.sz,Math.min(W-b.sz,b.x));}
     if(b.y>H-56){
       blobs.splice(i,1);
       if(shActive){shActive=false;shTimer=0;spawnPopup(W/2,H/2,'BLOCKED!','#00BCD4');}
@@ -1290,9 +1358,9 @@ function update(d){
       boss.dTimer+=dt; boss.dScale=Math.max(0,1-boss.dTimer*2.8);
       if(boss.dScale<=0){boss=null;bossPresent=false;}
     } else {
-      if(!boss.arrived){boss.y+=2.8;if(boss.y>=boss.targetY)boss.arrived=true;}
+      if(!boss.arrived){boss.y+=2.8*(fzActive?0.2:1);if(boss.y>=boss.targetY)boss.arrived=true;}
       else{
-        boss.x+=boss.spd*boss.dir;
+        boss.x+=boss.spd*boss.dir*(fzActive?0.15:1);
         if(boss.x>W-boss.sz||boss.x<boss.sz)boss.dir*=-1;
         boss.spd=Math.min(3,.5+((boss.maxHp-boss.hp)/boss.maxHp)*2.5);
       }
@@ -1477,6 +1545,27 @@ function drawGame(){
 
   for(const b of blobs)drawBlob(b);
   if(bossPresent&&boss)drawBoss(boss);
+
+  // ── Freeze overlay: frost tint on all blobs when FREEZE is active ──
+  if(fzActive){
+    const fzAlpha=0.28+0.08*Math.sin(frame*.12);
+    for(const b of blobs){
+      if(b.dying)continue;
+      ctx.save();ctx.globalAlpha=fzAlpha;
+      ctx.fillStyle='#00E5FF';
+      ctx.beginPath();ctx.arc(b.x,b.y,b.sz,0,Math.PI*2);ctx.fill();
+      ctx.restore();
+    }
+    if(bossPresent&&boss&&!boss.dying){
+      ctx.save();ctx.globalAlpha=0.22;ctx.fillStyle='#00E5FF';
+      ctx.beginPath();ctx.arc(boss.x,boss.y,boss.sz,0,Math.PI*2);ctx.fill();ctx.restore();
+    }
+    // Floating snowflake particles
+    if(frame%8===0){
+      particles.push({x:Math.random()*W,y:Math.random()*H*.6,vx:(Math.random()-.5)*.5,vy:-.4,
+        r:3+Math.random()*3,life:1,decay:.018,col:'#00E5FF',type:'circle'});
+    }
+  }
 
   for(const b of bullets){
     // Elongated trail
