@@ -115,6 +115,8 @@ let fadeAlpha=0;
 let tutorialTimer = 180; // show drag hint for 3 seconds at game start
 let streakCount=0, streakTimer=0;
 let levelFlashTimer=0, levelFlashNum=1;
+let nukeFlashTimer=0, nukeLines=[];
+let prevScoreMilestone=0;
 
 // ─── 2P Local Multiplayer ────────────────────────────────────────────────────
 let gameMode=0; // 0=1P solo, 1=2P local
@@ -280,12 +282,17 @@ function fire2(){
 // ─── Power-ups ────────────────────────────────────────────────────────────────
 function dropPowerup(x,y){
   if(Math.random()>.15)return;
-  const types=['rapid','triple','shield','mult'];
-  const cols=['#FF8C00','#9B59B6','#00BCD4','#FFD93D'];
-  const icons=['⚡','✦✦✦','🛡','×2'];
-  const glows=['rgba(255,140,0,.6)','rgba(155,89,182,.6)','rgba(0,188,212,.6)','rgba(255,217,61,.6)'];
-  const i=Math.floor(Math.random()*4);
-  powerups.push({x,y,type:types[i],col:cols[i],icon:icons[i],glow:glows[i],vy:1.1,life:1,decay:.0025,r:16,rot:0});
+  const PW=[
+    {type:'rapid', col:'#FF8C00',icon:'⚡',   glow:'rgba(255,140,0,.6)',  w:1},
+    {type:'triple',col:'#9B59B6',icon:'✦✦✦', glow:'rgba(155,89,182,.6)', w:1},
+    {type:'shield',col:'#00BCD4',icon:'🛡',   glow:'rgba(0,188,212,.6)',  w:1},
+    {type:'mult',  col:'#FFD93D',icon:'×2',   glow:'rgba(255,217,61,.6)', w:1},
+    {type:'nuke',  col:'#FF4500',icon:'💣',   glow:'rgba(255,80,0,.8)',   w:0.28},
+  ];
+  const tot=PW.reduce((s,p)=>s+p.w,0);
+  let r=Math.random()*tot,c=0,pw=PW[0];
+  for(const p of PW){c+=p.w;if(r<=c){pw=p;break;}}
+  powerups.push({x,y,type:pw.type,col:pw.col,icon:pw.icon,glow:pw.glow,vy:1.1,life:1,decay:.0025,r:pw.type==='nuke'?20:16,rot:0});
 }
 function applyPowerup(t){
   sfxPowerup();
@@ -293,6 +300,35 @@ function applyPowerup(t){
   if(t==='triple'){triActive=true;triTimer=8;}
   if(t==='shield'){shActive=true;shTimer=10;}
   if(t==='mult')  {mxActive=true;mxTimer=10;}
+  if(t==='nuke')  {nukeAllBlobs();}
+}
+function nukeAllBlobs(){
+  const alive=blobs.filter(b=>!b.dying);
+  blobs=blobs.filter(b=>b.dying);
+  bossShots=[];
+  for(const b of alive){
+    const pts=Math.floor(b.pts*(mxActive?2:1)*comboMult);
+    score+=pts;
+    spawnPopup(b.x,b.y,'+'+pts,'#FF8C00');
+    for(let i=0;i<2;i++) spawnParticles(b.x,b.y,b.col,12,'circle');
+    spawnRing(b.x,b.y,b.col);
+    spawnSparks(b.x,b.y,'#FF4500',6);
+  }
+  const msg=alive.length>0?'💣 SCREEN WIPE!':'💣 NUKE!';
+  spawnPopup(W/2,H/2-90,msg,'#FF4500');
+  beep(55,'sawtooth',1.0,0.5); beep(110,'square',0.6,0.35);
+  screenFlash(0.92,'#FF4500');
+  shake(20,550);
+  nukeLines=[];
+  for(let i=0;i<14;i++){
+    nukeLines.push({
+      x1:Math.random()*W, y1:0,
+      x2:Math.random()*W, y2:H,
+      mx:(Math.random()-.5)*150+W/2,
+      my:(Math.random()-.5)*80+H/2,
+    });
+  }
+  nukeFlashTimer=50;
 }
 
 // ─── Kill / Score ─────────────────────────────────────────────────────────────
@@ -302,10 +338,13 @@ function addKill(pts,x,y,player=1){
   const prevMult=comboMult;
   comboMult=combo>=6?4:combo>=4?3:combo>=3?2:combo>=2?1.5:1;
   if(comboMult>prevMult)sfxCombo(combo);
-  const total=Math.floor(pts*comboMult*(mxActive?2:1));
+  const basePts=Math.floor(pts*comboMult*(mxActive?2:1));
+  const isCrit=Math.random()<0.12;
+  const total=isCrit?Math.floor(basePts*2.5):basePts;
+  if(isCrit){ spawnPopup(x,y+22,'CRIT!','#FF4500'); beep(1400,'sine',0.06,0.18); }
   if(player===2)score2+=total; else score+=total;
   kills++; lvlKills++;
-  spawnPopup(x,y,'+'+total);
+  spawnPopup(x,y,'+'+total,isCrit?'#FF8C00':'#FFD93D');
   if(comboMult>1) spawnPopup(x,y-30,'×'+comboMult,'#FF6B6B');
 
   // Streak announcements
@@ -320,6 +359,19 @@ function addKill(pts,x,y,player=1){
   if(comboMult>=4) unlockAch('combo_god');
   if(score>=1000) unlockAch('centurion');
   if(level>=5&&lvlKills===0&&!bossPresent) unlockAch('speed_run');
+
+  // Score milestone popups
+  const milestones=[500,1000,2500,5000,10000,25000,50000];
+  for(const m of milestones){
+    if(score>=m&&prevScoreMilestone<m){
+      prevScoreMilestone=m;
+      const k=m>=1000?(m/1000+'K'):''+m;
+      spawnPopup(W/2,H/2+70,'🎯 '+k+'!','#FFD93D');
+      beep(660,'sine',0.14,0.2); beep(880,'sine',0.12,0.18);
+      screenFlash(0.28,'#FFD93D');
+      break;
+    }
+  }
 
   if(lvlKills>=KILLS_PER_LEVEL){
     level++; lvlKills=0; sfxLevelUp();
@@ -407,6 +459,8 @@ function startGame(){
   levelFlashTimer=0;levelFlashNum=1;
   achBannerTimer=0;achBannerMsg='';
   rfActive=triActive=shActive=mxActive=false;
+  nukeFlashTimer=0; nukeLines=[];
+  prevScoreMilestone=0;
   // 2P reset
   score2=0;cannonX2=3*W/4;recoil2=0;shootTimer2=0;muzzleFlash2=0;
   bullets2=[];p2LeftBtn=false;p2RightBtn=false;p2DragOn=false;
@@ -1194,6 +1248,7 @@ function update(d){
   if(combo>0){comboTimer-=dt;if(comboTimer<=0){combo=0;comboMult=1;}}
   if(streakTimer>0){streakTimer-=dt;if(streakTimer<=0)streakCount=0;}
   if(levelFlashTimer>0)levelFlashTimer-=dt;
+  if(nukeFlashTimer>0)nukeFlashTimer--;
   if(achBannerTimer>0)achBannerTimer-=dt;
   else showNextAch();
 
@@ -1546,6 +1601,35 @@ function drawGame(){
       ctx.fillText('KEEP GOING!',W/2,H/2+22);
       ctx.restore();
     }
+  }
+
+  // ── Nuke lightning strike ──
+  if(nukeFlashTimer>0){
+    const a=(nukeFlashTimer/50)*0.9;
+    ctx.save();
+    ctx.globalCompositeOperation='screen';
+    ctx.lineWidth=2;
+    ctx.shadowBlur=18;
+    for(const l of nukeLines){
+      ctx.strokeStyle=`rgba(255,120,0,${a})`;
+      ctx.shadowColor='#FF4500';
+      ctx.beginPath();
+      ctx.moveTo(l.x1,l.y1);
+      ctx.quadraticCurveTo(l.mx+(Math.random()-0.5)*20,l.my,l.x2,l.y2);
+      ctx.stroke();
+    }
+    ctx.globalCompositeOperation='source-over';
+    ctx.restore();
+  }
+
+  // ── Frenzy pulse at x4 combo ──
+  if(combo>=4&&comboTimer>0){
+    const p=Math.abs(Math.sin(frame*.16))*.09;
+    ctx.save();
+    ctx.globalAlpha=p;
+    ctx.fillStyle='#FF2200';
+    ctx.fillRect(0,0,W,H);
+    ctx.restore();
   }
 
   ctx.restore();
