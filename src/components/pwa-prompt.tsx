@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLang } from "@/lib/i18n";
 
 const STORAGE_KEY = "squish_pwa_asked";
 
@@ -12,6 +13,7 @@ function isInStandaloneMode() {
 }
 
 export function PwaPrompt() {
+  const { t } = useLang();
   const [show, setShow] = useState(false);
   const [isIosDevice, setIsIosDevice] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -20,18 +22,16 @@ export function PwaPrompt() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (localStorage.getItem(STORAGE_KEY)) return;
-    if (isInStandaloneMode()) return; // already installed
+    if (isInStandaloneMode()) return;
 
     const ios = isIos();
     setIsIosDevice(ios);
 
     if (ios) {
-      // iOS: show manual install hint after delay
       const t = setTimeout(() => setShow(true), 5000);
       return () => clearTimeout(t);
     }
 
-    // Android / Chrome: wait for browser install event
     const onPrompt = (e: Event) => {
       e.preventDefault();
       setDeferredPrompt(e);
@@ -75,46 +75,37 @@ export function PwaPrompt() {
           aria-label="Install app"
         >
           <div className="rounded-2xl border border-white/10 bg-[#0c160c]/96 backdrop-blur-2xl shadow-[0_8px_40px_rgba(0,0,0,0.6)] overflow-hidden">
-            {/* Accent line */}
             <div className="h-[1.5px] bg-gradient-to-r from-transparent via-primary/60 to-transparent" />
 
             <div className="p-4 flex items-start gap-3">
-              {/* App icon */}
               <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-primary/15 border border-primary/25 flex items-center justify-center text-xl">
                 🎮
               </div>
 
-              {/* Text */}
               <div className="flex-1 min-w-0 pt-0.5">
                 <p className="font-display font-bold text-[11px] tracking-widest text-white/90 mb-0.5">
-                  INSTALL APP
+                  {t.pwaInstallApp}
                 </p>
                 {isIosDevice ? (
                   <p className="text-[11px] text-muted-foreground leading-relaxed">
-                    Tap <span className="inline-block text-white">⬆</span> Share, lalu{" "}
-                    <span className="text-primary font-semibold">Add to Home Screen</span>{" "}
-                    untuk main offline.
+                    {t.pwaIosHint("⬆")}
                   </p>
                 ) : (
                   <p className="text-[11px] text-muted-foreground leading-relaxed">
-                    Main offline, layar penuh,{" "}
-                    <span className="text-primary font-semibold">tanpa browser</span>.
-                    Simpan ke home screen.
+                    {t.pwaAndroidHint}
                   </p>
                 )}
               </div>
 
-              {/* Close */}
               <button
                 onClick={dismiss}
                 className="flex-shrink-0 w-5 h-5 flex items-center justify-center text-muted-foreground/40 hover:text-white/70 transition-colors text-xs mt-0.5"
-                aria-label="Tutup"
+                aria-label={t.pwaClose}
               >
                 ✕
               </button>
             </div>
 
-            {/* Buttons */}
             {!isIosDevice && (
               <div className="px-4 pb-4 flex gap-2">
                 <button
@@ -131,14 +122,14 @@ export function PwaPrompt() {
                       ○
                     </motion.span>
                   ) : (
-                    "INSTALL"
+                    t.pwaInstall
                   )}
                 </button>
                 <button
                   onClick={dismiss}
                   className="px-3 py-2 text-[11px] font-mono text-muted-foreground/60 hover:text-white/80 border border-white/8 hover:border-white/18 rounded-lg transition-all"
                 >
-                  Nanti
+                  {t.pwaLater}
                 </button>
               </div>
             )}
@@ -149,7 +140,7 @@ export function PwaPrompt() {
                   onClick={dismiss}
                   className="w-full py-2 text-[11px] font-mono text-muted-foreground/50 hover:text-white/70 border border-white/8 hover:border-white/15 rounded-lg transition-all"
                 >
-                  Mengerti
+                  {t.pwaGotIt}
                 </button>
               </div>
             )}
