@@ -19,15 +19,13 @@ function useGameSound() {
     const ctx = getCtx();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
+    osc.connect(gain); gain.connect(ctx.destination);
     osc.type = "square";
     osc.frequency.setValueAtTime(880, ctx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(220, ctx.currentTime + 0.12);
     gain.gain.setValueAtTime(0.18, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.14);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.15);
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.15);
   }, [muted]);
 
   const playClick = useCallback(() => {
@@ -35,15 +33,13 @@ function useGameSound() {
     const ctx = getCtx();
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
-    osc.connect(gain);
-    gain.connect(ctx.destination);
+    osc.connect(gain); gain.connect(ctx.destination);
     osc.type = "square";
     osc.frequency.setValueAtTime(440, ctx.currentTime);
     osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.06);
     gain.gain.setValueAtTime(0.12, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.08);
-    osc.start(ctx.currentTime);
-    osc.stop(ctx.currentTime + 0.1);
+    osc.start(ctx.currentTime); osc.stop(ctx.currentTime + 0.1);
   }, [muted]);
 
   return { muted, setMuted, playShoot, playClick };
@@ -60,101 +56,63 @@ function GlitchTitle() {
   }, []);
 
   return (
-    <motion.div
-      className="relative mb-6 select-none"
-      initial={{ opacity: 0, y: 40, scale: 0.92 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-    >
+    <motion.div className="relative mb-6 select-none"
+      initial={{ opacity: 0, y: 40, scale: 0.92 }} animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}>
       <h1 className="text-5xl md:text-8xl font-display font-black text-white tracking-tight glow-text-green relative z-10">
         SQUISH&nbsp;'EM!
       </h1>
-      {glitch && (
-        <>
-          <h1 className="text-5xl md:text-8xl font-display font-black tracking-tight absolute inset-0 z-20 pointer-events-none"
-            style={{ color: "#0ff", clipPath: "inset(20% 0 60% 0)", transform: "translateX(-4px)", opacity: 0.7 }}>
-            SQUISH&nbsp;'EM!
-          </h1>
-          <h1 className="text-5xl md:text-8xl font-display font-black tracking-tight absolute inset-0 z-20 pointer-events-none"
-            style={{ color: "#f0f", clipPath: "inset(60% 0 10% 0)", transform: "translateX(4px)", opacity: 0.7 }}>
-            SQUISH&nbsp;'EM!
-          </h1>
-        </>
-      )}
+      {glitch && (<>
+        <h1 className="text-5xl md:text-8xl font-display font-black tracking-tight absolute inset-0 z-20 pointer-events-none"
+          style={{ color: "#0ff", clipPath: "inset(20% 0 60% 0)", transform: "translateX(-4px)", opacity: 0.7 }}>SQUISH&nbsp;'EM!</h1>
+        <h1 className="text-5xl md:text-8xl font-display font-black tracking-tight absolute inset-0 z-20 pointer-events-none"
+          style={{ color: "#f0f", clipPath: "inset(60% 0 10% 0)", transform: "translateX(4px)", opacity: 0.7 }}>SQUISH&nbsp;'EM!</h1>
+      </>)}
     </motion.div>
   );
 }
 
 function FloatingOrb({ delay, size, color, x, y }: { delay: number; size: number; color: string; x: string; y: string }) {
   return (
-    <motion.div
-      className="absolute rounded-full pointer-events-none"
+    <motion.div className="absolute rounded-full pointer-events-none"
       style={{ width: size, height: size, background: color, left: x, top: y, filter: "blur(40px)" }}
       animate={{ y: [0, -30, 0], scale: [1, 1.12, 1], opacity: [0.18, 0.32, 0.18] }}
-      transition={{ duration: 6 + delay, repeat: Infinity, ease: "easeInOut", delay }}
-    />
+      transition={{ duration: 6 + delay, repeat: Infinity, ease: "easeInOut", delay }} />
   );
 }
 
 function BlobCounter() {
   const [count, setCount] = useState(0);
   const [animating, setAnimating] = useState(false);
-
   useEffect(() => {
     const stored = parseInt(localStorage.getItem("squish_total_blobs") || "0");
     setCount(stored);
-
     const onKill = (e: Event) => {
       const kills = (e as CustomEvent).detail?.kills ?? 1;
-      setCount(prev => {
-        const next = prev + kills;
-        localStorage.setItem("squish_total_blobs", String(next));
-        return next;
-      });
-      setAnimating(true);
-      setTimeout(() => setAnimating(false), 400);
+      setCount(prev => { const next = prev + kills; localStorage.setItem("squish_total_blobs", String(next)); return next; });
+      setAnimating(true); setTimeout(() => setAnimating(false), 400);
     };
-
     window.addEventListener("squish:kill", onKill);
     return () => window.removeEventListener("squish:kill", onKill);
   }, []);
-
   if (count === 0) return null;
-
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.85, y: 10 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
+    <motion.div initial={{ opacity: 0, scale: 0.85, y: 10 }} animate={{ opacity: 1, scale: 1, y: 0 }}
       transition={{ delay: 1.1, duration: 0.5 }}
-      className="flex items-center gap-2 px-4 py-2 rounded-full border border-primary/30 bg-primary/8 backdrop-blur-sm"
-    >
-      <motion.span
-        animate={animating ? { scale: [1, 1.5, 1], rotate: [0, 15, -15, 0] } : {}}
-        transition={{ duration: 0.35 }}
-        className="text-base"
-      >
-        💥
-      </motion.span>
-      <span className="font-mono text-xs text-primary/80">
-        YOU'VE SQUISHED{" "}
-        <motion.span
-          key={count}
-          initial={{ y: -8, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="font-bold text-primary"
-        >
+      className="flex items-center gap-2 px-4 py-2 rounded-full border border-primary/30 bg-primary/8 backdrop-blur-sm">
+      <motion.span animate={animating ? { scale: [1, 1.5, 1], rotate: [0, 15, -15, 0] } : {}} transition={{ duration: 0.35 }} className="text-base">💥</motion.span>
+      <span className="font-mono text-xs text-primary/80">YOU'VE SQUISHED{" "}
+        <motion.span key={count} initial={{ y: -8, opacity: 0 }} animate={{ y: 0, opacity: 1 }} className="font-bold text-primary">
           {count.toLocaleString()}
-        </motion.span>
-        {" "}BLOB{count !== 1 ? "S" : ""}
-      </span>
+        </motion.span>{" "}BLOB{count !== 1 ? "S" : ""}</span>
     </motion.div>
   );
 }
 
 const MARQUEE_ITEMS = [
-  "SHOOT BLOBS", "CHAIN COMBOS", "SURVIVE BOSSES", "RACK UP POINTS",
-  "COLLECT POWER-UPS", "CLIMB THE LEADERBOARD", "SQUISH 'EM ALL",
-  "NO INSTALL", "PURE ARCADE", "INFINITE LEVELS",
+  "SHOOT BLOBS","CHAIN COMBOS","SURVIVE BOSSES","RACK UP POINTS",
+  "COLLECT POWER-UPS","CLIMB THE LEADERBOARD","SQUISH 'EM ALL",
+  "NO INSTALL","PURE ARCADE","INFINITE LEVELS",
 ];
 
 function MarqueeTicker() {
@@ -164,8 +122,7 @@ function MarqueeTicker() {
       <div className="flex gap-8 whitespace-nowrap" style={{ animation: "marquee 28s linear infinite", width: "max-content" }}>
         {items.map((item, i) => (
           <span key={i} className="font-display font-bold text-xs tracking-widest text-primary/70 flex items-center gap-4">
-            {item}
-            <span className="text-primary/30">◆</span>
+            {item}<span className="text-primary/30">◆</span>
           </span>
         ))}
       </div>
@@ -173,102 +130,248 @@ function MarqueeTicker() {
   );
 }
 
+// ── Mini AI Agent Simulator ────────────────────────────────────────────────
+type Strategy = "greedy" | "combo" | "dqn";
+type ActionId = 0 | 1 | 2 | 3;
 
+interface Blob { id: number; x: number; y: number; vx: number; vy: number; hp: number; type: string; }
+interface GS { cannonX: number; blobs: Blob[]; bulletActive: boolean; bulletX: number; bulletY: number; comboMultiplier: number; score: number; }
+
+const BLOB_COLORS: Record<string, string> = { green:"#22c55e", purple:"#a855f7", yellow:"#eab308", blue:"#3b82f6", red:"#ef4444" };
+const ACTION_LABELS = ["MOVE_LEFT","MOVE_RIGHT","SHOOT","WAIT"];
+const ACTION_COLORS = ["#3b82f6","#a855f7","#22c55e","#f59e0b"];
+const STRAT_META: Record<Strategy,{label:string;color:string;desc:string}> = {
+  greedy: { label:"Greedy",  color:"#22c55e", desc:"Shoots first, asks questions later." },
+  combo:  { label:"Combo",   color:"#eab308", desc:"Waits for alignment, then bursts." },
+  dqn:    { label:"RL-DQN",  color:"#a855f7", desc:"50k replays. Adapts to every wave." },
+};
+
+function clamp(v:number,lo:number,hi:number){return Math.max(lo,Math.min(hi,v));}
+
+function makeBlobs():Blob[]{
+  const types=["green","purple","yellow","blue","red"];
+  return Array.from({length:4},(_,i)=>({id:i,x:0.15+(i/4)*0.7,y:0.1+Math.random()*0.35,vx:(Math.random()-0.5)*0.003,vy:Math.random()*0.002+0.001,hp:Math.floor(Math.random()*3)+1,type:types[i%types.length]}));
+}
+
+function computeQ(cannonX:number,blobs:Blob[],bulletActive:boolean,combo:number,strategy:Strategy):number[]{
+  const nearest=blobs.length?blobs.reduce((a,b)=>Math.abs(b.x-cannonX)<Math.abs(a.x-cannonX)?b:a):null;
+  const nx=nearest?.x??0.5,nhp=(nearest?.hp??0)/5,dist=Math.abs(nx-cannonX);
+  const cm=Math.min(combo/8,1);
+  if(strategy==="greedy"){
+    const shouldShoot=!bulletActive&&dist<0.15;
+    return [nx<cannonX-0.1?0.6+Math.random()*0.25:0.15+Math.random()*0.12, nx>cannonX+0.1?0.6+Math.random()*0.25:0.15+Math.random()*0.12, shouldShoot?0.75+nhp*0.12+Math.random()*0.1:0.18+Math.random()*0.08, 0.05+Math.random()*0.06].map(v=>+v.toFixed(3));
+  }
+  if(strategy==="combo"){
+    const aligned=dist<0.08,comboReady=cm>0.4;
+    return [nx<cannonX-0.06?0.55+Math.random()*0.2:0.1+Math.random()*0.08, nx>cannonX+0.06?0.55+Math.random()*0.2:0.1+Math.random()*0.08, aligned&&comboReady?0.8+Math.random()*0.15:0.12+Math.random()*0.08, !comboReady?0.62+Math.random()*0.22:0.1+Math.random()*0.08].map(v=>+v.toFixed(3));
+  }
+  const moveLeft=(nx<cannonX-0.05?0.5:0.1)+0.2+Math.random()*0.12;
+  const moveRight=(nx>cannonX+0.05?0.5:0.1)+0.2+Math.random()*0.12;
+  const shoot=!bulletActive&&dist<0.12?0.62+nhp*0.18+Math.random()*0.08:0.12+Math.random()*0.07;
+  const wait=cm<0.35?0.45+Math.random()*0.18:0.08+Math.random()*0.06;
+  return [moveLeft,moveRight,shoot,wait].map(v=>+Math.min(v,0.99).toFixed(3));
+}
+
+function AgentSimulatorSection() {
+  const [strategy,setStrategy]=useState<Strategy>("dqn");
+  const [gs,setGs]=useState<GS>({cannonX:0.5,blobs:makeBlobs(),bulletActive:false,bulletX:0.5,bulletY:0.9,comboMultiplier:1,score:0});
+  const [qv,setQv]=useState<number[]>([0.25,0.25,0.25,0.25]);
+  const [chosen,setChosen]=useState<ActionId>(2);
+  const [frame,setFrame]=useState(0);
+  const stratRef=useRef(strategy);
+  stratRef.current=strategy;
+
+  useEffect(()=>{
+    const id=setInterval(()=>{
+      setGs(prev=>{
+        let {blobs,bulletActive,bulletX,bulletY,score,comboMultiplier,cannonX}=prev;
+        blobs=blobs.map(b=>({...b,x:((b.x+b.vx+1)%1),y:clamp(b.y+b.vy*0.5,0.05,0.55),vx:Math.abs(b.x+b.vx)>1||b.x+b.vx<0?-b.vx:b.vx}));
+        if(bulletActive){
+          bulletY-=0.07;
+          const hit=blobs.find(b=>Math.abs(b.x-bulletX)<0.09&&Math.abs(b.y-bulletY)<0.1);
+          if(hit){score+=3*comboMultiplier;comboMultiplier=Math.min(comboMultiplier+0.5,8);blobs=blobs.map(b=>b.id===hit.id?{...b,hp:b.hp-1}:b).filter(b=>b.hp>0);bulletActive=false;}
+          else if(bulletY<-0.1){bulletActive=false;comboMultiplier=Math.max(1,comboMultiplier-0.5);}
+        }
+        if(blobs.length<2)blobs=[...blobs,...makeBlobs().slice(0,3)];
+        const newQ=computeQ(cannonX,blobs,bulletActive,comboMultiplier,stratRef.current);
+        const act=newQ.indexOf(Math.max(...newQ)) as ActionId;
+        setQv(newQ); setChosen(act); setFrame(f=>f+1);
+        let nx=cannonX,nb=bulletActive,bx=bulletX,by=bulletY;
+        if(act===0)nx=clamp(cannonX-0.045,0.05,0.95);
+        if(act===1)nx=clamp(cannonX+0.045,0.05,0.95);
+        if(act===2&&!bulletActive){nb=true;bx=nx;by=0.87;}
+        return {...prev,blobs,cannonX:nx,bulletActive:nb,bulletX:bx,bulletY:by,score,comboMultiplier};
+      });
+    },130);
+    return ()=>clearInterval(id);
+  },[]);
+
+  const meta=STRAT_META[strategy];
+  const maxQ=Math.max(...qv);
+
+  return (
+    <section className="border-t border-white/5 py-20 bg-background">
+      <div className="container mx-auto px-4 max-w-5xl">
+        <motion.div initial={{opacity:0,y:20}} whileInView={{opacity:1,y:0}} viewport={{once:true,margin:"-60px"}} transition={{duration:0.5}} className="mb-10">
+          <p className="font-mono text-xs text-primary/60 tracking-widest mb-3">LIVE DEMO</p>
+          <div className="flex flex-col sm:flex-row sm:items-end gap-4 justify-between">
+            <div>
+              <h2 className="font-display font-black text-3xl md:text-4xl text-white tracking-tight">AI Mining Agent</h2>
+              <p className="text-muted-foreground text-sm mt-2 max-w-md leading-relaxed">
+                Python RL agent plays the game autonomously. Watch it decide every 130ms — state vector → Q-network → action.
+              </p>
+            </div>
+            <Link href="/ai-agent" className="flex-shrink-0 font-mono text-xs text-primary/70 border border-primary/30 px-4 py-2 rounded hover:bg-primary/8 transition-all hover:text-primary whitespace-nowrap">
+              Full Simulator →
+            </Link>
+          </div>
+        </motion.div>
+
+        {/* Strategy tabs */}
+        <div className="flex gap-2 flex-wrap mb-5">
+          {(["greedy","combo","dqn"] as Strategy[]).map(s=>{
+            const m=STRAT_META[s]; const active=s===strategy;
+            return (
+              <button key={s} onClick={()=>{setStrategy(s);}}
+                className={`px-4 py-2 rounded-lg border font-mono text-xs tracking-wider transition-all duration-200 ${active?"border-opacity-60 text-white":"border-white/10 text-muted-foreground/50 hover:border-white/20 hover:text-white/60"}`}
+                style={active?{borderColor:m.color+"88",background:m.color+"14",color:m.color}:{}}>
+                <span className="flex items-center gap-2">
+                  {active&&<motion.span className="w-1.5 h-1.5 rounded-full" style={{background:m.color}} animate={{scale:[1,1.4,1]}} transition={{duration:0.7,repeat:Infinity}}/>}
+                  {m.label}
+                </span>
+              </button>
+            );
+          })}
+          <div className="ml-auto flex items-center gap-2 font-mono text-[10px] text-muted-foreground/30">
+            <motion.div className="w-1.5 h-1.5 rounded-full" style={{background:meta.color}}
+              animate={{scale:[1,1.3,1],opacity:[1,0.4,1]}} transition={{duration:0.55,repeat:Infinity}}/>
+            FRAME {frame.toLocaleString()}
+          </div>
+        </div>
+
+        <AnimatePresence mode="wait">
+          <motion.p key={strategy} initial={{opacity:0,y:4}} animate={{opacity:1,y:0}} exit={{opacity:0}}
+            transition={{duration:0.2}} className="text-xs text-muted-foreground/50 mb-6 font-mono">
+            {meta.desc}
+          </motion.p>
+        </AnimatePresence>
+
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+          {/* Game board */}
+          <div className="lg:col-span-3">
+            <div className="relative w-full h-52 rounded-xl border border-white/10 bg-black/50 overflow-hidden select-none">
+              {[...Array(20)].map((_,i)=>(
+                <div key={i} className="absolute rounded-full bg-white/15" style={{width:1,height:1,left:`${(i*41+7)%100}%`,top:`${(i*53+11)%70}%`}}/>
+              ))}
+              {/* Grid lines faint */}
+              <div className="absolute inset-0 opacity-[0.03]" style={{backgroundImage:"linear-gradient(#22c55e 1px,transparent 1px),linear-gradient(90deg,#22c55e 1px,transparent 1px)",backgroundSize:"40px 40px"}}/>
+
+              {gs.blobs.map(blob=>(
+                <motion.div key={blob.id} className="absolute rounded-full"
+                  style={{width:26,height:26,left:`calc(${blob.x*100}% - 13px)`,top:`calc(${blob.y*100}% - 13px)`,
+                    background:`radial-gradient(circle at 35% 30%, ${BLOB_COLORS[blob.type]}cc, ${BLOB_COLORS[blob.type]}55)`,
+                    boxShadow:`0 0 10px ${BLOB_COLORS[blob.type]}44`}}
+                  animate={{scale:[1,1.06,1]}} transition={{duration:1.8+blob.id*0.3,repeat:Infinity,ease:"easeInOut"}}>
+                  <div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"100%",gap:3}}>
+                    <div style={{width:5,height:5,borderRadius:"50%",background:"rgba(0,0,0,0.5)"}}/>
+                    <div style={{width:5,height:5,borderRadius:"50%",background:"rgba(0,0,0,0.5)"}}/>
+                  </div>
+                </motion.div>
+              ))}
+
+              {gs.bulletActive&&(
+                <motion.div className="absolute rounded-full"
+                  style={{width:5,height:13,left:`calc(${gs.bulletX*100}% - 2.5px)`,top:`calc(${gs.bulletY*100}% - 6.5px)`,
+                    background:"linear-gradient(to top,#22c55e,#86efac)",boxShadow:"0 0 8px #22c55e"}}/>
+              )}
+
+              <motion.div className="absolute bottom-0 flex flex-col items-center"
+                style={{left:`calc(${gs.cannonX*100}% - 9px)`}} transition={{type:"spring",stiffness:320,damping:26}}>
+                <div className="w-2 h-5 rounded-sm bg-gradient-to-t from-primary to-primary/70" style={{boxShadow:"0 0 7px #22c55e55"}}/>
+                <div className="w-5 h-2 rounded-sm bg-primary/80"/>
+              </motion.div>
+
+              {/* Labels */}
+              <div className="absolute top-2 left-2 font-mono text-[9px] text-primary/40">
+                SCORE {gs.score.toLocaleString()}
+              </div>
+              <div className="absolute top-2 right-2">
+                <span className="font-mono text-[9px] tracking-widest px-1.5 py-0.5 rounded border"
+                  style={{color:ACTION_COLORS[chosen],borderColor:ACTION_COLORS[chosen]+"44",background:ACTION_COLORS[chosen]+"11"}}>
+                  {ACTION_LABELS[chosen]}
+                </span>
+              </div>
+              <div className="absolute bottom-2 left-2 font-mono text-[9px] text-muted-foreground/25">
+                COMBO ×{gs.comboMultiplier.toFixed(1)}
+              </div>
+            </div>
+          </div>
+
+          {/* Q-values */}
+          <div className="lg:col-span-2 rounded-xl border border-white/8 bg-white/[0.02] p-4">
+            <p className="font-mono text-[10px] text-primary/50 tracking-widest mb-3">Q-VALUES</p>
+            <div className="space-y-2.5">
+              {qv.map((q,i)=>{
+                const isC=i===chosen; const pct=maxQ>0?(q/maxQ)*100:0;
+                return (
+                  <div key={i} className={`rounded-lg p-2.5 border transition-all duration-300 ${isC?"border-white/15 bg-white/[0.03]":"border-white/5"}`}>
+                    <div className="flex items-center justify-between mb-1.5 gap-1">
+                      <span className="font-mono text-[9px] tracking-widest flex items-center gap-1.5"
+                        style={{color:isC?ACTION_COLORS[i]:"#ffffff33"}}>
+                        {isC&&<motion.span className="w-1 h-1 rounded-full" style={{background:ACTION_COLORS[i]}} animate={{scale:[1,1.5,1]}} transition={{duration:0.5,repeat:Infinity}}/>}
+                        {ACTION_LABELS[i]}
+                      </span>
+                      <span className="font-mono text-[9px] text-white/35">{q.toFixed(3)}</span>
+                    </div>
+                    <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
+                      <motion.div className="h-full rounded-full" style={{background:isC?ACTION_COLORS[i]:"#ffffff18"}}
+                        animate={{width:`${pct}%`}} transition={{duration:0.3,ease:"easeOut"}}/>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            <Link href="/ai-agent"
+              className="mt-4 block text-center font-mono text-[9px] text-primary/40 hover:text-primary/70 transition-colors tracking-widest">
+              VIEW FULL SIMULATOR →
+            </Link>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── BuiltWith ──────────────────────────────────────────────────────────────
 function BuiltWith() {
   const TECHS = [
-    {
-      category: "Frontend",
-      color: "127,65%,52%",
-      items: [
-        { name: "React 18",        desc: "UI component engine"          },
-        { name: "TypeScript",      desc: "Type-safe codebase"           },
-        { name: "Vite",            desc: "Dev server & bundler"         },
-        { name: "Framer Motion",   desc: "Animations & transitions"     },
-        { name: "Tailwind CSS",    desc: "Utility-first styling"        },
-      ],
-    },
-    {
-      category: "Blockchain",
-      color: "263,68%,60%",
-      items: [
-        { name: "Solana",          desc: "Layer-1 chain for $SQUISH"    },
-        { name: "Anchor",          desc: "Smart contract framework"     },
-        { name: "$SQUISH SPL",     desc: "In-game token standard"       },
-        { name: "Phantom Wallet",  desc: "Web3 wallet integration"      },
-        { name: "Helius RPC",      desc: "High-speed Solana node"       },
-      ],
-    },
-    {
-      category: "AI & Python",
-      color: "48,95%,58%",
-      items: [
-        { name: "Python 3.12",     desc: "AI agent runtime"             },
-        { name: "RL-DQN",          desc: "Reinforcement learning model" },
-        { name: "NumPy",           desc: "State vector processing"      },
-        { name: "WebSocket",       desc: "Real-time agent↔game bridge"  },
-        { name: "ONNX Runtime",    desc: "On-device model inference"    },
-      ],
-    },
-    {
-      category: "Infrastructure",
-      color: "215,88%,62%",
-      items: [
-        { name: "Vercel Edge",     desc: "Global CDN deployment"        },
-        { name: "PWA / SW",        desc: "Offline & installable"        },
-        { name: "GitHub Actions",  desc: "CI / auto-changelog"          },
-        { name: "Canvas API",      desc: "Game rendering engine"        },
-        { name: "Web Audio API",   desc: "8-bit sound synthesis"        },
-      ],
-    },
+    { category:"Frontend", color:"127,65%,52%", items:[{name:"React 18",desc:"UI component engine"},{name:"TypeScript",desc:"Type-safe codebase"},{name:"Vite",desc:"Dev server & bundler"},{name:"Framer Motion",desc:"Animations & transitions"},{name:"Tailwind CSS",desc:"Utility-first styling"}] },
+    { category:"Blockchain", color:"263,68%,60%", items:[{name:"Solana",desc:"Layer-1 chain for $SQUISH"},{name:"Anchor",desc:"Smart contract framework"},{name:"$SQUISH SPL",desc:"In-game token standard"},{name:"Phantom Wallet",desc:"Web3 wallet integration"},{name:"Helius RPC",desc:"High-speed Solana node"}] },
+    { category:"AI & Python", color:"48,95%,58%", items:[{name:"Python 3.12",desc:"AI agent runtime"},{name:"RL-DQN",desc:"Reinforcement learning model"},{name:"NumPy",desc:"State vector processing"},{name:"WebSocket",desc:"Real-time agent↔game bridge"},{name:"ONNX Runtime",desc:"On-device model inference"}] },
+    { category:"Infrastructure", color:"215,88%,62%", items:[{name:"Vercel Edge",desc:"Global CDN deployment"},{name:"PWA / SW",desc:"Offline & installable"},{name:"GitHub Actions",desc:"CI / auto-changelog"},{name:"Canvas API",desc:"Game rendering engine"},{name:"Web Audio API",desc:"8-bit sound synthesis"}] },
   ];
 
   return (
     <section className="border-t border-white/5 py-20 bg-background">
       <div className="container mx-auto px-4 max-w-5xl">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5 }}
-          className="mb-12"
-        >
+        <motion.div initial={{opacity:0,y:20}} whileInView={{opacity:1,y:0}} viewport={{once:true,margin:"-60px"}} transition={{duration:0.5}} className="mb-12">
           <p className="font-mono text-xs text-primary/60 tracking-widest mb-3">STACK</p>
-          <h2 className="font-display font-black text-3xl md:text-4xl text-white tracking-tight">
-            Built With
-          </h2>
-          <p className="text-muted-foreground text-sm mt-3 max-w-lg leading-relaxed">
-            Open, modern tech from browser to blockchain. No proprietary lock-in.
-          </p>
+          <h2 className="font-display font-black text-3xl md:text-4xl text-white tracking-tight">Built With</h2>
+          <p className="text-muted-foreground text-sm mt-3 max-w-lg leading-relaxed">Open, modern tech from browser to blockchain. No proprietary lock-in.</p>
         </motion.div>
-
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          {TECHS.map((group, gi) => (
-            <motion.div
-              key={group.category}
-              initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-40px" }}
-              transition={{ duration: 0.4, delay: gi * 0.08 }}
-              className="rounded-xl border border-white/8 bg-white/[0.02] p-5 hover:border-white/16 transition-colors"
-            >
+          {TECHS.map((group,gi)=>(
+            <motion.div key={group.category} initial={{opacity:0,y:24}} whileInView={{opacity:1,y:0}}
+              viewport={{once:true,margin:"-40px"}} transition={{duration:0.4,delay:gi*0.08}}
+              className="rounded-xl border border-white/8 bg-white/[0.02] p-5 hover:border-white/16 transition-colors">
               <div className="flex items-center gap-2 mb-4">
-                <span
-                  className="w-2 h-2 rounded-full flex-shrink-0"
-                  style={{ background: `hsl(${group.color})`, boxShadow: `0 0 6px hsl(${group.color} / 0.6)` }}
-                />
-                <span
-                  className="font-mono text-[10px] tracking-widest font-bold"
-                  style={{ color: `hsl(${group.color})` }}
-                >
-                  {group.category.toUpperCase()}
-                </span>
+                <span className="w-2 h-2 rounded-full flex-shrink-0" style={{background:`hsl(${group.color})`,boxShadow:`0 0 6px hsl(${group.color} / 0.6)`}}/>
+                <span className="font-mono text-[10px] tracking-widest font-bold" style={{color:`hsl(${group.color})`}}>{group.category.toUpperCase()}</span>
               </div>
               <ul className="space-y-3">
-                {group.items.map((item, ii) => (
-                  <motion.li
-                    key={item.name}
-                    initial={{ opacity: 0, x: -8 }} whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.3, delay: gi * 0.08 + ii * 0.04 }}
-                    className="flex items-center justify-between gap-3"
-                  >
+                {group.items.map((item,ii)=>(
+                  <motion.li key={item.name} initial={{opacity:0,x:-8}} whileInView={{opacity:1,x:0}} viewport={{once:true}}
+                    transition={{duration:0.3,delay:gi*0.08+ii*0.04}} className="flex items-center justify-between gap-3">
                     <span className="text-sm font-medium text-white/85">{item.name}</span>
                     <span className="text-[11px] text-muted-foreground/50 text-right leading-tight">{item.desc}</span>
                   </motion.li>
@@ -277,12 +380,8 @@ function BuiltWith() {
             </motion.div>
           ))}
         </div>
-
-        <motion.p
-          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
-          viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.3 }}
-          className="font-mono text-[10px] text-muted-foreground/25 mt-8 text-center"
-        >
+        <motion.p initial={{opacity:0}} whileInView={{opacity:1}} viewport={{once:true}} transition={{duration:0.5,delay:0.3}}
+          className="font-mono text-[10px] text-muted-foreground/25 mt-8 text-center">
           All game logic runs client-side — zero backend latency during gameplay.
         </motion.p>
       </div>
@@ -290,6 +389,7 @@ function BuiltWith() {
   );
 }
 
+// ── Main page ──────────────────────────────────────────────────────────────
 export default function Home() {
   const { muted, setMuted, playShoot, playClick } = useGameSound();
   const heroRef = useRef<HTMLElement>(null);
@@ -317,29 +417,21 @@ export default function Home() {
       `}</style>
 
       {/* Sound Toggle */}
-      <motion.button
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 1.2 }}
+      <motion.button initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 1.2 }}
         onClick={() => { setMuted(m => !m); playClick(); }}
         className="fixed bottom-6 right-6 z-50 w-11 h-11 rounded-full border border-primary/40 bg-background/80 backdrop-blur-md flex items-center justify-center text-lg hover:border-primary hover:glow-box-green transition-all group"
-        title={muted ? "Unmute sounds" : "Mute sounds"}
-      >
+        title={muted ? "Unmute sounds" : "Mute sounds"}>
         <span className="group-hover:scale-110 transition-transform">{muted ? "🔇" : "🔊"}</span>
       </motion.button>
 
       {/* Sticky scroll CTA */}
       <AnimatePresence>
         {showScrollCta && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.3 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50"
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} transition={{ duration: 0.3 }}
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
             <Link href="/play" onClick={playShoot}
               className="flex items-center gap-2 bg-primary/90 hover:bg-primary text-primary-foreground px-6 py-2.5 rounded-full font-display font-bold text-sm tracking-wider glow-box-green backdrop-blur-md transition-all hover:scale-105">
-              <motion.span animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 0.8, repeat: Infinity }}
-                className="w-2 h-2 rounded-full bg-primary-foreground inline-block" />
+              <motion.span animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 0.8, repeat: Infinity }} className="w-2 h-2 rounded-full bg-primary-foreground inline-block" />
               PLAY NOW
             </Link>
           </motion.div>
@@ -350,75 +442,49 @@ export default function Home() {
       <section ref={heroRef} className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden border-b border-white/5">
         <div className="absolute inset-0 bg-background z-0" />
         <HeroCanvas />
-
         <FloatingOrb delay={0}   size={320} color="radial-gradient(circle, hsla(127,65%,52%,0.3), transparent)" x="10%"  y="20%" />
         <FloatingOrb delay={1.5} size={260} color="radial-gradient(circle, hsla(263,68%,58%,0.25), transparent)" x="70%"  y="55%" />
         <FloatingOrb delay={3}   size={200} color="radial-gradient(circle, hsla(48,95%,58%,0.2), transparent)"  x="55%"  y="10%" />
         <FloatingOrb delay={2}   size={180} color="radial-gradient(circle, hsla(360,100%,71%,0.15), transparent)" x="85%" y="15%" />
-
         <div className="absolute inset-0 scanline z-0 opacity-15 pointer-events-none" />
         <div className="absolute inset-0 z-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%)" }} />
-        <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.04]" style={{
-          backgroundImage: "linear-gradient(hsl(127 49% 60%) 1px, transparent 1px), linear-gradient(90deg, hsl(127 49% 60%) 1px, transparent 1px)",
-          backgroundSize: "60px 60px"
-        }} />
+        <div className="absolute inset-0 z-0 pointer-events-none opacity-[0.04]" style={{ backgroundImage: "linear-gradient(hsl(127 49% 60%) 1px, transparent 1px), linear-gradient(90deg, hsl(127 49% 60%) 1px, transparent 1px)", backgroundSize: "60px 60px" }} />
 
         <motion.div style={{ y: springY, opacity: opacityHero }} className="container relative z-10 mx-auto px-4 text-center">
           <motion.div className="max-w-3xl mx-auto flex flex-col items-center">
-
             <GlitchTitle />
-
-            <motion.p
-              initial={{ opacity: 0, y: 20, filter: "blur(8px)" }}
-              animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            <motion.p initial={{ opacity: 0, y: 20, filter: "blur(8px)" }} animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
               transition={{ duration: 0.7, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="text-xl md:text-2xl text-muted-foreground mb-10 font-medium"
-            >
+              className="text-xl md:text-2xl text-muted-foreground mb-10 font-medium">
               Shoot blobs. Chain combos. Survive the boss waves.
             </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 24, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
+            <motion.div initial={{ opacity: 0, y: 24, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-              className="flex flex-col items-center gap-4"
-            >
+              className="flex flex-col items-center gap-4">
               <div className="relative">
                 <div className="absolute inset-0 rounded" style={{ background: "hsl(127 49% 60% / 0.4)", animation: "pulse-ring 2s ease-out infinite" }} />
                 <Link href="/play" onClick={playShoot}
                   className="relative group bg-primary hover:bg-primary/90 text-primary-foreground px-12 py-5 rounded font-display font-bold text-xl tracking-wider glow-box-green transition-all transform hover:-translate-y-1 hover:scale-105 inline-block overflow-hidden"
-                  data-testid="hero-play-btn"
-                >
+                  data-testid="hero-play-btn">
                   <span className="relative z-10 flex items-center gap-3">
-                    <motion.span animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 0.8, repeat: Infinity }}
-                      className="w-2 h-2 rounded-full bg-primary-foreground inline-block" />
+                    <motion.span animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 0.8, repeat: Infinity }} className="w-2 h-2 rounded-full bg-primary-foreground inline-block" />
                     START PLAYING
                   </span>
                   <motion.span className="absolute inset-0 bg-white/10" initial={{ x: "-100%" }} whileHover={{ x: "100%" }} transition={{ duration: 0.4 }} />
                 </Link>
               </div>
-
               <span className="text-xs text-muted-foreground/50 font-mono">No install · No login · Runs in browser</span>
-
               <BlobCounter />
-
               {bestScore !== null && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.9, duration: 0.4 }}
-                  className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/10 border border-accent/30 font-mono text-xs text-accent"
-                >
-                  <span>🏆</span>
-                  <span>YOUR BEST: {bestScore.toLocaleString()}</span>
+                <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.9, duration: 0.4 }}
+                  className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-accent/10 border border-accent/30 font-mono text-xs text-accent">
+                  <span>🏆</span><span>YOUR BEST: {bestScore.toLocaleString()}</span>
                 </motion.div>
               )}
             </motion.div>
-
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1.6 }} className="mt-14">
-              <motion.div
-                animate={{ y: [0, 8, 0] }} transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
-                className="w-6 h-6 mx-auto border-r-2 border-b-2 border-primary/50 rotate-45"
-              />
+              <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                className="w-6 h-6 mx-auto border-r-2 border-b-2 border-primary/50 rotate-45" />
             </motion.div>
           </motion.div>
         </motion.div>
@@ -426,21 +492,17 @@ export default function Home() {
         <div className="absolute bottom-0 left-0 right-0 bg-black/50 border-t border-primary/20 backdrop-blur-md z-10 py-3 hidden md:block">
           <div className="container mx-auto px-4 flex justify-between items-center font-mono text-xs text-primary">
             <span>[ SYS: ONLINE ]</span>
-            <div className="flex gap-8">
-              <span>ENEMIES: 05</span>
-              <span>POWER-UPS: 06</span>
-              <span>LEVELS: ∞</span>
-              <span>DEP: 00</span>
-            </div>
-            <motion.span animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1.1, repeat: Infinity }}>
-              _WAITING_FOR_INPUT
-            </motion.span>
+            <div className="flex gap-8"><span>ENEMIES: 05</span><span>POWER-UPS: 06</span><span>LEVELS: ∞</span><span>DEP: 00</span></div>
+            <motion.span animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1.1, repeat: Infinity }}>_WAITING_FOR_INPUT</motion.span>
           </div>
         </div>
       </section>
 
       {/* ── Marquee Ticker ───────────────────────────────────────────────── */}
       <MarqueeTicker />
+
+      {/* ── AI Agent Simulator ────────────────────────────────────────────── */}
+      <AgentSimulatorSection />
 
       {/* ── Built With ────────────────────────────────────────────────────── */}
       <BuiltWith />

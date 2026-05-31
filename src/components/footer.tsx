@@ -41,12 +41,11 @@ export function Footer() {
               </ul>
             </div>
             <div>
-              <h4 className="font-display font-bold text-xs tracking-widest text-muted-foreground mb-4 uppercase">Built With</h4>
-              <div className="flex flex-wrap gap-1.5 mb-4">
-                {["Canvas 2D", "Web Audio", "rAF", "localStorage", "Touch Events"].map(t => (
-                  <span key={t} className="text-xs bg-white/5 border border-white/8 px-2 py-0.5 rounded text-muted-foreground">{t}</span>
-                ))}
-              </div>
+              <h4 className="font-display font-bold text-xs tracking-widest text-muted-foreground mb-4 uppercase">AI Agent</h4>
+              <ul className="space-y-2.5 mb-4">
+                <li><Link href="/tech" className="text-sm text-muted-foreground hover:text-primary transition-colors">🧠 Architecture</Link></li>
+                <li><Link href="/ai-agent" className="text-sm text-muted-foreground hover:text-primary transition-colors">⚡ Live Simulator</Link></li>
+              </ul>
               <motion.a href="https://orynth.dev/projects/squishem" target="_blank" rel="noopener noreferrer"
                 whileHover={{ scale: 1.04, y: -1 }} className="inline-block transition-all">
                 <img src="https://orynth.dev/api/badge/squishem?theme=light&style=default" alt="Featured on Orynth"
