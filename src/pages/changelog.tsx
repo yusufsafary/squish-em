@@ -1,19 +1,12 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useLang } from "@/lib/i18n";
 
 interface CommitEntry { sha: string; message: string; timestamp: string; }
 interface BuildEntry { date: string; commits: CommitEntry[]; }
 interface ChangelogData { generated: string; builds: BuildEntry[]; }
 
 type Category = "all" | "gameplay" | "ui" | "blockchain" | "fixes";
-
-const CATEGORIES: { id: Category; label: string }[] = [
-  { id: "all",        label: "Semua"      },
-  { id: "gameplay",   label: "Gameplay"   },
-  { id: "ui",         label: "UI / Design"},
-  { id: "blockchain", label: "Blockchain" },
-  { id: "fixes",      label: "Bug Fixes"  },
-];
 
 const GAMEPLAY_KW   = /blob|boss|enemy|power.?up|squish|game|level|combo|shoot|leaderboard|difficulty|cannon|score|wave|nuke|freeze|crit|frenzy|mining.?agent|2p|multiplayer|powerup|kill|bullet|projectile|spawn|health/i;
 const UI_KW         = /nav|footer|hero|homepage|home.?page|landing|animation|visual|design|layout|banner|marquee|badge|font|style|icon|button|dark|ui|ux|responsive|mobile.?menu|hamburger|scroll|glassmorphic|ticker|card/i;
@@ -36,10 +29,10 @@ function parseCommit(msg: string) {
   return { type: "", title: msg };
 }
 
-function toSentence(items: string[]): string {
+function toSentence(items: string[], andWord: string): string {
   if (items.length === 0) return "";
   if (items.length === 1) return items[0] + ".";
-  return items.slice(0, -1).join(", ") + ", dan " + items[items.length - 1] + ".";
+  return items.slice(0, -1).join(", ") + ", " + andWord + " " + items[items.length - 1] + ".";
 }
 
 function buildSummary(commits: CommitEntry[], activeFilter: Category) {
@@ -58,12 +51,25 @@ function buildSummary(commits: CommitEntry[], activeFilter: Category) {
   return { feats, fixes };
 }
 
-function formatDate(dateStr: string): string {
+function formatDate(dateStr: string, lang: string): string {
   const d = new Date(dateStr + "T00:00:00Z");
-  return d.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+  if (lang === "ja") {
+    return d.toLocaleDateString("ja-JP", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
+  }
+  return d.toLocaleDateString("en-US", { day: "numeric", month: "long", year: "numeric", timeZone: "UTC" });
 }
 
 export default function Changelog() {
+  const { lang, t } = useLang();
+
+  const CATEGORIES: { id: Category; label: string }[] = [
+    { id: "all",        label: t.changelogAll      },
+    { id: "gameplay",   label: t.changelogGameplay  },
+    { id: "ui",         label: t.changelogUi        },
+    { id: "blockchain", label: t.changelogBlockchain },
+    { id: "fixes",      label: t.changelogFixes     },
+  ];
+
   const [data, setData]       = useState<ChangelogData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError]     = useState(false);
@@ -93,7 +99,7 @@ export default function Changelog() {
           <p className="font-mono text-xs text-primary/60 tracking-widest mb-3">SQUISHEM.FUN</p>
           <h1 className="font-display font-black text-4xl md:text-5xl text-white tracking-tight mb-4">Changelog</h1>
           <p className="text-muted-foreground text-sm leading-relaxed max-w-md">
-            Ringkasan update terbaru. Kami terus improve setiap hari.
+            {t.changelogDesc}
           </p>
         </motion.div>
 
@@ -136,7 +142,7 @@ export default function Changelog() {
 
         {error && (
           <p className="font-mono text-xs text-muted-foreground/40 pl-8">
-            Changelog tidak tersedia. Coba lagi nanti.
+            {t.changelogError}
           </p>
         )}
 
@@ -162,17 +168,17 @@ export default function Changelog() {
                     >
                       <div className="absolute left-0 top-1.5 w-3 h-3 rounded-full border-2 border-primary bg-primary/20" />
                       <p className="font-mono text-[11px] text-primary/50 tracking-widest mb-2">
-                        {formatDate(build.date)}
+                        {formatDate(build.date, lang)}
                       </p>
                       {feats.length > 0 && (
                         <p className="text-sm text-white/80 leading-relaxed mb-2">
-                          {toSentence(feats)}
+                          {toSentence(feats, t.changelogAnd)}
                         </p>
                       )}
                       {fixes.length > 0 && (
                         <p className="text-xs text-muted-foreground/50 leading-relaxed">
                           <span className="text-yellow-400/60 font-mono text-[10px] mr-1.5">FIXED</span>
-                          {toSentence(fixes)}
+                          {toSentence(fixes, t.changelogAnd)}
                         </p>
                       )}
                     </motion.div>
@@ -181,7 +187,7 @@ export default function Changelog() {
 
                 {data.builds.every(b => !hasContent(b)) && (
                   <p className="pl-8 font-mono text-xs text-muted-foreground/35">
-                    Belum ada update di kategori ini.
+                    {t.changelogEmpty}
                   </p>
                 )}
               </div>
@@ -192,8 +198,8 @@ export default function Changelog() {
         {data && (
           <div className="mt-14 pt-5 border-t border-white/5">
             <p className="font-mono text-[10px] text-muted-foreground/25">
-              Diperbarui:{" "}
-              {new Date(data.generated).toLocaleString("id-ID", {
+              {t.changelogUpdated}{" "}
+              {new Date(data.generated).toLocaleString(lang === "ja" ? "ja-JP" : "en-US", {
                 day: "numeric", month: "short", year: "numeric",
                 hour: "2-digit", minute: "2-digit",
               })}
