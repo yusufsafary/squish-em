@@ -230,7 +230,7 @@ export default function Home() {
       </AnimatePresence>
 
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
-      <section ref={heroRef} className="relative min-h-[92vh] flex items-center justify-center overflow-hidden border-b border-white/5">
+      <section ref={heroRef} className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden border-b border-white/5">
         <div className="absolute inset-0 bg-background z-0" />
         <HeroCanvas />
 
@@ -324,67 +324,6 @@ export default function Home() {
 
       {/* ── Marquee Ticker ───────────────────────────────────────────────── */}
       <MarqueeTicker />
-
-      {/* ── Final CTA ────────────────────────────────────────────────────── */}
-      <section className="py-24 relative overflow-hidden flex-1">
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 60% 80% at 50% 60%, hsla(127,49%,60%,0.08), transparent)" }} />
-        <div className="absolute inset-0 scanline z-0 opacity-5 pointer-events-none" />
-        <div className="absolute top-0 left-0 w-40 h-40 border-l-2 border-t-2 border-primary/8 rounded-tl-2xl pointer-events-none" />
-        <div className="absolute bottom-0 right-0 w-40 h-40 border-r-2 border-b-2 border-primary/8 rounded-br-2xl pointer-events-none" />
-
-        <div className="container mx-auto px-4 relative z-10 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-60px" }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <span className="font-mono text-xs text-primary/50 tracking-widest uppercase mb-4 block">— No download required —</span>
-            <h2 className="text-4xl md:text-6xl font-display font-black text-white mb-4 glow-text-green">
-              READY TO<br />SQUISH?
-            </h2>
-            <p className="text-muted-foreground mb-10 max-w-sm mx-auto">
-              Jump straight in. Zero friction. Just pure arcade chaos — directly in your browser.
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.97 }}>
-                <Link href="/play" onClick={playShoot}
-                  className="flex items-center gap-3 bg-primary hover:bg-primary/90 text-primary-foreground px-10 py-4 rounded font-display font-bold text-lg tracking-wider glow-box-green transition-all">
-                  <motion.span animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 0.8, repeat: Infinity }}
-                    className="w-2 h-2 rounded-full bg-primary-foreground inline-block" />
-                  PLAY NOW — FREE
-                </Link>
-              </motion.div>
-              <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-                <Link href="/how-to-play"
-                  className="flex items-center gap-2 border border-white/20 hover:border-primary/50 text-muted-foreground hover:text-white px-8 py-4 rounded font-display font-bold text-sm tracking-wider transition-all backdrop-blur-sm">
-                  READ THE GUIDE
-                </Link>
-              </motion.div>
-            </div>
-
-            {/* Quick feature pills */}
-            <motion.div
-              className="flex flex-wrap justify-center gap-2"
-              initial="hidden"
-              whileInView="show"
-              viewport={{ once: true }}
-              variants={{ hidden: {}, show: { transition: { staggerChildren: 0.06 } } }}
-            >
-              {["∞ Infinite Levels", "×4 Combo System", "6 Power-Ups", "Boss Waves", "No Install"].map((pill) => (
-                <motion.span
-                  key={pill}
-                  variants={{ hidden: { opacity: 0, scale: 0.85 }, show: { opacity: 1, scale: 1, transition: { duration: 0.35 } } }}
-                  className="px-3 py-1 rounded-full border border-white/10 bg-white/5 text-xs font-mono text-muted-foreground"
-                >
-                  {pill}
-                </motion.span>
-              ))}
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
     </main>
   );
 }
