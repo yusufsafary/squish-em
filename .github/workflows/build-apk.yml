@@ -1,0 +1,153 @@
+name: Build Beta APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Capacitor
+        run: |
+          npm install --save-exact \
+            @capacitor/core@6.2.0 \
+            @capacitor/android@6.2.0
+          npm install --save-dev --save-exact \
+            @capacitor/cli@6.2.0
+
+      - name: Prepare www directory
+        run: |
+          mkdir -p www
+          # Use game.html as the app entry point
+          cp game.html www/index.html
+          # Copy supporting assets
+          [ -f favicon.svg ] && cp favicon.svg www/
+          [ -f manifest.json ] && cp manifest.json www/
+          [ -f service-worker.js ] && cp service-worker.js www/ || true
+          [ -d public ] && cp -r public www/ || true
+          echo "www contents:"
+          ls -lah www/
+
+      - name: Write capacitor.config.json
+        run: |
+          cat > capacitor.config.json << 'JSON'
+          {
+            "appId": "fun.squishem.app",
+            "appName": "Squish Em",
+            "webDir": "www",
+            "server": {
+              "androidScheme": "https"
+            },
+            "plugins": {
+              "SplashScreen": {
+                "launchShowDuration": 1800,
+                "backgroundColor": "#05031a",
+                "showSpinner": false,
+                "androidSplashResourceName": "splash"
+              }
+            }
+          }
+          JSON
+
+      - name: Initialize Capacitor & Add Android
+        run: |
+          npx cap init "Squish Em" "fun.squishem.app" --web-dir www
+          npx cap add android
+          npx cap sync android
+
+      - name: Customize Android branding
+        run: |
+          # App colors
+          cat > android/app/src/main/res/values/colors.xml << 'XML'
+          <?xml version="1.0" encoding="utf-8"?>
+          <resources>
+            <color name="ic_launcher_background">#05031a</color>
+            <color name="colorPrimary">#a855f7</color>
+            <color name="colorPrimaryDark">#05031a</color>
+            <color name="colorAccent">#a855f7</color>
+          </resources>
+          XML
+
+          # App name
+          sed -i 's/<string name="app_name">.*<\/string>/<string name="app_name">SQUISH \x27EM<\/string>/' \
+            android/app/src/main/res/values/strings.xml || true
+
+          # Allow HTTP for dev builds
+          echo '<?xml version="1.0" encoding="utf-8"?><network-security-config><base-config cleartextTrafficPermitted="true"><trust-anchors><certificates src="system"/></trust-anchors></base-config></network-security-config>' \
+            > android/app/src/main/res/xml/network_security_config.xml || true
+
+      - name: Build debug APK
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon --warning-mode=none
+
+      - name: Rename & stage APK
+        run: |
+          cp android/app/build/outputs/apk/debug/app-debug.apk squish-em-beta.apk
+          echo "APK size: $(du -sh squish-em-beta.apk | cut -f1)"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: squish-em-beta-apk
+          path: squish-em-beta.apk
+          retention-days: 30
+
+      - name: Delete old beta release (if exists)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release delete beta-latest --yes 2>/dev/null || true
+          git push origin :refs/tags/beta-latest 2>/dev/null || true
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create beta-latest \
+            --title "SQUISH 'EM Beta" \
+            --notes "## SQUISH 'EM Beta APK
+
+          **The on-chain record is immutable. Also it's very fun to squish blobs.** 🟥👑
+
+          ### Install Instructions
+          1. Download \`squish-em-beta.apk\`
+          2. On your Android device: **Settings → Security → Install unknown apps** → Allow
+          3. Open the downloaded APK and install
+          4. Play offline, anywhere
+
+          ### Requirements
+          - Android 8.0 (Oreo) or higher
+          - ~15 MB storage
+
+          ### What's in this build
+          - Full offline gameplay
+          - All blob types: green, blue, red, gold, phantom, boss
+          - Upgrade system with 7 upgrade types
+          - Smooth sinusoidal screen shake
+          - Organic blob drift & 3D depth effects
+          - Hurt expressions when blobs take damage
+
+          ---
+          *Pre-release build. Bugs welcome. Report: @squishem_fun*" \
+            --prerelease \
+            squish-em-beta.apk
