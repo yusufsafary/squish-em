@@ -10,6 +10,7 @@ export function Nav() {
     { href: "/", label: "Home" },
     { href: "/how-to-play", label: "Guide" },
     { href: "/roadmap", label: "Roadmap" },
+    { href: "/tech", label: "Tech" },
     { href: "/changelog", label: "Changelog" },
   ];
 
