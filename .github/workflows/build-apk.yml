@@ -75,7 +75,11 @@ jobs:
 
       - name: Customize Android branding
         run: |
-          # App colors
+          # Remove Capacitor-generated ic_launcher_background.xml to avoid
+          # duplicate resource conflict with colors.xml below
+          rm -f android/app/src/main/res/values/ic_launcher_background.xml
+
+          # App colors (ic_launcher_background defined here only)
           cat > android/app/src/main/res/values/colors.xml << 'XML'
           <?xml version="1.0" encoding="utf-8"?>
           <resources>
