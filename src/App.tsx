@@ -13,6 +13,7 @@ import Beta from "@/pages/beta";
 import Feedback from "@/pages/feedback";
 import About from "@/pages/about";
 import Cookies from "@/pages/cookies";
+import Legal from "@/pages/legal";
 import NotFound from "@/pages/not-found";
 
 import { Nav } from "@/components/nav";
@@ -55,6 +56,7 @@ function Router() {
       <Route path="/feedback" component={Feedback} />
       <Route path="/about" component={About} />
       <Route path="/cookies" component={Cookies} />
+      <Route path="/legal" component={Legal} />
       <Route component={NotFound} />
     </Switch>
   );
