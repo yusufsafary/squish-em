@@ -26,11 +26,7 @@ export function Nav() {
       <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary to-transparent opacity-50" />
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
         <Link href="/" className="font-display font-bold text-xl text-white flex items-center gap-2 group" data-testid="nav-logo">
-          <motion.div
-            animate={{ scale: [1, 1.05, 1] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-            className="w-4 h-4 rounded-full bg-primary glow-box-green"
-          />
+          <img src="/favicon.svg" alt="" className="w-6 h-6" aria-hidden />
           <span className="group-hover:glow-text-green transition-all">SQUISH 'EM!</span>
         </Link>
 
@@ -46,7 +42,7 @@ export function Nav() {
                 {link.label}
               </Link>
             ))}
-            {/* Beta App — special amber link */}
+            {/* Beta App - special amber link */}
             <Link
               href="/beta"
               className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${
