@@ -269,7 +269,7 @@ function AgentSimulatorSection() {
             <div>
               <h2 className="font-display font-black text-3xl md:text-4xl text-white tracking-tight">AI Mining Agent</h2>
               <p className="text-muted-foreground text-sm mt-2 max-w-md leading-relaxed">
-                Python RL agent plays the game autonomously. Watch it decide every 130ms — state vector → Q-network → action.
+                Python RL agent plays the game autonomously. Watch it decide every 130ms - state vector → Q-network → action.
               </p>
             </div>
             <Link href="/ai-agent" className="flex-shrink-0 font-mono text-xs text-primary/70 border border-primary/30 px-4 py-2 rounded hover:bg-primary/8 transition-all hover:text-primary whitespace-nowrap">
@@ -444,7 +444,7 @@ function BuiltWith() {
           transition={{ duration: 0.5, delay: 0.3 }}
           className="font-mono text-[10px] text-muted-foreground/25 mt-8 text-center"
         >
-          All game logic runs client-side — zero backend latency during gameplay.
+          All game logic runs client-side - zero backend latency during gameplay.
         </motion.p>
       </div>
     </section>
