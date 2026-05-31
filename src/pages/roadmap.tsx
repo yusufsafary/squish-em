@@ -28,7 +28,7 @@ export default function Roadmap() {
               "Local Leaderboard & Hall of Fame",
               "PWA Support (Installable)",
               "2P Local Multiplayer (same device)",
-              "AI Mining Agent — 3 autonomous strategies (Greedy / Combo / RL-DQN)"
+              "AI Mining Agent: 3 autonomous strategies (Greedy / Combo / RL-DQN)"
             ]}
           />
 
@@ -62,7 +62,7 @@ export default function Roadmap() {
               "On-chain global leaderboard",
               "$SQUISH SPL token integration",
               "NFT Blob Skins (Mint unique avatars)",
-              "Squish-Mining program — anti-cheat session proofs",
+              "Squish-Mining program: anti-cheat session proofs",
               "Weekend SOL tournament prize pools",
               "Verifiable high scores"
             ]}
