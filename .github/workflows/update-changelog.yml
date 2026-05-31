@@ -1,0 +1,51 @@
+name: Update Changelog
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'public/changelog.json'
+
+jobs:
+  changelog:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Sync changelog.json via GitHub API
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          node -e "
+          const https = require('https');
+          function api(path, method, body) {
+            return new Promise((res, rej) => {
+              const data = body ? JSON.stringify(body) : null;
+              const opts = { hostname: 'api.github.com', path, method: method||'GET', headers: {
+                Authorization: 'Bearer ' + process.env.GH_TOKEN,
+                Accept: 'application/vnd.github+json',
+                'User-Agent': 'squish-changelog',
+                ...(data && { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(data) })
+              }};
+              const req = https.request(opts, r => { let d=''; r.on('data',x=>d+=x); r.on('end',()=>res(JSON.parse(d))); });
+              req.on('error',rej); if(data) req.write(data); req.end();
+            });
+          }
+          (async()=>{
+            const commits = await api('/repos/yusufsafary/squish-em/commits?per_page=80');
+            if(!Array.isArray(commits)){ console.error(JSON.stringify(commits).slice(0,300)); process.exit(1); }
+            const SKIP = /^(chore:|Merge )/i;
+            const byDate={};
+            commits.forEach(c=>{
+              const msg=c.commit.message.split('\\n')[0].trim();
+              if(SKIP.test(msg)) return;
+              const date=c.commit.author.date.slice(0,10);
+              if(!byDate[date]) byDate[date]=[];
+              byDate[date].push({sha:c.sha.slice(0,7),message:msg,timestamp:c.commit.author.date});
+            });
+            const builds=Object.entries(byDate).sort(([a],[b])=>b.localeCompare(a)).map(([date,cs])=>({date,commits:cs}));
+            const encoded=Buffer.from(JSON.stringify({generated:new Date().toISOString(),builds},null,2)).toString('base64');
+            let sha;
+            try{ const ex=await api('/repos/yusufsafary/squish-em/contents/public/changelog.json'); if(ex.sha) sha=ex.sha; }catch(_){}
+            const r=await api('/repos/yusufsafary/squish-em/contents/public/changelog.json','PUT',{message:'chore: update changelog',content:encoded,...(sha&&{sha})});
+            console.log(r.content?'OK':'ERR '+JSON.stringify(r).slice(0,200));
+          })().catch(e=>{console.error(e);process.exit(1);});
+          "
