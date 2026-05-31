@@ -46,6 +46,23 @@ export function Nav() {
                 {link.label}
               </Link>
             ))}
+            {/* Beta App — special amber link */}
+            <Link
+              href="/beta"
+              className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${
+                location === "/beta"
+                  ? "text-amber-400"
+                  : "text-amber-400/70 hover:text-amber-300"
+              }`}
+            >
+              <motion.span
+                animate={{ opacity: [1, 0.2, 1], scale: [1, 1.4, 1] }}
+                transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}
+                className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block flex-shrink-0"
+                style={{ boxShadow: "0 0 6px #f59e0b" }}
+              />
+              BETA APP
+            </Link>
           </div>
 
           {/* Language toggle */}
@@ -64,24 +81,6 @@ export function Nav() {
               </button>
             ))}
           </div>
-
-          {/* Beta APK Download Badge */}
-          <a
-            href="/download"
-            className="hidden md:inline-flex items-center gap-2 border border-amber-500/35 bg-amber-500/8 hover:bg-amber-500/18 text-amber-400 hover:text-amber-300 px-3 py-1.5 rounded-lg font-display font-bold text-[10px] tracking-widest transition-all relative group"
-            style={{ textDecoration: "none" }}
-          >
-            <motion.span
-              animate={{ opacity: [1, 0.25, 1], scale: [1, 1.3, 1] }}
-              transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
-              className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block flex-shrink-0"
-              style={{ boxShadow: "0 0 6px #f59e0b" }}
-            />
-            BETA APK
-            <span className="absolute -top-2 -right-2 bg-amber-500 text-black text-[7px] font-black px-1 py-0.5 rounded leading-none tracking-wide">
-              NEW
-            </span>
-          </a>
 
           <Link
             href="/play"
@@ -127,12 +126,11 @@ export function Nav() {
                 </Link>
               ))}
 
-              {/* Mobile: Beta APK */}
-              <a
-                href="/download"
+              {/* Mobile: Beta App */}
+              <Link
+                href="/beta"
                 onClick={() => setOpen(false)}
                 className="flex items-center gap-3 py-3 border-b border-white/5 text-amber-400 hover:text-amber-300 transition-colors"
-                style={{ textDecoration: "none" }}
               >
                 <motion.span
                   animate={{ opacity: [1, 0.25, 1] }}
@@ -140,9 +138,9 @@ export function Nav() {
                   className="w-2 h-2 rounded-full bg-amber-400 inline-block flex-shrink-0"
                   style={{ boxShadow: "0 0 8px #f59e0b" }}
                 />
-                <span className="text-sm font-display font-bold tracking-wider">BETA APK DOWNLOAD</span>
+                <span className="text-sm font-display font-bold tracking-wider">BETA APP</span>
                 <span className="ml-auto bg-amber-500 text-black text-[8px] font-black px-1.5 py-0.5 rounded leading-none">NEW</span>
-              </a>
+              </Link>
 
               {/* Mobile language toggle */}
               <div className="flex gap-2 py-3 border-b border-white/5">
