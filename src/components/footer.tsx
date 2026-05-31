@@ -68,6 +68,10 @@ export function Footer() {
               Cookie Policy
             </Link>
             <span className="hidden sm:block text-white/10">|</span>
+            <Link href="/legal" className="text-xs text-muted-foreground/40 hover:text-primary font-mono transition-colors">
+              Terms of Service
+            </Link>
+            <span className="hidden sm:block text-white/10">|</span>
             <Link href="/about" className="text-xs text-muted-foreground/40 hover:text-primary font-mono transition-colors">
               About
             </Link>
