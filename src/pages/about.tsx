@@ -3,24 +3,24 @@ import { Link } from "wouter";
 
 const PARAGRAPHS = [
   {
-    heading: "Origin: Bandung, Indonesia. Motivation: Unclear.",
-    body: `SQUISH 'EM! was conceived, designed, engineered, and deployed by a single individual operating out of Bandung, West Java, Indonesia, a city better known for its textile industry and unreasonably good coffee than for browser-based arcade games involving sentient blobs. The project began as an experiment in real-time canvas rendering and gradually expanded to encompass an AI-controlled game agent, a Solana token economy, and an Android build, which is to say it expanded considerably further than originally planned. This is, we are told, how most good things happen.`,
+    heading: "What Is SQUISH 'EM!",
+    body: `SQUISH 'EM! is an HTML5 canvas arcade game in which the player eliminates waves of procedurally animated blobs in exchange for score multipliers and, eventually, on-chain rewards denominated in $SQUISH on the Solana network. It runs entirely in the browser, requires no installation, and was built by a single developer who appears to have significantly underestimated how long the project would take. This is, we are told, how most good things happen.`,
   },
   {
     heading: "The Creator",
-    body: `The individual responsible for all of the above is Yusuf Safary, known online as @oroimho. He is a solo developer who appears to derive satisfaction from building systems that are simultaneously technically interesting and playable by people who have never heard the words \"reinforcement learning\" and do not particularly need to. His X profile at x.com/oroimho documents the development process with the candor of someone who has long since stopped pretending that shipping software is a dignified activity. It is recommended reading.`,
+    body: `The individual responsible for all of the above is Yusuf Safary, known online as @oroimho. He is a solo developer who derives satisfaction from building systems that are simultaneously technically interesting and playable by people who have never heard the words "reinforcement learning" and do not particularly need to. His X profile at x.com/oroimho documents the development process with the candor of someone who has long since stopped pretending that shipping software is a dignified activity. It is recommended reading.`,
   },
   {
     heading: "Platform: Orynth",
     body: `SQUISH 'EM! is published under Orynth, a developer portfolio and project showcase platform found at orynth.dev. The project's canonical profile lives at orynth.dev/projects/squishem, where metadata, status updates, and version history are maintained with somewhat more discipline than the development changelog would suggest. Orynth serves as the public record of what was built, while the game itself serves as evidence that it works. Both are, in the considered judgment of the author, preferable to a slide deck.`,
   },
   {
-    heading: "What This Thing Actually Is",
-    body: `At its core, SQUISH 'EM! is an HTML5 canvas arcade game in which the player eliminates waves of procedurally animated blobs in exchange for score multipliers and, eventually, on-chain rewards denominated in $SQUISH on the Solana network. Embedded within the client is a reinforcement learning agent trained to play the game autonomously, which does so every 130 milliseconds using a Q-network over a compact state vector. The RL agent also mines tokens on behalf of idle users, which is either a novel monetization mechanism or a very small robot doing chores depending on your philosophical orientation.`,
+    heading: "How It Works",
+    body: `At its core the game embeds a reinforcement learning agent trained to play autonomously, which does so every 130 milliseconds using a Q-network over a compact state vector. The RL agent also mines $SQUISH tokens on behalf of idle users, which is either a novel monetization mechanism or a very small robot doing chores depending on your philosophical orientation. All game logic runs client-side with zero backend latency during gameplay. The Android build is a packaged PWA, which means it is still the same game, just wearing a slightly different hat.`,
   },
   {
     heading: "A Note on Scope",
-    body: `This project was not built by a team, a studio, a startup, or a committee. It was built by one person in one city using freely available tools, documented APIs, and what can only be described as an unreasonable commitment to the bit. If you enjoy it, the appropriate response is to share it. If you encounter a bug, the /feedback page exists for exactly that purpose. If you wish to discuss any of the above, @oroimho is on X and does respond, eventually, once he finishes squishing blobs.`,
+    body: `This project was not built by a team, a studio, a startup, or a committee. It was built by one person using freely available tools, documented APIs, and what can only be described as an unreasonable commitment to the bit. If you enjoy it, the appropriate response is to share it. If you encounter a bug, the /feedback page exists for exactly that purpose. If you wish to discuss any of the above, @oroimho is on X and does respond, eventually, once he finishes squishing blobs.`,
   },
 ];
 
