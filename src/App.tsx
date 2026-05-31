@@ -15,6 +15,7 @@ import NotFound from "@/pages/not-found";
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
 import { PwaPrompt } from "@/components/pwa-prompt";
+import { LangProvider } from "@/lib/i18n";
 
 const queryClient = new QueryClient();
 
@@ -57,11 +58,13 @@ function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
-        <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-          <Layout>
-            <Router />
-          </Layout>
-        </WouterRouter>
+        <LangProvider>
+          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+            <Layout>
+              <Router />
+            </Layout>
+          </WouterRouter>
+        </LangProvider>
         <Toaster />
       </TooltipProvider>
     </QueryClientProvider>
