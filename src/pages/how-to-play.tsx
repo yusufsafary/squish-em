@@ -56,7 +56,7 @@ export default function HowToPlay() {
             <h2 className="text-2xl font-display font-bold mb-6 text-accent flex items-center gap-3">
               <span className="w-6 h-1 bg-accent inline-block" /> COMBO SYSTEM
             </h2>
-            <p className="text-muted-foreground mb-6">Chain kills quickly to build your multiplier. The timer resets after each kill — keep shooting!</p>
+            <p className="text-muted-foreground mb-6">Chain kills quickly to build your multiplier. The timer resets after each kill. Keep shooting!</p>
             <div className="flex flex-col gap-4">
               {[
                 { mult: "×1.5", threshold: "2 kills", color: "rgba(255,255,255,0.8)", pct: "25%" },
@@ -71,7 +71,7 @@ export default function HowToPlay() {
                       <div className="h-full rounded-full" style={{ width: pct, backgroundColor: color }} />
                     </div>
                     <span className="text-xs font-mono mt-2 block" style={{ color }}>
-                      {threshold}{max ? " — MAX TIER" : ""}
+                      {threshold}{max ? " (MAX TIER)" : ""}
                     </span>
                   </div>
                 </div>
@@ -83,12 +83,13 @@ export default function HowToPlay() {
             <h2 className="text-2xl font-display font-bold mb-6 text-primary flex items-center gap-3">
               <span className="w-6 h-1 bg-primary inline-block" /> POWER-UPS
             </h2>
-            <p className="font-mono text-sm mb-6 text-muted-foreground">DROP RATE: 15% — collect by moving your cannon into them</p>
+            <p className="font-mono text-sm mb-6 text-muted-foreground">DROP RATE: 15%. Collect by moving your cannon into them.</p>
             <div className="grid md:grid-cols-2 gap-4">
-              <PowerUp icon="⚡" name="Rapid Fire" desc="Fire rate 0.5s → 0.14s. Lasts 8s." color="360 100% 71%" />
+              <PowerUp icon="⚡" name="Rapid Fire" desc="Fire rate 0.5s to 0.14s. Lasts 8s." color="360 100% 71%" />
               <PowerUp icon="✦✦✦" name="Triple Shot" desc="3 spread projectiles per shot. Lasts 8s." color="263 44% 56%" />
               <PowerUp icon="🛡" name="Shield" desc="Absorbs 1 hit (from blobs or boss shots). Lasts 10s." color="180 80% 55%" />
               <PowerUp icon="×2" name="Score Multiplier" desc="Doubles all points earned. Lasts 10s." color="48 100% 62%" />
+              <PowerUp icon="💣" name="NUKE" desc="Clears every blob on screen instantly. Rare drop. Massive score burst." color="14 100% 57%" />
             </div>
           </section>
 
@@ -99,9 +100,9 @@ export default function HowToPlay() {
             <div className="grid md:grid-cols-2 gap-4">
               {[
                 { tip: "Every 15 kills advances a level. Speed and blob count increase each level." },
-                { tip: "Boss appears every 5 levels. It fires projectiles — dodge by moving your cannon!" },
-                { tip: "Shield blocks boss shots too — always grab it before a boss fight." },
-                { tip: "Gold blobs zigzag and are rare (5%) — worth 100 pts. Prioritize them!" },
+                { tip: "Boss appears every 5 levels. It fires projectiles. Dodge by moving your cannon!" },
+                { tip: "Shield blocks boss shots too. Always grab it before a boss fight." },
+                { tip: "Gold blobs zigzag and are rare (5%). Worth 100 pts. Prioritize them!" },
                 { tip: "Triple Shot + Score×2 stack. Combine them with a combo for massive scores." },
                 { tip: "Blue blobs take 2 hits. Lead your shots slightly ahead of them." },
               ].map(({ tip }, i) => (
