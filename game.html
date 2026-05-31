@@ -102,7 +102,7 @@ const ACH={
 };
 let lives=3, level=1, kills=0, lvlKills=0;
 let combo=0, comboTimer=0, comboMult=1;
-let shakeX=0, shakeY=0, shakeTime=0, shakeMag=0;
+let shakeX=0, shakeY=0, shakeTime=0, shakeMag=0, shakePhase=0;
 let frame=0, dt=0;
 let rfActive=false, rfTimer=0;
 let triActive=false, triTimer=0;
@@ -159,7 +159,7 @@ const KILLS_PER_LEVEL = 15;
 const RAIL_Y = H - 110;
 let dragOn=false, dragOff=0, leftBtn=false, rightBtn=false;
 
-function shake(m,t){ shakeMag=m; shakeTime=t; }
+function shake(m,t){ shakeMag=m; shakeTime=t; shakePhase=Math.random()*Math.PI*2; }
 function screenFlash(a, col='#ffffff') { sfxFlashAlpha = a; sfxFlashColor = col; }
 
 // ─── Background ─────────────────────────────────────────────────────────────
@@ -271,6 +271,9 @@ function spawnBlob(){
     dying:false,dTimer:0,dScale:1,flash:0,
     blobPts:makeBlobPts(8),
     trail:[],
+    driftPhase:Math.random()*Math.PI*2,
+    driftAmp:0.18+Math.random()*0.28,
+    driftSpeed:0.018+Math.random()*0.012,
   });
 }
 
@@ -606,11 +609,16 @@ function drawBlob(b, isTitle=false){
   if(!isTitle&&!b.dying){
     b.trail.forEach((pt,i)=>{
       const frac=i/b.trail.length;
-      ctx.globalAlpha=frac*0.15;
+      ctx.globalAlpha=frac*0.13;
       ctx.fillStyle=b.col;
-      ctx.beginPath();ctx.ellipse(pt.x,pt.y,s*frac*0.5,s*frac*0.35,0,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.ellipse(pt.x,pt.y,s*frac*0.58,s*frac*0.4,0,0,Math.PI*2);ctx.fill();
     });
     ctx.globalAlpha=1;
+    const _sha=0.20-Math.max(0,(b.y-H*0.65)/(H*0.35))*0.14;
+    const _sg=ctx.createRadialGradient(b.x,b.y+s*0.76,0,b.x,b.y+s*0.76,s*0.95);
+    _sg.addColorStop(0,'rgba(0,0,0,'+_sha+')');_sg.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=_sg;
+    ctx.beginPath();ctx.ellipse(b.x,b.y+s*0.76,s*0.9,s*0.26,0,0,Math.PI*2);ctx.fill();
   }
 
   const isPhantom=b.type==='phantom';
@@ -650,6 +658,18 @@ function drawBlob(b, isTitle=false){
   ctx.fillStyle='rgba(255,255,255,.92)'; ctx.fill();
   ctx.restore();
 
+  // ── Subsurface scattering rim ────────────────────────────────────────────────
+  ctx.save();
+  pathBlob(b.x,b.y,b.blobPts,b.rot,rx*1.04,ry*1.04);
+  const _hex=b.col.replace('#','');
+  const _rr=parseInt(_hex.slice(0,2),16),_gg=parseInt(_hex.slice(2,4),16),_bb2=parseInt(_hex.slice(4,6),16);
+  const _ssG=ctx.createRadialGradient(b.x,b.y,rx*0.62,b.x,b.y,rx*1.08);
+  _ssG.addColorStop(0,'rgba(0,0,0,0)');
+  _ssG.addColorStop(0.68,'rgba(0,0,0,0)');
+  _ssG.addColorStop(1,'rgba('+_rr+','+_gg+','+_bb2+',0.35)');
+  ctx.fillStyle=_ssG;ctx.fill();
+  ctx.restore();
+
   // ── Surface bumps around perimeter ──────────────────────────────────────────
   const nB=8;
   for(let i=0;i<nB;i++){
@@ -676,7 +696,7 @@ function drawBlob(b, isTitle=false){
     }
   }
 
-  drawBlobFace(b.x,b.y,s,rx,ry,b.expr,b.wobble,col);
+  drawBlobFace(b.x,b.y,s,rx,ry,b.flash>0.15?"hurt":b.expr,b.wobble,col);
   if(isPhantom)ctx.restore();
 }
 
@@ -719,12 +739,25 @@ function drawBlobFace(cx,cy,s,rx,ry,expr,wobble,col){
     ctx.beginPath();ctx.moveTo(ex2+ew*1.2,ey-eh*2.1);ctx.lineTo(ex2-ew*.5,ey-eh*1.0);ctx.stroke();
   }
 
+  // ── Hurt X-eyes ─────────────────────────────────────────────────────────────
+  if(expr==='hurt'){
+    ctx.strokeStyle='#ff3333';ctx.lineWidth=2.6;ctx.lineCap='round';
+    const _hw=ew*0.58;
+    [[ex1,ey],[ex2,ey]].forEach(([_ex,_ey])=>{
+      ctx.beginPath();ctx.moveTo(_ex-_hw,_ey-_hw*0.75);ctx.lineTo(_ex+_hw,_ey+_hw*0.75);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(_ex+_hw,_ey-_hw*0.75);ctx.lineTo(_ex-_hw,_ey+_hw*0.75);ctx.stroke();
+    });
+  }
+
   // ── Mouth ───────────────────────────────────────────────────────────────────
   ctx.strokeStyle='#0d0d1a';ctx.lineWidth=2.5;
   ctx.lineCap='round';
   ctx.beginPath();
   const my=cy+ry*.38;
-  if(expr==='angry'){
+  if(expr==='hurt'){
+    ctx.moveTo(cx-rx*.28,my+3);ctx.quadraticCurveTo(cx-rx*.08,my-4,cx,my+3);
+    ctx.quadraticCurveTo(cx+rx*.08,my+8,cx+rx*.28,my+3);
+  } else if(expr==='angry'){
     ctx.moveTo(cx-rx*.3,my+4);ctx.quadraticCurveTo(cx,my-6,cx+rx*.3,my+4);
   } else if(expr==='smug'){
     ctx.moveTo(cx-rx*.2,my);ctx.quadraticCurveTo(cx+rx*.18,my+10,cx+rx*.32,my-3);
@@ -1411,8 +1444,14 @@ function update(d){
 
   if(screen!==SCR.GAME)return;
 
-  if(shakeTime>0){shakeTime-=dt*1000;shakeX=(Math.random()-.5)*shakeMag*2;shakeY=(Math.random()-.5)*shakeMag*2;}
-  else{shakeX=0;shakeY=0;if(shakeMag>0)shakeMag=0;}
+  if(shakeTime>0){
+    shakeTime-=dt*1000;
+    const shk=shakeMag*(shakeTime>0?Math.pow(Math.max(0,shakeTime)/600,0.4):0);
+    shakePhase+=dt*28;
+    shakeX=Math.sin(shakePhase*1.7)*shk+Math.cos(shakePhase*2.9)*shk*0.45;
+    shakeY=Math.cos(shakePhase*1.3)*shk+Math.sin(shakePhase*3.1)*shk*0.4;
+    if(shakeTime<=0)shakeMag=0;
+  } else {shakeX=0;shakeY=0;}
 
   if(leftBtn) cannonX=Math.max(22,cannonX-6);
   if(rightBtn)cannonX=Math.min(gameMode===1?W/2-22:W-22,cannonX+6);
@@ -1462,8 +1501,12 @@ function update(d){
     b.wobble+=.065; b.rot+=.012;
     b.flash=Math.max(0,b.flash-dt*6);
     updateBlobPts(b.blobPts);
+    b.driftPhase=(b.driftPhase||0)+(b.driftSpeed||0.022);
+    const _drift=Math.sin(b.driftPhase)*(b.driftAmp||0.22);
+    if(!b.dying&&b.type!=='gold'&&b.type!=='phantom')
+      b.x=Math.max(b.sz,Math.min(W-b.sz,b.x+_drift));
     b.trail.push({x:b.x,y:b.y});
-    if(b.trail.length>14)b.trail.shift();
+    if(b.trail.length>20)b.trail.shift();
 
     if(b.dying){
       b.dTimer+=dt; b.dScale=Math.max(0,1-b.dTimer*4.5);
@@ -2019,127 +2062,173 @@ function applyUpgrade(u){
 }
 
 function drawUpgradeScreen(){
-  upgradeAnimTimer=Math.min(1,upgradeAnimTimer+dt*2.6);
+  upgradeAnimTimer=Math.min(1,upgradeAnimTimer+dt*2.8);
   const easeOut=t=>1-Math.pow(1-t,3);
   const prog=easeOut(upgradeAnimTimer);
 
-  // Dark overlay
-  ctx.fillStyle=`rgba(8,5,20,${0.91*prog})`;
+  // Dark overlay + vignette
+  ctx.fillStyle='rgba(5,3,18,'+0.93*prog+')';
   ctx.fillRect(0,0,W,H);
+  const _vg=ctx.createRadialGradient(W/2,H/2,H*.15,W/2,H/2,H*.82);
+  _vg.addColorStop(0,'rgba(0,0,0,0)');_vg.addColorStop(1,'rgba(0,0,0,0.52)');
+  ctx.fillStyle=_vg;ctx.fillRect(0,0,W,H);
 
-  ctx.save();
-  ctx.globalAlpha=prog;
-
-  // ── Title ──
+  // Title
+  ctx.save();ctx.globalAlpha=prog;
   ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.shadowColor='#a855f7';ctx.shadowBlur=28;
-  ctx.fillStyle='#ffffff';ctx.font="bold 30px 'Orbitron',sans-serif";
-  ctx.fillText('LEVEL  UP!',W/2,68);
+  ctx.shadowColor='#a855f7';ctx.shadowBlur=38;
+  ctx.fillStyle='#ffffff';ctx.font="900 33px 'Orbitron',sans-serif";
+  ctx.fillText('LEVEL  UP!',W/2,54);
   ctx.shadowBlur=0;
-  ctx.fillStyle='rgba(200,180,255,.65)';ctx.font="12px 'Orbitron',sans-serif";
-  ctx.fillText('CHOOSE AN UPGRADE',W/2,96);
-
-  // Current build summary
-  const stats=[];
-  if(upgrades.fireRate>0)stats.push('⚡×'+upgrades.fireRate);
-  if(upgrades.bulCount===2)stats.push('❋❋');
-  if(upgrades.bulCount===3)stats.push('❋❋❋');
-  if(upgrades.bulSize>0)stats.push('◉×'+upgrades.bulSize);
-  if(upgrades.bulSpeed>0)stats.push('↑↑×'+upgrades.bulSpeed);
-  if(upgrades.pierce>0)stats.push('➤×'+upgrades.pierce);
-  if(upgrades.explosive)stats.push('💥');
-  if(stats.length){
-    ctx.fillStyle='rgba(168,85,247,.5)';ctx.font="10px 'Orbitron',sans-serif";
-    ctx.fillText(stats.join('  '),W/2,114);
-  }
-
+  ctx.fillStyle='rgba(168,85,247,.55)';ctx.font="bold 10px 'Orbitron',sans-serif";
+  ctx.fillText('CHOOSE AN UPGRADE',W/2,80);
   ctx.restore();
 
-  // ── Cards ──
-  const cw=344,ch=106,cx0=(W-cw)/2;
-  const totalH=upgradeCards.length*ch+(upgradeCards.length-1)*12;
-  const cy0=Math.round((H-totalH)/2)+8;
+  // Current build pills
+  const _pills=[];
+  if(upgrades.fireRate>0) _pills.push({t:'\u26A1\xD7'+upgrades.fireRate,c:'#f59e0b'});
+  if(upgrades.bulCount===2) _pills.push({t:'\u274B\u274B',c:'#8b5cf6'});
+  if(upgrades.bulCount===3) _pills.push({t:'\u274B\u274B\u274B',c:'#a855f7'});
+  if(upgrades.bulSize>0)  _pills.push({t:'\u25CE\xD7'+upgrades.bulSize,c:'#ef4444'});
+  if(upgrades.bulSpeed>0) _pills.push({t:'\u2191\xD7'+upgrades.bulSpeed,c:'#3b82f6'});
+  if(upgrades.pierce>0)   _pills.push({t:'\u27A4\xD7'+upgrades.pierce,c:'#06b6d4'});
+  if(upgrades.explosive)  _pills.push({t:'\uD83D\uDCA5',c:'#f97316'});
+  if(_pills.length){
+    const _pw=44,_ph=19,_pg=5;
+    const _tw=_pills.length*(_pw+_pg)-_pg;
+    let _px=(W-_tw)/2;
+    ctx.save();ctx.globalAlpha=prog*0.9;
+    _pills.forEach(_p=>{
+      rr(_px,95,_pw,_ph,9,_p.c+'1a',_p.c+'66',1);
+      ctx.fillStyle=_p.c;ctx.font="9px 'Segoe UI Emoji',sans-serif";
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(_p.t,_px+_pw/2,104);
+      _px+=_pw+_pg;
+    });
+    ctx.restore();
+  }
+
+  // Cards
+  const _cw=346,_ch=120,_cx0=(W-_cw)/2;
+  const _totalH=upgradeCards.length*_ch+(upgradeCards.length-1)*10;
+  const _cy0=Math.round((H-_totalH)/2)+14;
   upgCardRects=[];
 
-  upgradeCards.forEach((u,i)=>{
-    const slideY=(1-prog)*50;
-    const cardX=cx0;
-    const cardY=cy0+i*(ch+12)+slideY;
-    upgCardRects.push({x:cardX,y:cardY-slideY,w:cw,h:ch});
+  upgradeCards.forEach((_u,_i)=>{
+    const _delay=_i*0.1;
+    const _cp=easeOut(Math.max(0,Math.min(1,(upgradeAnimTimer-_delay)*2.5)));
+    const _sy=(1-_cp)*55;
+    const _cx=_cx0, _cy=_cy0+_i*(_ch+10);
+    upgCardRects.push({x:_cx,y:_cy,w:_cw,h:_ch});
 
-    ctx.save();
-    ctx.globalAlpha=Math.min(prog*(1+i*0.18),1)*0.97;
+    ctx.save();ctx.globalAlpha=_cp;ctx.translate(0,_sy);
 
-    // Card glow
-    ctx.shadowColor=u.glow;ctx.shadowBlur=22;
+    // Drop shadow
+    ctx.shadowColor='rgba(0,0,0,.65)';ctx.shadowBlur=18;ctx.shadowOffsetY=7;
+    rr(_cx+2,_cy+4,_cw-4,_ch,16,'rgba(0,0,0,.3)',null);
+    ctx.shadowBlur=0;ctx.shadowOffsetY=0;
+
+    // Maxed state check
+    let _lvl=0;
+    if(_u.id==='fireRate') _lvl=upgrades.fireRate;
+    else if(_u.id==='bulSize') _lvl=upgrades.bulSize;
+    else if(_u.id==='bulSpeed') _lvl=upgrades.bulSpeed;
+    else if(_u.id==='pierce') _lvl=upgrades.pierce;
+    const _have=(_u.id==='bulCount2'&&upgrades.bulCount>=2)||(_u.id==='bulCount3'&&upgrades.bulCount>=3)||(_u.id==='explosive'&&upgrades.explosive);
+    const _maxed=(_u.max>1&&_lvl>=_u.max)||_have;
 
     // Card bg
-    const bg=ctx.createLinearGradient(cardX,cardY,cardX+cw,cardY+ch);
-    bg.addColorStop(0,'rgba(22,14,46,.97)');
-    bg.addColorStop(1,'rgba(14,8,30,.99)');
-    rr(cardX,cardY,cw,ch,14,bg,u.col,2.5);
-
+    const _cbg=ctx.createLinearGradient(_cx,_cy,_cx+_cw,_cy+_ch);
+    _cbg.addColorStop(0,'rgba(26,14,52,.98)');_cbg.addColorStop(1,'rgba(14,7,30,.99)');
+    ctx.shadowColor=_maxed?'rgba(0,0,0,.1)':_u.glow;ctx.shadowBlur=_maxed?0:20;
+    rr(_cx,_cy,_cw,_ch,16,_cbg,_maxed?'rgba(255,255,255,.08)':_u.col+'99',2);
     ctx.shadowBlur=0;
 
-    // Icon circle
-    ctx.shadowColor=u.glow;ctx.shadowBlur=14;
-    ctx.beginPath();ctx.arc(cardX+42,cardY+ch/2,26,0,Math.PI*2);
-    const ig=ctx.createRadialGradient(cardX+40,cardY+ch/2-4,0,cardX+42,cardY+ch/2,26);
-    ig.addColorStop(0,u.col+'55');ig.addColorStop(1,u.col+'18');
-    ctx.fillStyle=ig;ctx.fill();
-    ctx.shadowBlur=0;
-
-    ctx.font="22px 'Segoe UI Emoji',sans-serif";
-    ctx.textAlign='center';ctx.textBaseline='middle';
-    ctx.fillText(u.icon,cardX+42,cardY+ch/2+1);
-
-    // Title
-    ctx.shadowColor=u.glow;ctx.shadowBlur=8;
-    ctx.font="bold 14px 'Orbitron',sans-serif";
-    ctx.textAlign='left';ctx.textBaseline='middle';
-    ctx.fillStyle=u.col;
-    ctx.fillText(u.title,cardX+78,cardY+ch/2-16);
-    ctx.shadowBlur=0;
-
-    // Description
-    ctx.fillStyle='rgba(220,210,255,.72)';
-    ctx.font="11px 'Orbitron',sans-serif";
-    ctx.fillText(u.desc,cardX+78,cardY+ch/2+4);
-
-    // Level dots (for stackable upgrades)
-    let curLvl=0;
-    if(u.id==='fireRate') curLvl=upgrades.fireRate;
-    else if(u.id==='bulSize') curLvl=upgrades.bulSize;
-    else if(u.id==='bulSpeed') curLvl=upgrades.bulSpeed;
-    else if(u.id==='pierce') curLvl=upgrades.pierce;
-    if(u.max>1){
-      ctx.textAlign='left';ctx.textBaseline='middle';
-      ctx.fillStyle='rgba(200,180,255,.45)';
-      ctx.font="9px 'Orbitron',sans-serif";
-      ctx.fillText('LVL',cardX+78,cardY+ch/2+21);
-      for(let d=0;d<u.max;d++){
-        ctx.beginPath();ctx.arc(cardX+104+d*14,cardY+ch/2+21,4.5,0,Math.PI*2);
-        ctx.fillStyle=d<curLvl?u.col:'rgba(255,255,255,.15)';
-        if(d<curLvl){ctx.shadowColor=u.glow;ctx.shadowBlur=6;}
-        ctx.fill();ctx.shadowBlur=0;
-      }
+    // Top accent bar (only if not maxed)
+    if(!_maxed){
+      ctx.save();
+      ctx.beginPath();ctx.roundRect(_cx,_cy,_cw,4,[16,16,0,0]);
+      const _ab=ctx.createLinearGradient(_cx,0,_cx+_cw,0);
+      _ab.addColorStop(0,'transparent');_ab.addColorStop(0.35,_u.col+'cc');
+      _ab.addColorStop(0.65,_u.col);_ab.addColorStop(1,'transparent');
+      ctx.fillStyle=_ab;ctx.fill();
+      ctx.restore();
     }
 
-    // Arrow hint
-    ctx.textAlign='right';ctx.textBaseline='middle';
-    ctx.fillStyle=u.col+'bb';
-    ctx.font="16px sans-serif";
-    ctx.fillText('›',cardX+cw-14,cardY+ch/2);
+    // Icon circle
+    const _icX=_cx+52,_icY=_cy+_ch/2;
+    ctx.shadowColor=_maxed?'transparent':_u.glow;ctx.shadowBlur=_maxed?0:16;
+    ctx.beginPath();ctx.arc(_icX,_icY,28,0,Math.PI*2);
+    const _hex2=_u.col.replace('#','');
+    const _ir=parseInt(_hex2.slice(0,2),16),_ig2=parseInt(_hex2.slice(2,4),16),_ib=parseInt(_hex2.slice(4,6),16);
+    const _ig=ctx.createRadialGradient(_icX-5,_icY-7,0,_icX,_icY,28);
+    _ig.addColorStop(0,'rgba('+_ir+','+_ig2+','+_ib+','+(_maxed?.06:.46)+')');
+    _ig.addColorStop(1,'rgba('+_ir+','+_ig2+','+_ib+',.08)');
+    ctx.fillStyle=_ig;ctx.fill();
+    ctx.strokeStyle=_maxed?'rgba(255,255,255,.12)':_u.col+(_maxed?'44':'77');
+    ctx.lineWidth=1.5;ctx.stroke();ctx.shadowBlur=0;
+    ctx.font="22px 'Segoe UI Emoji',sans-serif";
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.globalAlpha=_cp*(_maxed?.35:1);
+    ctx.fillText(_u.icon,_icX,_icY+1);
+    ctx.globalAlpha=_cp;
+
+    // Title
+    ctx.textAlign='left';ctx.textBaseline='top';
+    ctx.shadowColor=_maxed?'transparent':_u.glow;ctx.shadowBlur=_maxed?0:8;
+    ctx.font="bold 13px 'Orbitron',sans-serif";
+    ctx.fillStyle=_maxed?'rgba(255,255,255,.28)':_u.col;
+    ctx.fillText(_u.title,_cx+90,_cy+20);ctx.shadowBlur=0;
+
+    // Desc
+    ctx.font="10px 'Orbitron',sans-serif";
+    ctx.fillStyle=_maxed?'rgba(200,200,255,.25)':'rgba(210,200,255,.72)';
+    ctx.fillText(_u.desc,_cx+90,_cy+40);
+
+    // Progress bar (stackable)
+    if(_u.max>1){
+      const _bx=_cx+90,_by=_cy+64,_bw=168,_bh=7;
+      rr(_bx,_by,_bw,_bh,4,'rgba(255,255,255,.07)',null);
+      if(_lvl>0){
+        const _fw=Math.round(_bw*(_lvl/_u.max));
+        const _bf=ctx.createLinearGradient(_bx,0,_bx+_bw,0);
+        _bf.addColorStop(0,_u.col+'88');_bf.addColorStop(1,_u.col);
+        rr(_bx,_by,_fw,_bh,4,_bf,null);
+        if(!_maxed){
+          ctx.shadowColor=_u.glow;ctx.shadowBlur=9;
+          ctx.beginPath();ctx.arc(_bx+_fw,_by+_bh/2,4.5,0,Math.PI*2);
+          ctx.fillStyle=_u.col;ctx.fill();ctx.shadowBlur=0;
+        }
+      }
+      ctx.textAlign='left';ctx.textBaseline='middle';
+      ctx.font="8px 'Orbitron',sans-serif";
+      ctx.fillStyle=_maxed?'rgba(255,255,255,.55)':'rgba(200,180,255,.5)';
+      ctx.fillText(_maxed?'\u2713 MAX':'LVL '+_lvl+' / '+_u.max, _bx+_bw+8, _by+_bh/2);
+    } else if(_maxed){
+      rr(_cx+90,_cy+62,64,18,9,'rgba(255,255,255,.05)','rgba(255,255,255,.12)',1);
+      ctx.fillStyle='rgba(255,255,255,.32)';ctx.font="7px 'Orbitron',sans-serif";
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText('\u2713 EQUIPPED',_cx+90+32,_cy+71);
+    }
+
+    // Chevron arrow (not maxed)
+    if(!_maxed){
+      ctx.save();
+      ctx.shadowColor=_u.glow;ctx.shadowBlur=14;
+      ctx.strokeStyle=_u.col+'cc';ctx.lineWidth=2.2;ctx.lineCap='round';ctx.lineJoin='round';
+      const _ax=_cx+_cw-18,_ay=_cy+_ch/2;
+      ctx.beginPath();ctx.moveTo(_ax-7,_ay-7);ctx.lineTo(_ax,_ay);ctx.lineTo(_ax-7,_ay+7);ctx.stroke();
+      ctx.restore();
+    }
 
     ctx.restore();
   });
 
-  // Footer hint
-  ctx.save();
-  ctx.globalAlpha=prog*0.45;
+  // Footer
+  ctx.save();ctx.globalAlpha=prog*0.38;
   ctx.textAlign='center';ctx.textBaseline='middle';
-  ctx.fillStyle='#fff';ctx.font="10px 'Orbitron',sans-serif";
-  ctx.fillText('TAP A CARD TO UPGRADE',W/2,cy0+totalH+26);
+  ctx.fillStyle='#fff';ctx.font="9px 'Orbitron',sans-serif";
+  ctx.fillText('TAP A CARD TO UPGRADE',W/2,_cy0+_totalH+28);
   ctx.restore();
 }
 
