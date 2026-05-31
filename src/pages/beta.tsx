@@ -1,17 +1,16 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 const APK_URL =
   "https://github.com/yusufsafary/squish-em/releases/download/beta-latest/squish-em-beta.apk";
 
-const TWEET_COPY =
-  "Just got early access to SQUISH 'EM Android Beta! \ud83d\udfe5\ud83d\udc51\n\n" +
-  "Free blob-squishing arcade game - no Play Store needed. Testing phase open now.\n\n" +
-  "Get the APK: https://squishem.fun/beta\n\n" +
-  "#SquishEm #AndroidGame #IndieGame #BetaTesting";
-
-const TWEET_URL =
-  "https://twitter.com/intent/tweet?text=" + encodeURIComponent(TWEET_COPY);
+const TWEET_TEMPLATES = [
+  `just found SQUISH 'EM and i can't stop squishing blobs 🟥\n\n@oroimho built this whole thing solo and it goes hard\n\n$SQUISH on @orynth let's gooo 🐛\n\nsquishem.fun/beta`,
+  `ok @oroimho really cooked with SQUISH 'EM\n\nfree android beta, no play store, just pure blob-squishing chaos\n\nanyone in $SQUISH on @orynth needs to play this NOW\n\nsquishem.fun/beta`,
+  `SQUISH 'EM android beta is actually addictive??\n\ncute blobs falling from the sky and you gotta squish em all\n\nbig respect to @oroimho for building this solo 👑\n\n$SQUISH on @orynth is the move\n\nsquishem.fun/beta`,
+  `testing SQUISH 'EM android beta and having way too much fun with this\n\nshoutout @oroimho for the solo build, genuinely impressive\n\nif you're in $SQUISH on @orynth — this one's for you 💚\n\nsquishem.fun/beta`,
+  `can't believe @oroimho made this from scratch with zero frameworks\n\nSQUISH 'EM android beta is live and it slaps\n\n$SQUISH on @orynth support the builder 🙏\n\nget the apk: squishem.fun/beta`,
+];
 
 const STORAGE_KEY = "squish_beta_tweeted";
 const NS = "squishem.fun";
@@ -63,6 +62,14 @@ export default function Beta() {
   const [tweetCount, setTweetCount] = useState<number | null>(null);
   const [dlCount, setDlCount] = useState<number | null>(null);
 
+  // Pick a random personal tweet template once per session
+  const tweetCopy = useMemo(
+    () => TWEET_TEMPLATES[Math.floor(Math.random() * TWEET_TEMPLATES.length)],
+    []
+  );
+  const tweetUrl =
+    "https://twitter.com/intent/tweet?text=" + encodeURIComponent(tweetCopy);
+
   useEffect(() => {
     if (localStorage.getItem(STORAGE_KEY) === "1") setTweeted(true);
     getCount("beta-tweets").then(setTweetCount);
@@ -70,7 +77,7 @@ export default function Beta() {
   }, []);
 
   const handleTweet = () => {
-    window.open(TWEET_URL, "_blank", "width=560,height=420,noopener,noreferrer");
+    window.open(tweetUrl, "_blank", "width=560,height=420,noopener,noreferrer");
     setTimeout(() => {
       setTweeted(true);
       localStorage.setItem(STORAGE_KEY, "1");
@@ -111,7 +118,7 @@ export default function Beta() {
       </div>
 
       <div className="relative z-10 w-full max-w-xl mx-auto">
-        {/* Testing phase banner */}
+        {/* Testing phase banner — clean, no "early access only" */}
         <motion.div
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -120,7 +127,7 @@ export default function Beta() {
         >
           <div className="flex items-center gap-2 border border-amber-500/30 bg-amber-500/8 text-amber-300 px-4 py-2 rounded-full font-mono text-[11px] tracking-widest">
             <PulseDot />
-            ANDROID TESTING PHASE - EARLY ACCESS ONLY
+            ANDROID TESTING PHASE
           </div>
         </motion.div>
 
@@ -143,12 +150,8 @@ export default function Beta() {
               'EM
             </span>
           </h1>
-          <p className="font-display font-bold text-muted-foreground text-sm tracking-widest mb-4">
+          <p className="font-display font-bold text-muted-foreground text-sm tracking-widest">
             BETA APK FOR ANDROID
-          </p>
-          <p className="text-muted-foreground text-sm max-w-sm mx-auto leading-relaxed">
-            This is an early testing build. Install directly on your Android device
-            and help us find bugs before the official launch.
           </p>
         </motion.div>
 
@@ -219,23 +222,17 @@ export default function Beta() {
                   POST ON X TO UNLOCK
                 </h2>
                 <p className="text-muted-foreground text-sm mb-6 max-w-xs mx-auto leading-relaxed">
-                  Share this testing build with your followers, then unlock your
-                  free APK download below.
+                  Share with your followers and unlock the free APK. Every post
+                  helps support @oroimho and the $SQUISH community on @orynth.
                 </p>
 
-                {/* Tweet preview */}
+                {/* Tweet preview — shows the personal copy */}
                 <div className="border border-white/8 rounded-xl bg-white/3 p-4 mb-6 text-left">
                   <p className="font-mono text-[10px] text-muted-foreground/50 tracking-widest mb-2">
                     YOUR POST WILL SAY
                   </p>
-                  <p className="text-xs text-muted-foreground/80 leading-relaxed">
-                    Just got early access to SQUISH &apos;EM Android Beta! Free
-                    blob-squishing arcade game - no Play Store needed. Testing phase
-                    open now.
-                    <span className="text-primary/60">
-                      {" "}
-                      #SquishEm #AndroidGame #IndieGame #BetaTesting
-                    </span>
+                  <p className="text-xs text-muted-foreground/80 leading-relaxed whitespace-pre-line">
+                    {tweetCopy}
                   </p>
                 </div>
 
@@ -253,7 +250,7 @@ export default function Beta() {
                 </button>
 
                 <p className="mt-3 font-mono text-[10px] text-muted-foreground/35 tracking-wide">
-                  X will open in a new window - return here after posting
+                  X will open in a new window — return here after posting
                 </p>
 
                 {tweetCount !== null && tweetCount > 0 && (
@@ -302,7 +299,7 @@ export default function Beta() {
                   DOWNLOAD UNLOCKED
                 </h2>
                 <p className="text-muted-foreground text-sm mb-6 max-w-xs mx-auto">
-                  Thanks for spreading the word. Your APK is ready.
+                  Thanks for supporting $SQUISH. Your APK is ready.
                 </p>
 
                 <motion.button
@@ -346,13 +343,13 @@ export default function Beta() {
                           d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
                         />
                       </svg>
-                      DOWNLOAD APK - squish-em-beta.apk
+                      DOWNLOAD APK — squish-em-beta.apk
                     </>
                   )}
                 </motion.button>
 
                 <p className="mt-3 font-mono text-[10px] text-muted-foreground/35 tracking-wide">
-                  ~4.5 MB - Android 8.0 and above
+                  ~4.5 MB · Android 8.0 and above
                 </p>
               </motion.div>
             )}
@@ -366,21 +363,43 @@ export default function Beta() {
           transition={{ delay: 0.4, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6"
         >
-          {/* Testing phase notice */}
+          {/* Feedback & testing notice */}
           <div className="border border-amber-500/15 rounded-xl bg-amber-500/4 p-5">
             <p className="font-mono text-[9px] text-amber-400/60 tracking-widest mb-3">
-              TESTING PHASE NOTICE
+              TESTING PHASE
             </p>
             <ul className="space-y-2">
               {[
-                "This is a pre-release testing build",
-                "Bugs and crashes are expected",
-                "Your feedback helps improve the game",
-                "Report issues to @squishem_fun on X",
+                "Pre-release build — bugs may occur",
+                "Your feedback shapes the game",
+                <>
+                  DM or mention{" "}
+                  <a
+                    href="https://x.com/oroimho"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-amber-400 hover:text-amber-300 transition-colors"
+                  >
+                    @oroimho
+                  </a>{" "}
+                  to report issues
+                </>,
+                <>
+                  Follow{" "}
+                  <a
+                    href="https://x.com/oroimho"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-amber-400 hover:text-amber-300 transition-colors"
+                  >
+                    @oroimho
+                  </a>{" "}
+                  for updates
+                </>,
               ].map((item, i) => (
                 <li key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
                   <span className="text-amber-400/70 mt-0.5 flex-shrink-0">!</span>
-                  {item}
+                  <span>{item}</span>
                 </li>
               ))}
             </ul>
@@ -436,13 +455,42 @@ export default function Beta() {
           </div>
         </motion.div>
 
+        {/* Feedback CTA */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="border border-white/8 rounded-xl bg-card/20 p-5 mb-6 text-center"
+        >
+          <p className="font-mono text-[9px] text-muted-foreground/50 tracking-widest mb-2">
+            SEND FEEDBACK
+          </p>
+          <p className="text-xs text-muted-foreground leading-relaxed mb-4">
+            Found a bug? Got a feature idea? Reach out directly to the founder.
+          </p>
+          <a
+            href="https://x.com/oroimho"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2.5 text-white px-6 py-2.5 rounded-xl font-display font-bold text-xs tracking-wider transition-all duration-200 hover:scale-105 active:scale-95"
+            style={{
+              background: "#000",
+              border: "1px solid rgba(255,255,255,0.15)",
+              boxShadow: "0 2px 12px rgba(0,0,0,0.4)",
+            }}
+          >
+            <XLogo className="w-3.5 h-3.5" />
+            MESSAGE @oroimho ON X
+          </a>
+        </motion.div>
+
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.65 }}
           className="text-center font-mono text-[10px] text-muted-foreground/30 tracking-wide"
         >
-          SQUISH 'EM BETA - ANDROID TESTING PHASE - NOT FOR REDISTRIBUTION
+          SQUISH 'EM BETA · ANDROID TESTING PHASE · NOT FOR REDISTRIBUTION
         </motion.p>
       </div>
     </main>
