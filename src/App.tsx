@@ -11,6 +11,8 @@ import Tech from "@/pages/tech";
 import AiAgent from "@/pages/ai-agent";
 import Beta from "@/pages/beta";
 import Feedback from "@/pages/feedback";
+import About from "@/pages/about";
+import Cookies from "@/pages/cookies";
 import NotFound from "@/pages/not-found";
 
 import { Nav } from "@/components/nav";
@@ -51,6 +53,8 @@ function Router() {
       <Route path="/ai-agent" component={AiAgent} />
       <Route path="/beta" component={Beta} />
       <Route path="/feedback" component={Feedback} />
+      <Route path="/about" component={About} />
+      <Route path="/cookies" component={Cookies} />
       <Route component={NotFound} />
     </Switch>
   );
