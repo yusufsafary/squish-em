@@ -3,65 +3,91 @@ import { motion } from "framer-motion";
 
 export function Footer() {
   return (
-    <footer className="relative border-t border-white/5 bg-background/50 overflow-hidden mt-0">
-      <div className="py-10 relative">
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.025] select-none">
-          <span className="font-display font-black text-[18vw] whitespace-nowrap text-white">SQUISH 'EM!</span>
+    <footer className="relative border-t border-white/5 bg-background/50 overflow-hidden">
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.022] select-none">
+        <span className="font-display font-black text-[18vw] whitespace-nowrap text-white">SQUISH 'EM!</span>
+      </div>
+
+      <div className="container relative z-10 mx-auto px-4 py-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
+          {/* Brand */}
+          <div className="md:col-span-2">
+            <div className="flex items-center gap-2 mb-4">
+              <div className="w-3 h-3 rounded-full bg-primary glow-box-green shrink-0" />
+              <span className="font-display font-bold text-lg tracking-wide">SQUISH 'EM!</span>
+            </div>
+            <p className="text-sm text-muted-foreground leading-relaxed max-w-sm">
+              AI-powered arcade shooter on Solana. Squish blobs, chain combos, and let the RL agent mine{" "}
+              <span className="text-primary/80 font-mono">$SQUISH</span> for you — no install, runs in the browser.
+            </p>
+            <div className="mt-5 flex items-center gap-2 text-xs font-mono text-muted-foreground/40">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block animate-pulse" />
+              <span>SERVERS ONLINE</span>
+            </div>
+          </div>
+
+          {/* Play */}
+          <div>
+            <h4 className="font-display font-bold text-[10px] tracking-widest text-muted-foreground/50 mb-4 uppercase">Play</h4>
+            <ul className="space-y-3">
+              <FooterLink href="/play">🎮 Start Game</FooterLink>
+              <FooterLink href="/how-to-play">📖 Game Guide</FooterLink>
+              <FooterLink href="/how-to-play#bestiary">🐛 Bestiary</FooterLink>
+            </ul>
+          </div>
+
+          {/* Discover */}
+          <div>
+            <h4 className="font-display font-bold text-[10px] tracking-widest text-muted-foreground/50 mb-4 uppercase">Discover</h4>
+            <ul className="space-y-3">
+              <FooterLink href="/roadmap">🗺 Web3 Roadmap</FooterLink>
+              <FooterLink href="/tech">🧠 AI Architecture</FooterLink>
+              <FooterLink href="/ai-agent">⚡ Live Simulator</FooterLink>
+              <li>
+                <motion.a
+                  href="https://orynth.dev/projects/squishem"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-muted-foreground hover:text-primary transition-colors inline-flex items-center gap-1.5"
+                  whileHover={{ x: 2 }}
+                >
+                  ✨ Orynth Profile
+                </motion.a>
+              </li>
+            </ul>
+          </div>
         </div>
-        <div className="container relative z-10 mx-auto px-4">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
-            <div className="col-span-2 md:col-span-1">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="w-3 h-3 rounded-full bg-primary glow-box-green" />
-                <span className="font-display font-bold text-lg">SQUISH 'EM!</span>
-              </div>
-              <p className="text-xs text-muted-foreground leading-relaxed max-w-[180px]">
-                AI-powered arcade shooter on Solana. Squish blobs, chain combos, and let the RL agent mine $SQUISH for you.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-display font-bold text-xs tracking-widest text-muted-foreground mb-4 uppercase">Play</h4>
-              <ul className="space-y-2.5">
-                <li><Link href="/play" className="text-sm text-muted-foreground hover:text-primary transition-colors">🎮 Start Game</Link></li>
-                <li><Link href="/how-to-play" className="text-sm text-muted-foreground hover:text-primary transition-colors">📖 Game Guide</Link></li>
-                <li><Link href="/how-to-play#bestiary" className="text-sm text-muted-foreground hover:text-primary transition-colors">🐛 Bestiary</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-display font-bold text-xs tracking-widest text-muted-foreground mb-4 uppercase">Discover</h4>
-              <ul className="space-y-2.5">
-                <li><Link href="/roadmap" className="text-sm text-muted-foreground hover:text-secondary transition-colors">🗺 Web3 Roadmap</Link></li>
-                <li><Link href="/changelog" className="text-sm text-muted-foreground hover:text-primary transition-colors">📋 Changelog</Link></li>
-                <li>
-                  <motion.a href="https://orynth.dev/projects/squishem" target="_blank" rel="noopener noreferrer"
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors inline-block" whileHover={{ x: 2 }}>
-                    ✨ Orynth Profile
-                  </motion.a>
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-display font-bold text-xs tracking-widest text-muted-foreground mb-4 uppercase">AI Agent</h4>
-              <ul className="space-y-2.5 mb-4">
-                <li><Link href="/tech" className="text-sm text-muted-foreground hover:text-primary transition-colors">🧠 Architecture</Link></li>
-                <li><Link href="/ai-agent" className="text-sm text-muted-foreground hover:text-primary transition-colors">⚡ Live Simulator</Link></li>
-              </ul>
-              <motion.a href="https://orynth.dev/projects/squishem" target="_blank" rel="noopener noreferrer"
-                whileHover={{ scale: 1.04, y: -1 }} className="inline-block transition-all">
-                <img src="https://orynth.dev/api/badge/squishem?theme=light&style=default" alt="Featured on Orynth"
-                  width={160} height={50} className="rounded-lg opacity-70 hover:opacity-100 transition-opacity" />
-              </motion.a>
-            </div>
-          </div>
-          <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
-            <span className="text-xs text-muted-foreground/50">© 2026 SQUISH 'EM!  -  HTML5 Canvas Arcade</span>
-            <div className="flex items-center gap-1 text-xs text-muted-foreground/40 font-mono">
-              <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block" />
-              <span>ONLINE</span>
-            </div>
-          </div>
+
+        {/* Bottom bar */}
+        <div className="border-t border-white/5 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <span className="text-xs text-muted-foreground/40 font-mono">© 2026 SQUISH 'EM! — HTML5 Canvas Arcade</span>
+          <motion.a
+            href="https://orynth.dev/projects/squishem"
+            target="_blank"
+            rel="noopener noreferrer"
+            whileHover={{ scale: 1.04, y: -1 }}
+            className="inline-block transition-all"
+          >
+            <img
+              src="https://orynth.dev/api/badge/squishem?theme=light&style=default"
+              alt="Featured on Orynth"
+              width={140}
+              height={44}
+              className="rounded-lg opacity-50 hover:opacity-90 transition-opacity"
+            />
+          </motion.a>
         </div>
       </div>
     </footer>
+  );
+}
+
+function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
+  return (
+    <li>
+      <Link href={href} className="text-sm text-muted-foreground hover:text-primary transition-colors">
+        {children}
+      </Link>
+    </li>
   );
 }
