@@ -8,7 +8,7 @@ const PARAGRAPHS = [
   },
   {
     heading: "The Creator",
-    body: `The individual responsible for all of the above is Yusuf Safary, known online as @oroimho. He is a solo developer who derives satisfaction from building systems that are simultaneously technically interesting and playable by people who have never heard the words "reinforcement learning" and do not particularly need to. His X profile at x.com/oroimho documents the development process with the candor of someone who has long since stopped pretending that shipping software is a dignified activity. It is recommended reading.`,
+    body: `The individual responsible for all of the above is @oroimho. He is a solo developer who derives satisfaction from building systems that are simultaneously technically interesting and playable by people who have never heard the words "reinforcement learning" and do not particularly need to. His X profile at x.com/oroimho documents the development process with the candor of someone who has long since stopped pretending that shipping software is a dignified activity. It is recommended reading.`,
   },
   {
     heading: "Platform: Orynth",
