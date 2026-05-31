@@ -9,6 +9,7 @@ import Roadmap from "@/pages/roadmap";
 import Play from "@/pages/play";
 import Tech from "@/pages/tech";
 import AiAgent from "@/pages/ai-agent";
+import Beta from "@/pages/beta";
 import NotFound from "@/pages/not-found";
 
 import { Nav } from "@/components/nav";
@@ -47,6 +48,7 @@ function Router() {
       <Route path="/play" component={Play} />
       <Route path="/tech" component={Tech} />
       <Route path="/ai-agent" component={AiAgent} />
+      <Route path="/beta" component={Beta} />
       <Route component={NotFound} />
     </Switch>
   );
