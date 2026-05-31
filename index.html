@@ -28,6 +28,16 @@
   </head>
   <body>
     <div id="root"></div>
+    <!-- GitHub Pages SPA routing: restore path from ?p= redirect -->
+    <script>
+      (function(){
+        var p = new URLSearchParams(window.location.search).get('p');
+        if (p) {
+          window.history.replaceState(null, null,
+            p + (window.location.hash || ''));
+        }
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
