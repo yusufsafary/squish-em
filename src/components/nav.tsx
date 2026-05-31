@@ -11,6 +11,7 @@ export function Nav() {
     { href: "/how-to-play", label: "Guide" },
     { href: "/roadmap", label: "Roadmap" },
     { href: "/tech", label: "Tech" },
+    { href: "/ai-agent", label: "AI Agent" },
     { href: "/changelog", label: "Changelog" },
   ];
 
@@ -28,13 +29,13 @@ export function Nav() {
         </Link>
 
         <div className="flex items-center gap-3">
-          <div className="hidden md:flex items-center gap-6">
+          <div className="hidden md:flex items-center gap-5">
             {links.map(link => (
               <Link
                 key={link.href}
                 href={link.href}
                 className={`text-sm font-medium transition-colors hover:text-primary ${location === link.href ? "text-primary glow-text-green" : "text-muted-foreground"}`}
-                data-testid={`nav-link-${link.label.toLowerCase()}`}
+                data-testid={`nav-link-${link.label.toLowerCase().replace(" ", "-")}`}
               >
                 {link.label}
               </Link>
@@ -53,21 +54,12 @@ export function Nav() {
             className="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-[5px] rounded border border-white/10 bg-white/5 hover:bg-white/10 transition-colors"
             aria-label="Toggle menu"
           >
-            <motion.span
-              animate={{ rotate: open ? 45 : 0, y: open ? 7 : 0 }}
-              transition={{ duration: 0.18 }}
-              className="block w-5 h-0.5 bg-primary origin-center"
-            />
-            <motion.span
-              animate={{ opacity: open ? 0 : 1, scaleX: open ? 0 : 1 }}
-              transition={{ duration: 0.18 }}
-              className="block w-5 h-0.5 bg-primary"
-            />
-            <motion.span
-              animate={{ rotate: open ? -45 : 0, y: open ? -7 : 0 }}
-              transition={{ duration: 0.18 }}
-              className="block w-5 h-0.5 bg-primary origin-center"
-            />
+            <motion.span animate={{ rotate: open ? 45 : 0, y: open ? 7 : 0 }} transition={{ duration: 0.18 }}
+              className="block w-5 h-0.5 bg-primary origin-center" />
+            <motion.span animate={{ opacity: open ? 0 : 1, scaleX: open ? 0 : 1 }} transition={{ duration: 0.18 }}
+              className="block w-5 h-0.5 bg-primary" />
+            <motion.span animate={{ rotate: open ? -45 : 0, y: open ? -7 : 0 }} transition={{ duration: 0.18 }}
+              className="block w-5 h-0.5 bg-primary origin-center" />
           </button>
         </div>
       </div>
