@@ -10,6 +10,7 @@ import Play from "@/pages/play";
 import Tech from "@/pages/tech";
 import AiAgent from "@/pages/ai-agent";
 import Beta from "@/pages/beta";
+import Feedback from "@/pages/feedback";
 import NotFound from "@/pages/not-found";
 
 import { Nav } from "@/components/nav";
@@ -49,6 +50,7 @@ function Router() {
       <Route path="/tech" component={Tech} />
       <Route path="/ai-agent" component={AiAgent} />
       <Route path="/beta" component={Beta} />
+      <Route path="/feedback" component={Feedback} />
       <Route component={NotFound} />
     </Switch>
   );
