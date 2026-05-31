@@ -9,6 +9,7 @@ export function Nav() {
   const links = [
     { href: "/", label: "Home" },
     { href: "/how-to-play", label: "Guide" },
+    { href: "/roadmap", label: "Roadmap" },
     { href: "/changelog", label: "Changelog" },
   ];
 
