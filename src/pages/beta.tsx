@@ -9,7 +9,7 @@ const TWEET_TEMPLATES = [
   `just found SQUISH 'EM and i can't stop squishing blobs 🟥\n\n@oroimho built this whole thing solo and it goes hard\n\n$SQUISH on @orynth let's gooo 🐛\n\nsquishem.fun/beta`,
   `ok @oroimho really cooked with SQUISH 'EM\n\nfree android beta, no play store, just pure blob-squishing chaos\n\nanyone in $SQUISH on @orynth needs to play this NOW\n\nsquishem.fun/beta`,
   `SQUISH 'EM android beta is actually addictive??\n\ncute blobs falling from the sky and you gotta squish em all\n\nbig respect to @oroimho for building this solo 👑\n\n$SQUISH on @orynth is the move\n\nsquishem.fun/beta`,
-  `testing SQUISH 'EM android beta and having way too much fun with this\n\nshoutout @oroimho for the solo build, genuinely impressive\n\nif you're in $SQUISH on @orynth — this one's for you 💚\n\nsquishem.fun/beta`,
+  `testing SQUISH 'EM android beta and having way too much fun with this\n\nshoutout @oroimho for the solo build, genuinely impressive\n\nif you're in $SQUISH on @orynth - this one's for you 💚\n\nsquishem.fun/beta`,
   `can't believe @oroimho made this from scratch with zero frameworks\n\nSQUISH 'EM android beta is live and it slaps\n\n$SQUISH on @orynth support the builder 🙏\n\nget the apk: squishem.fun/beta`,
 ];
 
@@ -151,7 +151,7 @@ export default function Beta() {
           </p>
         </motion.div>
 
-        {/* Stats row — 3 cards, TESTERS removed */}
+        {/* Stats row - 3 cards, TESTERS removed */}
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -235,7 +235,7 @@ export default function Beta() {
                 </button>
 
                 <p className="mt-3 font-mono text-[10px] text-white/45 tracking-wide">
-                  X will open in a new window — return here after posting
+                  X will open in a new window - return here after posting
                 </p>
 
                 {tweetCount !== null && tweetCount > 0 && (
@@ -315,7 +315,7 @@ export default function Beta() {
                           d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"
                         />
                       </svg>
-                      DOWNLOAD APK — squish-em-beta.apk
+                      DOWNLOAD APK - squish-em-beta.apk
                     </>
                   )}
                 </motion.button>
@@ -342,7 +342,7 @@ export default function Beta() {
             </p>
             <ul className="space-y-2.5">
               {[
-                "Pre-release build — bugs may occur",
+                "Pre-release build - bugs may occur",
                 "Your feedback shapes the game",
                 <>
                   DM or mention{" "}
@@ -438,7 +438,7 @@ export default function Beta() {
             SEND FEEDBACK
           </p>
           <p className="text-sm text-white/65 leading-relaxed mb-4">
-            Found a bug? Got a feature idea? Reach out directly to the founder —
+            Found a bug? Got a feature idea? Reach out directly to the founder -
             your device info is attached automatically.
           </p>
           <Link
