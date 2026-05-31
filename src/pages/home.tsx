@@ -136,6 +136,7 @@ type ActionId = 0 | 1 | 2 | 3;
 
 interface Blob { id: number; x: number; y: number; vx: number; vy: number; hp: number; type: string; }
 interface GS { cannonX: number; blobs: Blob[]; bulletActive: boolean; bulletX: number; bulletY: number; comboMultiplier: number; score: number; }
+interface Particle { id: number; x: number; y: number; vx: number; vy: number; color: string; life: number; }
 
 const BLOB_COLORS: Record<string, string> = { green:"#22c55e", purple:"#a855f7", yellow:"#eab308", blue:"#3b82f6", red:"#ef4444" };
 const ACTION_LABELS = ["MOVE_LEFT","MOVE_RIGHT","SHOOT","WAIT"];
@@ -178,30 +179,56 @@ function AgentSimulatorSection() {
   const [qv,setQv]=useState<number[]>([0.25,0.25,0.25,0.25]);
   const [chosen,setChosen]=useState<ActionId>(2);
   const [frame,setFrame]=useState(0);
+  const [particles,setParticles]=useState<Particle[]>([]);
   const stratRef=useRef(strategy);
+  const pidRef=useRef(0);
+  const gsRef=useRef<GS>({cannonX:0.5,blobs:makeBlobs(),bulletActive:false,bulletX:0.5,bulletY:0.9,comboMultiplier:1,score:0});
   stratRef.current=strategy;
 
   useEffect(()=>{
     const id=setInterval(()=>{
-      setGs(prev=>{
-        let {blobs,bulletActive,bulletX,bulletY,score,comboMultiplier,cannonX}=prev;
-        blobs=blobs.map(b=>({...b,x:((b.x+b.vx+1)%1),y:clamp(b.y+b.vy*0.5,0.05,0.55),vx:Math.abs(b.x+b.vx)>1||b.x+b.vx<0?-b.vx:b.vx}));
-        if(bulletActive){
-          bulletY-=0.07;
-          const hit=blobs.find(b=>Math.abs(b.x-bulletX)<0.09&&Math.abs(b.y-bulletY)<0.1);
-          if(hit){score+=3*comboMultiplier;comboMultiplier=Math.min(comboMultiplier+0.5,8);blobs=blobs.map(b=>b.id===hit.id?{...b,hp:b.hp-1}:b).filter(b=>b.hp>0);bulletActive=false;}
-          else if(bulletY<-0.1){bulletActive=false;comboMultiplier=Math.max(1,comboMultiplier-0.5);}
-        }
-        if(blobs.length<2)blobs=[...blobs,...makeBlobs().slice(0,3)];
-        const newQ=computeQ(cannonX,blobs,bulletActive,comboMultiplier,stratRef.current);
-        const act=newQ.indexOf(Math.max(...newQ)) as ActionId;
-        setQv(newQ); setChosen(act); setFrame(f=>f+1);
-        let nx=cannonX,nb=bulletActive,bx=bulletX,by=bulletY;
-        if(act===0)nx=clamp(cannonX-0.045,0.05,0.95);
-        if(act===1)nx=clamp(cannonX+0.045,0.05,0.95);
-        if(act===2&&!bulletActive){nb=true;bx=nx;by=0.87;}
-        return {...prev,blobs,cannonX:nx,bulletActive:nb,bulletX:bx,bulletY:by,score,comboMultiplier};
-      });
+      // ── Tick simulation synchronously via ref ──────────────────────
+      let {blobs,bulletActive,bulletX,bulletY,score,comboMultiplier,cannonX}=gsRef.current;
+      blobs=blobs.map(b=>({...b,x:((b.x+b.vx+1)%1),y:clamp(b.y+b.vy*0.5,0.05,0.55),vx:Math.abs(b.x+b.vx)>1||b.x+b.vx<0?-b.vx:b.vx}));
+
+      let spawnParticles: Particle[]=[];
+      if(bulletActive){
+        bulletY-=0.07;
+        const hit=blobs.find(b=>Math.abs(b.x-bulletX)<0.09&&Math.abs(b.y-bulletY)<0.1);
+        if(hit){
+          score+=3*comboMultiplier;
+          comboMultiplier=Math.min(comboMultiplier+0.5,8);
+          blobs=blobs.map(b=>b.id===hit.id?{...b,hp:b.hp-1}:b).filter(b=>b.hp>0);
+          bulletActive=false;
+          // Spawn burst particles at blob hit position
+          const hc=BLOB_COLORS[hit.type];
+          spawnParticles=Array.from({length:11},()=>{
+            const ang=Math.random()*Math.PI*2;
+            const spd=0.006+Math.random()*0.018;
+            return {id:pidRef.current++,x:hit.x,y:hit.y,vx:Math.cos(ang)*spd,vy:Math.sin(ang)*spd,color:hc,life:1};
+          });
+        } else if(bulletY<-0.1){bulletActive=false;comboMultiplier=Math.max(1,comboMultiplier-0.5);}
+      }
+      if(blobs.length<2)blobs=[...blobs,...makeBlobs().slice(0,3)];
+
+      const newQ=computeQ(cannonX,blobs,bulletActive,comboMultiplier,stratRef.current);
+      const act=newQ.indexOf(Math.max(...newQ)) as ActionId;
+      setQv(newQ); setChosen(act); setFrame(f=>f+1);
+
+      let nx=cannonX,nb=bulletActive,bx=bulletX,by=bulletY;
+      if(act===0)nx=clamp(cannonX-0.045,0.05,0.95);
+      if(act===1)nx=clamp(cannonX+0.045,0.05,0.95);
+      if(act===2&&!bulletActive){nb=true;bx=nx;by=0.87;}
+
+      const nextGs={...gsRef.current,blobs,cannonX:nx,bulletActive:nb,bulletX:bx,bulletY:by,score,comboMultiplier};
+      gsRef.current=nextGs;
+      setGs(nextGs);
+
+      // ── Tick particles ─────────────────────────────────────────────
+      setParticles(prev=>[
+        ...prev.map(p=>({...p,x:p.x+p.vx,y:p.y+p.vy,vy:p.vy+0.0008,life:p.life-0.13})).filter(p=>p.life>0),
+        ...spawnParticles,
+      ].slice(-60));
     },130);
     return ()=>clearInterval(id);
   },[]);
@@ -284,6 +311,22 @@ function AgentSimulatorSection() {
                   style={{width:5,height:13,left:`calc(${gs.bulletX*100}% - 2.5px)`,top:`calc(${gs.bulletY*100}% - 6.5px)`,
                     background:"linear-gradient(to top,#22c55e,#86efac)",boxShadow:"0 0 8px #22c55e"}}/>
               )}
+
+              {/* Particle burst effects */}
+              {particles.map(p=>(
+                <div key={p.id} className="absolute rounded-full pointer-events-none"
+                  style={{
+                    width: Math.max(3, 7 * p.life),
+                    height: Math.max(3, 7 * p.life),
+                    left:`calc(${p.x*100}% - ${Math.max(1.5,3.5*p.life)}px)`,
+                    top:`calc(${p.y*100}% - ${Math.max(1.5,3.5*p.life)}px)`,
+                    background:p.color,
+                    opacity:p.life,
+                    boxShadow:`0 0 ${6*p.life}px ${p.color}`,
+                    transform:`scale(${0.5+p.life*0.5})`,
+                  }}
+                />
+              ))}
 
               <motion.div className="absolute bottom-0 flex flex-col items-center"
                 style={{left:`calc(${gs.cannonX*100}% - 9px)`}} transition={{type:"spring",stiffness:320,damping:26}}>
