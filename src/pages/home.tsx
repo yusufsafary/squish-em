@@ -173,6 +173,123 @@ function MarqueeTicker() {
   );
 }
 
+
+function BuiltWith() {
+  const TECHS = [
+    {
+      category: "Frontend",
+      color: "127,65%,52%",
+      items: [
+        { name: "React 18",        desc: "UI component engine"          },
+        { name: "TypeScript",      desc: "Type-safe codebase"           },
+        { name: "Vite",            desc: "Dev server & bundler"         },
+        { name: "Framer Motion",   desc: "Animations & transitions"     },
+        { name: "Tailwind CSS",    desc: "Utility-first styling"        },
+      ],
+    },
+    {
+      category: "Blockchain",
+      color: "263,68%,60%",
+      items: [
+        { name: "Solana",          desc: "Layer-1 chain for $SQUISH"    },
+        { name: "Anchor",          desc: "Smart contract framework"     },
+        { name: "$SQUISH SPL",     desc: "In-game token standard"       },
+        { name: "Phantom Wallet",  desc: "Web3 wallet integration"      },
+        { name: "Helius RPC",      desc: "High-speed Solana node"       },
+      ],
+    },
+    {
+      category: "AI & Python",
+      color: "48,95%,58%",
+      items: [
+        { name: "Python 3.12",     desc: "AI agent runtime"             },
+        { name: "RL-DQN",          desc: "Reinforcement learning model" },
+        { name: "NumPy",           desc: "State vector processing"      },
+        { name: "WebSocket",       desc: "Real-time agent↔game bridge"  },
+        { name: "ONNX Runtime",    desc: "On-device model inference"    },
+      ],
+    },
+    {
+      category: "Infrastructure",
+      color: "215,88%,62%",
+      items: [
+        { name: "Vercel Edge",     desc: "Global CDN deployment"        },
+        { name: "PWA / SW",        desc: "Offline & installable"        },
+        { name: "GitHub Actions",  desc: "CI / auto-changelog"          },
+        { name: "Canvas API",      desc: "Game rendering engine"        },
+        { name: "Web Audio API",   desc: "8-bit sound synthesis"        },
+      ],
+    },
+  ];
+
+  return (
+    <section className="border-t border-white/5 py-20 bg-background">
+      <div className="container mx-auto px-4 max-w-5xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }} transition={{ duration: 0.5 }}
+          className="mb-12"
+        >
+          <p className="font-mono text-xs text-primary/60 tracking-widest mb-3">STACK</p>
+          <h2 className="font-display font-black text-3xl md:text-4xl text-white tracking-tight">
+            Built With
+          </h2>
+          <p className="text-muted-foreground text-sm mt-3 max-w-lg leading-relaxed">
+            Open, modern tech from browser to blockchain. No proprietary lock-in.
+          </p>
+        </motion.div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+          {TECHS.map((group, gi) => (
+            <motion.div
+              key={group.category}
+              initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-40px" }}
+              transition={{ duration: 0.4, delay: gi * 0.08 }}
+              className="rounded-xl border border-white/8 bg-white/[0.02] p-5 hover:border-white/16 transition-colors"
+            >
+              <div className="flex items-center gap-2 mb-4">
+                <span
+                  className="w-2 h-2 rounded-full flex-shrink-0"
+                  style={{ background: `hsl(${group.color})`, boxShadow: `0 0 6px hsl(${group.color} / 0.6)` }}
+                />
+                <span
+                  className="font-mono text-[10px] tracking-widest font-bold"
+                  style={{ color: `hsl(${group.color})` }}
+                >
+                  {group.category.toUpperCase()}
+                </span>
+              </div>
+              <ul className="space-y-3">
+                {group.items.map((item, ii) => (
+                  <motion.li
+                    key={item.name}
+                    initial={{ opacity: 0, x: -8 }} whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3, delay: gi * 0.08 + ii * 0.04 }}
+                    className="flex items-center justify-between gap-3"
+                  >
+                    <span className="text-sm font-medium text-white/85">{item.name}</span>
+                    <span className="text-[11px] text-muted-foreground/50 text-right leading-tight">{item.desc}</span>
+                  </motion.li>
+                ))}
+              </ul>
+            </motion.div>
+          ))}
+        </div>
+
+        <motion.p
+          initial={{ opacity: 0 }} whileInView={{ opacity: 1 }}
+          viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.3 }}
+          className="font-mono text-[10px] text-muted-foreground/25 mt-8 text-center"
+        >
+          All game logic runs client-side — zero backend latency during gameplay.
+        </motion.p>
+      </div>
+    </section>
+  );
+}
+
 export default function Home() {
   const { muted, setMuted, playShoot, playClick } = useGameSound();
   const heroRef = useRef<HTMLElement>(null);
@@ -324,6 +441,9 @@ export default function Home() {
 
       {/* ── Marquee Ticker ───────────────────────────────────────────────── */}
       <MarqueeTicker />
+
+      {/* ── Built With ────────────────────────────────────────────────────── */}
+      <BuiltWith />
     </main>
   );
 }
