@@ -65,6 +65,24 @@ export function Nav() {
             ))}
           </div>
 
+          {/* Beta APK Download Badge */}
+          <a
+            href="/download"
+            className="hidden md:inline-flex items-center gap-2 border border-amber-500/35 bg-amber-500/8 hover:bg-amber-500/18 text-amber-400 hover:text-amber-300 px-3 py-1.5 rounded-lg font-display font-bold text-[10px] tracking-widest transition-all relative group"
+            style={{ textDecoration: "none" }}
+          >
+            <motion.span
+              animate={{ opacity: [1, 0.25, 1], scale: [1, 1.3, 1] }}
+              transition={{ repeat: Infinity, duration: 1.5, ease: "easeInOut" }}
+              className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block flex-shrink-0"
+              style={{ boxShadow: "0 0 6px #f59e0b" }}
+            />
+            BETA APK
+            <span className="absolute -top-2 -right-2 bg-amber-500 text-black text-[7px] font-black px-1 py-0.5 rounded leading-none tracking-wide">
+              NEW
+            </span>
+          </a>
+
           <Link
             href="/play"
             className="hidden md:inline-flex bg-primary hover:bg-primary/80 text-primary-foreground px-6 py-2 rounded font-display font-bold text-sm tracking-wider glow-box-green transition-all"
@@ -108,6 +126,24 @@ export function Nav() {
                   {link.label}
                 </Link>
               ))}
+
+              {/* Mobile: Beta APK */}
+              <a
+                href="/download"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-3 py-3 border-b border-white/5 text-amber-400 hover:text-amber-300 transition-colors"
+                style={{ textDecoration: "none" }}
+              >
+                <motion.span
+                  animate={{ opacity: [1, 0.25, 1] }}
+                  transition={{ repeat: Infinity, duration: 1.5 }}
+                  className="w-2 h-2 rounded-full bg-amber-400 inline-block flex-shrink-0"
+                  style={{ boxShadow: "0 0 8px #f59e0b" }}
+                />
+                <span className="text-sm font-display font-bold tracking-wider">BETA APK DOWNLOAD</span>
+                <span className="ml-auto bg-amber-500 text-black text-[8px] font-black px-1.5 py-0.5 rounded leading-none">NEW</span>
+              </a>
+
               {/* Mobile language toggle */}
               <div className="flex gap-2 py-3 border-b border-white/5">
                 {langs.map(l => (
