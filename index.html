@@ -6,21 +6,31 @@
     <title>SQUISH 'EM! — Blob Shooter Game</title>
     <meta name="description" content="A kawaii HTML5 Canvas blob shooter. Shoot blobs, chain combos, survive boss waves. Zero installs — runs in any browser." />
     <meta name="robots" content="index, follow" />
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'">
+    <!-- PWA -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#1a1a2e" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="SQUISH 'EM!" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <!-- Security -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https:; connect-src 'self'; worker-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'">
     <meta http-equiv="X-Content-Type-Options" content="nosniff">
     <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
     <meta name="referrer" content="strict-origin-when-cross-origin">
+    <!-- OG / Twitter -->
     <meta property="og:title" content="SQUISH 'EM! — Blob Shooter Game" />
     <meta property="og:description" content="A kawaii HTML5 Canvas blob shooter. Shoot blobs, chain combos, survive boss waves. Zero installs — runs in any browser." />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://squish-em.vercel.app" />
-    <meta property="og:image" content="https://squish-em.vercel.app/og-image.png" />
+    <meta property="og:url" content="https://squishem.fun" />
+    <meta property="og:image" content="https://squishem.fun/og-image.png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="SQUISH 'EM! — Blob Shooter Game" />
     <meta name="twitter:description" content="A kawaii HTML5 Canvas blob shooter. Shoot blobs, chain combos, survive boss waves. Zero installs — runs in any browser." />
-    <meta name="twitter:image" content="https://squish-em.vercel.app/og-image.png" />
+    <meta name="twitter:image" content="https://squishem.fun/og-image.png" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,13 +38,14 @@
   </head>
   <body>
     <div id="root"></div>
-    <!-- GitHub Pages SPA routing: restore path from ?p= redirect -->
     <script>
       (function(){
         var p = new URLSearchParams(window.location.search).get('p');
-        if (p) {
-          window.history.replaceState(null, null,
-            p + (window.location.hash || ''));
+        if (p) { window.history.replaceState(null, null, p + (window.location.hash || '')); }
+        if ('serviceWorker' in navigator) {
+          window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function(){});
+          });
         }
       })();
     </script>
