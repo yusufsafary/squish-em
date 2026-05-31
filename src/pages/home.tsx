@@ -531,16 +531,16 @@ export default function Home() {
             </div>
 
             <h2 className="text-3xl md:text-4xl font-display font-bold mb-6 text-white">
-              MOBILE + WEB3
+              MULTIPLAYER + MOBILE + WEB3
             </h2>
             <p className="text-lg text-muted-foreground mb-10 max-w-xl mx-auto">
-              iOS & Android launch in June. On-chain Solana leaderboards, $SQUISH token, and NFT blob skins in Q3.
+              2P Local Multiplayer is live now. iOS & Android in progress for June. On-chain Solana leaderboards, $SQUISH token, and NFT blob skins in Q3.
             </p>
 
             <div className="flex flex-wrap justify-center gap-4 mb-10">
               {[
                 { label: "PHASE 1", status: "LIVE NOW", color: "127 49% 60%" },
-                { label: "PHASE 2", status: "MOBILE — JUNE 2026", color: "48 100% 62%" },
+                { label: "PHASE 2", status: "IN PROGRESS — JUNE 2026", color: "48 100% 62%" },
                 { label: "PHASE 3", status: "SOLANA — Q3 2026", color: "263 44% 56%" },
               ].map((p, i) => (
                 <motion.div

@@ -9,7 +9,7 @@ export default function Roadmap() {
       <div className="container mx-auto px-4 max-w-4xl relative z-10">
         <div className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-display font-black mb-4 text-white">THE MASTER PLAN</h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">From browser experiment to fully on-chain Solana arcade experience.</p>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">From browser blob shooter to mobile app, AI mining agent, and fully on-chain Solana arcade.</p>
         </div>
 
         <div className="relative border-l-2 border-white/10 ml-4 md:ml-12 space-y-16 py-8">
@@ -19,14 +19,16 @@ export default function Roadmap() {
             title="BETA LAUNCH" 
             date="MAY 2026" 
             status="LIVE NOW" 
-            color="127 49% 60%" // Green
+            color="127 49% 60%"
             items={[
               "Web version deployment",
               "Core gameplay loop & scaling difficulty",
               "4 enemy types + Boss system",
               "Power-ups system",
-              "Local Leaderboard",
-              "PWA Support (Installable)"
+              "Local Leaderboard & Hall of Fame",
+              "PWA Support (Installable)",
+              "2P Local Multiplayer (same device)",
+              "AI Mining Agent — 3 autonomous strategies (Greedy / Combo / RL-DQN)"
             ]}
           />
 
@@ -34,15 +36,17 @@ export default function Roadmap() {
             phase="PHASE 2" 
             title="MOBILE LAUNCH" 
             date="JUNE 2026" 
-            status="COMING SOON" 
-            color="48 100% 62%" // Gold
+            status="IN PROGRESS" 
+            color="48 100% 62%"
             items={[
               "Android (Play Store) Release",
               "iOS (App Store) Release",
               "Touch joystick optimizations",
               "Haptic feedback integration",
+              "AI Mining Agent mobile tab (WebView + injected agent)",
               "Daily challenges",
-              "Push notifications"
+              "Push notifications",
+              "Online multiplayer (2–4 players)"
             ]}
           />
 
@@ -50,14 +54,15 @@ export default function Roadmap() {
             phase="PHASE 3" 
             title="SOLANA WEB3" 
             date="Q3 2026" 
-            status="ROADMAP" 
-            color="263 44% 56%" // Purple
+            status="PLANNED" 
+            color="263 44% 56%"
             glow
             items={[
               "Phantom/Solflare wallet connect",
               "On-chain global leaderboard",
               "$SQUISH SPL token integration",
               "NFT Blob Skins (Mint unique avatars)",
+              "Squish-Mining program — anti-cheat session proofs",
               "Weekend SOL tournament prize pools",
               "Verifiable high scores"
             ]}
