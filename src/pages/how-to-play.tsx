@@ -90,6 +90,7 @@ export default function HowToPlay() {
               <PowerUp icon="🛡" name="Shield" desc="Absorbs 1 hit (from blobs or boss shots). Lasts 10s." color="180 80% 55%" />
               <PowerUp icon="×2" name="Score Multiplier" desc="Doubles all points earned. Lasts 10s." color="48 100% 62%" />
               <PowerUp icon="💣" name="NUKE" desc="Clears every blob on screen instantly. Rare drop. Massive score burst." color="14 100% 57%" />
+              <PowerUp icon="❄" name="FREEZE" desc="Freezes all blobs & boss at 12% speed for 6 seconds. Use it before boss arrives." color="195 100% 50%" />
             </div>
           </section>
 
@@ -120,6 +121,45 @@ export default function HowToPlay() {
               ))}
             </div>
           </section>
+          {/* ── Bestiary ── */}
+          <section id="bestiary">
+            <h2 className="text-2xl font-display font-bold mb-6 text-primary flex items-center gap-3">
+              <span className="w-6 h-1 bg-primary inline-block" /> THE BESTIARY
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                { name: "Green Blob",  icon: "🟢", hp: 1, speed: "Slow",              pts: 10,  desc: "Most common. Easy prey — chain them for combos.",                      color: "127 49% 60%",  unlocks: "from start" },
+                { name: "Blue Blob",   icon: "🔵", hp: 2, speed: "Very Slow",          pts: 20,  desc: "Tanky. Takes 2 shots. Lead your aim slightly.",                       color: "215 100% 65%", unlocks: "Level 3" },
+                { name: "Red Blob",    icon: "🔴", hp: 1, speed: "Fast",               pts: 30,  desc: "Darts downward quickly. Shoot ahead of its path.",                    color: "360 100% 71%", unlocks: "Level 5" },
+                { name: "Gold Blob",   icon: "🟡", hp: 1, speed: "Medium (zigzag)",    pts: 100, desc: "5% spawn chance. Zigzag pattern. Worth 10× a green — always chase it.", color: "48 100% 62%",  unlocks: "Level 2" },
+                { name: "Boss Blob",   icon: "🔥", hp: 20, speed: "Fires projectiles", pts: 500, desc: "Appears every 5 levels. Has 20 HP, fires shots. Use FREEZE + NUKE.",   color: "360 100% 71%", unlocks: "every 5 lvls", isBoss: true },
+              ].map(e => (
+                <motion.div
+                  key={e.name}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  className={`p-5 rounded-lg border bg-card/40 flex gap-4 ${e.isBoss ? "md:col-span-2" : ""}`}
+                  style={{ borderColor: `hsl(${e.color} / 0.3)` }}
+                >
+                  <div className="text-3xl shrink-0 w-12 h-12 flex items-center justify-center rounded-xl" style={{ backgroundColor: `hsl(${e.color} / 0.12)` }}>{e.icon}</div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-display font-bold" style={{ color: `hsl(${e.color})` }}>{e.name}</h3>
+                      <span className="text-xs font-mono bg-white/5 px-2 py-0.5 rounded">{e.unlocks}</span>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">{e.desc}</p>
+                    <div className="flex gap-4 font-mono text-xs">
+                      <span><span className="text-muted-foreground">HP </span><span className="text-white">{e.hp}</span></span>
+                      <span><span className="text-muted-foreground">SPD </span><span className="text-white">{e.speed}</span></span>
+                      <span><span className="text-muted-foreground">PTS </span><span style={{ color: `hsl(${e.color})` }}>{e.pts}</span></span>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </section>
+
         </div>
       </div>
     </main>
