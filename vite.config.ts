@@ -21,6 +21,9 @@ export default defineConfig({
       input: {
         main: path.resolve(__dirname, "index.html"),
         game: path.resolve(__dirname, "game.html"),
+        about: path.resolve(__dirname, "about.html"),
+        howtoplay: path.resolve(__dirname, "howtoplay.html"),
+        creator: path.resolve(__dirname, "creator.html"),
       },
     },
   },
