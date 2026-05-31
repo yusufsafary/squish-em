@@ -1,18 +1,6 @@
 import { Link } from "wouter";
 import { motion } from "framer-motion";
 
-const NAV_CARDS = [
-  { href: "/how-to-play",          icon: "📖", label: "Game Guide",  desc: "Controls, power-ups & pro tips",   color: "127 49% 60%"  },
-  { href: "/how-to-play#bestiary", icon: "🐛", label: "Bestiary",    desc: "All enemies, HP & strategies",     color: "215 100% 65%" },
-  { href: "/roadmap",              icon: "🗺", label: "Roadmap",     desc: "Mobile, Web3 & Multiplayer plans", color: "263 44% 56%"  },
-];
-
-const PHASES = [
-  { label: "PHASE 1", status: "LIVE NOW",                       color: "127 49% 60%" },
-  { label: "PHASE 2", status: "MOBILE / JUNE 2026",             color: "48 100% 62%" },
-  { label: "PHASE 3", status: "SOLANA + MULTIPLAYER / Q3 2026", color: "263 44% 56%" },
-];
-
 const FEATURES = [
   { icon: "∞",  iconColor: "hsl(127 49% 60%)",  title: "Infinite Levels",  desc: "Every 15 kills advances a level. Speed and blob count scale endlessly.", border: "127 49% 60%" },
   { icon: "×4", iconColor: "hsl(360 100% 71%)", title: "Combo System",     desc: "Chain kills to multiply your score up to ×4. Keep the streak or reset.", border: "360 100% 71%" },
@@ -131,77 +119,6 @@ export function Footer() {
               READ FULL GUIDE →
             </Link>
           </div>
-        </div>
-      </div>
-
-      {/* ── Explore More ────────────────────────────────────────────────── */}
-      <div className="border-b border-white/5 py-10 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 100% at 50% 100%, hsla(127,49%,60%,0.03), transparent)" }} />
-        <div className="container mx-auto px-4 relative z-10">
-          <motion.div className="mb-6 text-center" initial={{ opacity: 0, y: 12 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.4 }}>
-            <span className="font-mono text-xs text-muted-foreground/40 tracking-widest uppercase">— Explore More —</span>
-          </motion.div>
-          <motion.div
-            className="grid grid-cols-1 md:grid-cols-3 gap-3 max-w-3xl mx-auto"
-            initial="hidden" whileInView="show" viewport={{ once: true }}
-            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.07 } } }}
-          >
-            {NAV_CARDS.map(item => (
-              <motion.div
-                key={item.href}
-                variants={{ hidden: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] } } }}
-                whileHover={{ y: -3, scale: 1.02 }}
-              >
-                <Link href={item.href}
-                  className="flex items-center gap-3 p-4 rounded-xl border bg-card/50 backdrop-blur-sm hover:border-opacity-60 transition-all group block"
-                  style={{ borderColor: `hsl(${item.color} / 0.22)` }}>
-                  <div className="text-lg w-9 h-9 rounded-lg flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform"
-                    style={{ backgroundColor: `hsl(${item.color} / 0.1)`, boxShadow: `0 0 10px hsl(${item.color} / 0.13)` }}>
-                    {item.icon}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <span className="font-display font-bold text-xs block mb-0.5" style={{ color: `hsl(${item.color})` }}>{item.label}</span>
-                    <span className="text-xs text-muted-foreground/60">{item.desc}</span>
-                  </div>
-                  <span className="text-muted-foreground/30 group-hover:text-muted-foreground group-hover:translate-x-1 transition-all shrink-0">→</span>
-                </Link>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </div>
-
-      {/* ── Roadmap Strip ───────────────────────────────────────────────── */}
-      <div className="border-b border-white/5 py-8 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 120% at 50% 50%, hsla(263,44%,56%,0.04), transparent)" }} />
-        <div className="container mx-auto px-4 relative z-10">
-          <motion.div
-            className="max-w-2xl mx-auto flex flex-col items-center gap-4"
-            initial={{ opacity: 0, y: 14 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }}
-          >
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-secondary/40 bg-secondary/10 text-secondary text-xs font-mono tracking-widest uppercase">
-              <motion.span animate={{ opacity: [1, 0.4, 1] }} transition={{ duration: 1.8, repeat: Infinity }}
-                className="w-1.5 h-1.5 rounded-full bg-secondary inline-block" />
-              Coming Soon
-            </div>
-            <h3 className="text-xl font-display font-bold text-white text-center tracking-wide">MOBILE + WEB3 + MULTIPLAYER</h3>
-            <div className="flex flex-wrap justify-center gap-2">
-              {PHASES.map((p, i) => (
-                <motion.div key={p.label}
-                  initial={{ opacity: 0, scale: 0.9 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }}
-                  transition={{ delay: i * 0.07, duration: 0.35 }}
-                  className="flex items-center gap-2 px-3 py-1.5 rounded-lg border bg-background/50 backdrop-blur-sm"
-                  style={{ borderColor: `hsl(${p.color} / 0.3)` }}>
-                  <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ backgroundColor: `hsl(${p.color})`, boxShadow: `0 0 5px hsl(${p.color} / 0.6)` }} />
-                  <span className="font-mono text-xs font-bold" style={{ color: `hsl(${p.color})` }}>{p.label}</span>
-                  <span className="font-mono text-xs text-muted-foreground">{p.status}</span>
-                </motion.div>
-              ))}
-            </div>
-            <Link href="/roadmap" className="text-xs font-mono text-secondary/50 hover:text-secondary transition-colors flex items-center gap-1">
-              VIEW MASTER PLAN →
-            </Link>
-          </motion.div>
         </div>
       </div>
 
