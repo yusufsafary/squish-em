@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 export function Footer() {
   return (
     <footer className="relative border-t border-white/5 bg-background/50 overflow-hidden mt-0">
-      {/* ── Main Footer ─────────────────────────────────────────────────── */}
       <div className="py-10 relative">
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.025] select-none">
           <span className="font-display font-black text-[18vw] whitespace-nowrap text-white">SQUISH 'EM!</span>
@@ -32,7 +31,7 @@ export function Footer() {
               <h4 className="font-display font-bold text-xs tracking-widest text-muted-foreground mb-4 uppercase">Discover</h4>
               <ul className="space-y-2.5">
                 <li><Link href="/roadmap" className="text-sm text-muted-foreground hover:text-secondary transition-colors">🗺 Web3 Roadmap</Link></li>
-                <li><Link href="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">🏠 Home</Link></li>
+                <li><Link href="/changelog" className="text-sm text-muted-foreground hover:text-primary transition-colors">📋 Changelog</Link></li>
                 <li>
                   <motion.a href="https://orynth.dev/projects/squishem" target="_blank" rel="noopener noreferrer"
                     className="text-sm text-muted-foreground hover:text-primary transition-colors inline-block" whileHover={{ x: 2 }}>
