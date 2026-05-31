@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect, useMemo } from "react";
+import { Link } from "wouter";
 
 const APK_URL =
   "https://github.com/yusufsafary/squish-em/releases/download/beta-latest/squish-em-beta.apk";
@@ -62,7 +63,6 @@ export default function Beta() {
   const [tweetCount, setTweetCount] = useState<number | null>(null);
   const [dlCount, setDlCount] = useState<number | null>(null);
 
-  // Pick a random personal tweet template once per session
   const tweetCopy = useMemo(
     () => TWEET_TEMPLATES[Math.floor(Math.random() * TWEET_TEMPLATES.length)],
     []
@@ -99,7 +99,6 @@ export default function Beta() {
 
   return (
     <main className="min-h-screen pt-24 pb-20 px-4 relative overflow-hidden">
-      {/* Ambient background */}
       <div className="fixed inset-0 pointer-events-none" aria-hidden>
         <div
           className="absolute top-0 left-1/2 -translate-x-1/2 w-[900px] h-[500px]"
@@ -118,7 +117,7 @@ export default function Beta() {
       </div>
 
       <div className="relative z-10 w-full max-w-xl mx-auto">
-        {/* Testing phase banner — clean, no "early access only" */}
+        {/* Banner */}
         <motion.div
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -213,7 +212,6 @@ export default function Beta() {
                 transition={{ duration: 0.3 }}
                 className="p-8 text-center"
               >
-                {/* X icon */}
                 <div className="w-16 h-16 rounded-2xl border border-amber-500/20 bg-amber-500/8 flex items-center justify-center mx-auto mb-5">
                   <XLogo className="w-8 h-8 text-amber-400" />
                 </div>
@@ -226,7 +224,6 @@ export default function Beta() {
                   helps support @oroimho and the $SQUISH community on @orynth.
                 </p>
 
-                {/* Tweet preview — shows the personal copy */}
                 <div className="border border-white/8 rounded-xl bg-white/3 p-4 mb-6 text-left">
                   <p className="font-mono text-[10px] text-muted-foreground/50 tracking-widest mb-2">
                     YOUR POST WILL SAY
@@ -318,11 +315,7 @@ export default function Beta() {
                     <>
                       <motion.div
                         animate={{ rotate: 360 }}
-                        transition={{
-                          duration: 1,
-                          repeat: Infinity,
-                          ease: "linear",
-                        }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                         className="w-4 h-4 border-2 border-current border-t-transparent rounded-full"
                       />
                       STARTING DOWNLOAD...
@@ -363,7 +356,7 @@ export default function Beta() {
           transition={{ delay: 0.4, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
           className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6"
         >
-          {/* Feedback & testing notice */}
+          {/* Testing phase notice */}
           <div className="border border-amber-500/15 rounded-xl bg-amber-500/4 p-5">
             <p className="font-mono text-[9px] text-amber-400/60 tracking-widest mb-3">
               TESTING PHASE
@@ -466,12 +459,11 @@ export default function Beta() {
             SEND FEEDBACK
           </p>
           <p className="text-xs text-muted-foreground leading-relaxed mb-4">
-            Found a bug? Got a feature idea? Reach out directly to the founder.
+            Found a bug? Got a feature idea? Reach out directly to the founder —
+            your device info is attached automatically.
           </p>
-          <a
-            href="https://x.com/oroimho"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="/feedback"
             className="inline-flex items-center gap-2.5 text-white px-6 py-2.5 rounded-xl font-display font-bold text-xs tracking-wider transition-all duration-200 hover:scale-105 active:scale-95"
             style={{
               background: "#000",
@@ -480,8 +472,8 @@ export default function Beta() {
             }}
           >
             <XLogo className="w-3.5 h-3.5" />
-            MESSAGE @oroimho ON X
-          </a>
+            REPORT TO @oroimho
+          </Link>
         </motion.div>
 
         <motion.p
