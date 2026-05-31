@@ -4,48 +4,127 @@
   "installCommand": "npm install",
   "framework": null,
   "routes": [
-    { "src": "/game\\.html", "dest": "/game.html" },
-    { "src": "/assets/(.*)", "dest": "/assets/$1" },
-    { "src": "/favicon\\.svg", "dest": "/favicon.svg" },
-    { "src": "/og-image\\.png", "dest": "/og-image.png" },
-    { "src": "/changelog\\.json", "dest": "/changelog.json" },
-    { "src": "/manifest\\.json", "dest": "/manifest.json" },
-    { "src": "/sw\\.js", "dest": "/sw.js" },
-    { "src": "/(.*)", "dest": "/index.html", "status": 200 }
+    {
+      "src": "/game\\.html",
+      "dest": "/game.html"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/assets/$1"
+    },
+    {
+      "src": "/favicon\\.svg",
+      "dest": "/favicon.svg"
+    },
+    {
+      "src": "/og-image\\.png",
+      "dest": "/og-image.png"
+    },
+    {
+      "src": "/changelog\\.json",
+      "dest": "/changelog.json"
+    },
+    {
+      "src": "/manifest\\.json",
+      "dest": "/manifest.json"
+    },
+    {
+      "src": "/sw\\.js",
+      "dest": "/sw.js"
+    },
+    {
+      "src": "/about\\.html",
+      "dest": "/about.html"
+    },
+    {
+      "src": "/howtoplay\\.html",
+      "dest": "/howtoplay.html"
+    },
+    {
+      "src": "/creator\\.html",
+      "dest": "/creator.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html",
+      "status": 200
+    }
   ],
   "headers": [
     {
       "source": "/assets/(.*)",
       "headers": [
-        { "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
       ]
     },
     {
       "source": "/(.*\\.html)",
       "headers": [
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
-        { "key": "Pragma", "value": "no-cache" },
-        { "key": "Expires", "value": "0" }
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        },
+        {
+          "key": "Pragma",
+          "value": "no-cache"
+        },
+        {
+          "key": "Expires",
+          "value": "0"
+        }
       ]
     },
     {
       "source": "/",
       "headers": [
-        { "key": "Cache-Control", "value": "no-cache, no-store, must-revalidate" },
-        { "key": "Pragma", "value": "no-cache" },
-        { "key": "Expires", "value": "0" }
+        {
+          "key": "Cache-Control",
+          "value": "no-cache, no-store, must-revalidate"
+        },
+        {
+          "key": "Pragma",
+          "value": "no-cache"
+        },
+        {
+          "key": "Expires",
+          "value": "0"
+        }
       ]
     },
     {
       "source": "/(.*)",
       "headers": [
-        { "key": "X-Content-Type-Options", "value": "nosniff" },
-        { "key": "X-Frame-Options", "value": "SAMEORIGIN" },
-        { "key": "X-XSS-Protection", "value": "1; mode=block" },
-        { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
-        { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=(), payment=()" },
-        { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" },
-        { "key": "Content-Security-Policy", "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://api.squishem.io https://*.solana.com https://*.helius.dev; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'" }
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "X-XSS-Protection",
+          "value": "1; mode=block"
+        },
+        {
+          "key": "Referrer-Policy",
+          "value": "strict-origin-when-cross-origin"
+        },
+        {
+          "key": "Permissions-Policy",
+          "value": "camera=(), microphone=(), geolocation=(), payment=()"
+        },
+        {
+          "key": "Strict-Transport-Security",
+          "value": "max-age=63072000; includeSubDomains; preload"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://api.squishem.io https://*.solana.com https://*.helius.dev; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'"
+        }
       ]
     }
   ]
