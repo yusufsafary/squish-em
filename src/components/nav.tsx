@@ -14,7 +14,6 @@ export function Nav() {
     { href: "/roadmap", label: t.navRoadmap },
     { href: "/tech", label: t.navTech },
     { href: "/ai-agent", label: t.navAiAgent },
-    { href: "/changelog", label: t.navChangelog },
   ];
 
   const langs: { id: Lang; flag: string }[] = [
