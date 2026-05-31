@@ -50,7 +50,7 @@ const ACTION_DESC   = [
   "Shift cannon left",
   "Shift cannon right",
   "Fire at target",
-  "Hold — charge combo",
+  "Hold  -  charge combo",
 ];
 const ACTION_COLORS = ["#3b82f6", "#a855f7", "#22c55e", "#f59e0b"];
 
@@ -122,7 +122,7 @@ function computeQValues(sv: number[], strategy: Strategy): number[] {
     return [moveLeft, moveRight, shoot, wait].map(v => +v.toFixed(3));
   }
 
-  // dqn — richer, more varied
+  // dqn  -  richer, more varied
   const aggression = ba ? 0.3 : ec * 0.4;
   const moveLeft  = (nx < cx - 0.05 ? 0.5 : 0.1) + aggression * 0.2 + Math.random() * 0.12;
   const moveRight = (nx > cx + 0.05 ? 0.5 : 0.1) + aggression * 0.2 + Math.random() * 0.12;

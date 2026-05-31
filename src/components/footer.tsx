@@ -54,7 +54,7 @@ export function Footer() {
             </div>
           </div>
           <div className="border-t border-white/5 pt-6 flex flex-col md:flex-row items-center justify-between gap-3">
-            <span className="text-xs text-muted-foreground/50">© 2026 SQUISH 'EM! — HTML5 Canvas Arcade</span>
+            <span className="text-xs text-muted-foreground/50">© 2026 SQUISH 'EM!  -  HTML5 Canvas Arcade</span>
             <div className="flex items-center gap-1 text-xs text-muted-foreground/40 font-mono">
               <span className="w-1.5 h-1.5 rounded-full bg-primary inline-block" />
               <span>ONLINE</span>

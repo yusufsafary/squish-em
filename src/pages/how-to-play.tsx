@@ -128,10 +128,10 @@ export default function HowToPlay() {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {[
-                { name: "Green Blob",  icon: "🟢", hp: 1, speed: "Slow",              pts: 10,  desc: "Most common. Easy prey — chain them for combos.",                      color: "127 49% 60%",  unlocks: "from start" },
+                { name: "Green Blob",  icon: "🟢", hp: 1, speed: "Slow",              pts: 10,  desc: "Most common. Easy prey  -  chain them for combos.",                      color: "127 49% 60%",  unlocks: "from start" },
                 { name: "Blue Blob",   icon: "🔵", hp: 2, speed: "Very Slow",          pts: 20,  desc: "Tanky. Takes 2 shots. Lead your aim slightly.",                       color: "215 100% 65%", unlocks: "Level 3" },
                 { name: "Red Blob",    icon: "🔴", hp: 1, speed: "Fast",               pts: 30,  desc: "Darts downward quickly. Shoot ahead of its path.",                    color: "360 100% 71%", unlocks: "Level 5" },
-                { name: "Gold Blob",   icon: "🟡", hp: 1, speed: "Medium (zigzag)",    pts: 100, desc: "5% spawn chance. Zigzag pattern. Worth 10× a green — always chase it.", color: "48 100% 62%",  unlocks: "Level 2" },
+                { name: "Gold Blob",   icon: "🟡", hp: 1, speed: "Medium (zigzag)",    pts: 100, desc: "5% spawn chance. Zigzag pattern. Worth 10× a green  -  always chase it.", color: "48 100% 62%",  unlocks: "Level 2" },
                 { name: "Boss Blob",   icon: "🔥", hp: 20, speed: "Fires projectiles", pts: 500, desc: "Appears every 5 levels. Has 20 HP, fires shots. Use FREEZE + NUKE.",   color: "360 100% 71%", unlocks: "every 5 lvls", isBoss: true },
               ].map(e => (
                 <motion.div

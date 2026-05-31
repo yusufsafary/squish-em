@@ -140,9 +140,9 @@ const STATE_FIELDS = [
   { idx: "3",    name: "nearest_enemy_y",         desc: "Y of closest blob"                  },
   { idx: "4",    name: "nearest_enemy_hp",        desc: "Hit-points remaining"                },
   { idx: "5",    name: "enemy_count",             desc: "Live blobs on screen"                },
-  { idx: "6",    name: "bullet_in_flight",        desc: "Bool — shot already active"          },
+  { idx: "6",    name: "bullet_in_flight",        desc: "Bool  -  shot already active"          },
   { idx: "7",    name: "combo_multiplier",        desc: "Current chain multiplier"            },
-  { idx: "8",    name: "boss_active",             desc: "Bool — boss phase active"            },
+  { idx: "8",    name: "boss_active",             desc: "Bool  -  boss phase active"            },
   { idx: "9",    name: "powerup_x",              desc: "Nearest power-up X (or -1)"          },
   { idx: "10",   name: "score_delta",             desc: "Score change since last frame"       },
   { idx: "11",   name: "time_remaining",          desc: "Session countdown (normalized)"      },
@@ -152,7 +152,7 @@ const ACTIONS = [
   { id: 0, label: "MOVE_LEFT",  desc: "Shift cannon left"         },
   { id: 1, label: "MOVE_RIGHT", desc: "Shift cannon right"        },
   { id: 2, label: "SHOOT",      desc: "Fire bullet at target"     },
-  { id: 3, label: "WAIT",       desc: "Hold — charge combo timer" },
+  { id: 3, label: "WAIT",       desc: "Hold  -  charge combo timer" },
 ];
 
 // ── WebSocket protocol ─────────────────────────────────────────────────────
@@ -225,7 +225,7 @@ export default function Tech() {
           </h1>
           <p className="text-muted-foreground text-sm leading-relaxed max-w-xl">
             A Python-powered reinforcement learning agent that plays the game autonomously,
-            accumulates <span className="text-primary font-mono">$SQUISH</span>, and anchors session proofs on Solana —
+            accumulates <span className="text-primary font-mono">$SQUISH</span>, and anchors session proofs on Solana  - 
             all in real time.
           </p>
           <div className="flex flex-wrap gap-2 mt-5">
@@ -247,7 +247,7 @@ export default function Tech() {
           <h2 className="font-display font-bold text-2xl text-white mb-2">System Overview</h2>
           <p className="text-sm text-muted-foreground/70 leading-relaxed mb-6">
             The game engine and AI agent are fully decoupled. They communicate over a local
-            WebSocket connection — no shared memory, no monkey-patching. This means the agent
+            WebSocket connection  -  no shared memory, no monkey-patching. This means the agent
             can run on a separate device, VM, or even a cloud server.
           </p>
           <ArchDiagram />
@@ -297,7 +297,7 @@ export default function Tech() {
           className="mb-16"
         >
           <SectionLabel>INPUT</SectionLabel>
-          <h2 className="font-display font-bold text-2xl text-white mb-2">State Vector — 12 floats</h2>
+          <h2 className="font-display font-bold text-2xl text-white mb-2">State Vector  -  12 floats</h2>
           <p className="text-sm text-muted-foreground/70 leading-relaxed mb-6">
             Every frame, the game serializes its world state into a 12-element float array.
             All position values are normalized to [0, 1] relative to canvas dimensions.
@@ -336,7 +336,7 @@ export default function Tech() {
           className="mb-16"
         >
           <SectionLabel>OUTPUT</SectionLabel>
-          <h2 className="font-display font-bold text-2xl text-white mb-2">Action Space — 4 discrete</h2>
+          <h2 className="font-display font-bold text-2xl text-white mb-2">Action Space  -  4 discrete</h2>
           <p className="text-sm text-muted-foreground/70 leading-relaxed mb-6">
             The agent outputs a single integer (0–3) each frame. The game maps this to
             one of four control commands. The DQN selects the action with the highest Q-value.
