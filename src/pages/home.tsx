@@ -127,8 +127,8 @@ const FEATURES = [
   {
     icon: "⚡",
     iconColor: "hsl(48 95% 58%)",
-    title: "4 Power-Ups",
-    desc: "Rapid Fire, Triple Shot, Shield, Score ×2, and NUKE. Drops from enemies, expire fast, stack smart.",
+    title: "6 Power-Ups",
+    desc: "Rapid Fire, Triple Shot, Shield, ×2 Score, NUKE, and FREEZE. Drops from enemies — use them wisely.",
     border: "48 95% 58%",
     delay: 0.2,
   },
@@ -333,8 +333,8 @@ export default function Home() {
           <div className="container mx-auto px-4 flex justify-between items-center font-mono text-xs text-primary">
             <span>[ SYS: ONLINE ]</span>
             <div className="flex gap-8">
-              <span>ENEMIES: 04</span>
-              <span>POWER-UPS: 04</span>
+              <span>ENEMIES: 05</span>
+              <span>POWER-UPS: 06</span>
               <span>LEVELS: ∞</span>
               <span>DEP: 00</span>
             </div>
@@ -346,7 +346,7 @@ export default function Home() {
       </section>
 
       {/* ── Features Section ─────────────────────────────────────────────── */}
-      <section className="py-24 bg-card border-b border-white/5 relative overflow-hidden">
+      <section className="py-20 bg-card border-b border-white/5 relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 80% 60% at 50% 100%, hsla(127,49%,60%,0.05), transparent)" }} />
         <div className="container mx-auto px-4 relative z-10">
           <motion.div
@@ -393,177 +393,86 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ── Bestiary Section ─────────────────────────────────────────────── */}
-      <section className="py-24 bg-background">
+      {/* ── Explore More (compact nav to other pages) ─────────────────────── */}
+      <section className="py-14 bg-background border-b border-white/5">
         <div className="container mx-auto px-4">
           <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <h2 className="text-3xl font-display font-bold mb-4">THE BESTIARY</h2>
-            <div className="w-24 h-1 bg-primary mx-auto rounded-full glow-box-green" />
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
-            {[
-              { name: "Green Blob",  hp: "1",  speed: "Slow",             pts: "10",  desc: "Common",              color: "127 49% 60%",  delay: 0 },
-              { name: "Blue Blob",   hp: "2",  speed: "Very Slow",        pts: "20",  desc: "Unlocks Lv 3",        color: "215 100% 65%", delay: 0.08 },
-              { name: "Red Blob",    hp: "1",  speed: "Fast",             pts: "30",  desc: "Unlocks Lv 5",        color: "360 100% 71%", delay: 0.16 },
-              { name: "Golden Blob", hp: "1",  speed: "Medium",           pts: "100", desc: "5% Spawn Rate (zigzag)", color: "48 100% 62%",  delay: 0.24 },
-              { name: "Boss Blob",   hp: "20", speed: "Fires Projectiles",pts: "500", desc: "Every 5 Levels",      color: "360 100% 71%", delay: 0.32, isBoss: true },
-            ].map(e => (
-              <EnemyCard key={e.name} {...e} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── How to Play (3 Steps) ─────────────────────────────────────────── */}
-      <section className="py-24 bg-card border-y border-white/5 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 70% 80% at 80% 50%, hsla(263,44%,56%,0.07), transparent)" }} />
-        <div className="container mx-auto px-4 relative z-10">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <h2 className="text-3xl font-display font-bold mb-4">HOW TO PLAY</h2>
-            <div className="w-24 h-1 bg-secondary mx-auto rounded-full" style={{ boxShadow: "0 0 15px hsl(263 44% 56% / 0.4)" }} />
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-            {STEPS.map((step, i) => (
-              <motion.div
-                key={step.n}
-                initial={{ opacity: 0, y: 36, filter: "blur(6px)" }}
-                whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                viewport={{ once: true, margin: "-60px" }}
-                transition={{ duration: 0.6, delay: i * 0.12, ease: [0.22, 1, 0.36, 1] }}
-                className="flex flex-col items-center text-center group"
-              >
-                <div
-                  className="w-16 h-16 rounded-2xl flex items-center justify-center font-display font-black text-2xl mb-5 transition-transform group-hover:scale-110"
-                  style={{
-                    backgroundColor: `hsl(${step.color} / 0.12)`,
-                    color: `hsl(${step.color})`,
-                    boxShadow: `0 0 24px hsl(${step.color} / 0.2), inset 0 0 20px hsl(${step.color} / 0.05)`,
-                    border: `1px solid hsl(${step.color} / 0.3)`
-                  }}
-                >
-                  {step.n}
-                </div>
-                {i < STEPS.length - 1 && (
-                  <div className="hidden md:block absolute" style={{ top: "32px", left: "calc(50% + 64px)", width: "calc(100% - 128px)" }} />
-                )}
-                <h3 className="font-display font-bold text-lg mb-3" style={{ color: `hsl(${step.color})` }}>{step.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
-              </motion.div>
-            ))}
-          </div>
-
-          <motion.div
-            className="text-center mt-12"
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
-            <Link
-              href="/how-to-play"
-              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border border-secondary/40 bg-secondary/10 text-secondary text-sm font-mono tracking-wider hover:bg-secondary/20 transition-colors"
-            >
-              FULL GAME GUIDE
-              <span className="text-xs">→</span>
-            </Link>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ── Tech Section ─────────────────────────────────────────────────── */}
-      <section className="py-24 bg-background border-b border-white/5 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background/50 pointer-events-none" />
-        <div className="container mx-auto px-4 relative z-10">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          >
-            <h2 className="text-3xl font-display font-bold mb-4">PURE PERFORMANCE</h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">Built from the ground up with zero bloat. No massive engines, just pure math and pixels.</p>
-          </motion.div>
-
-          <motion.div
-            className="flex flex-wrap justify-center gap-4 max-w-3xl mx-auto"
+            className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-3xl mx-auto"
             initial="hidden"
             whileInView="show"
-            viewport={{ once: true, margin: "-80px" }}
-            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.08 } } }}
+            viewport={{ once: true, margin: "-40px" }}
+            variants={{ hidden: {}, show: { transition: { staggerChildren: 0.1 } } }}
           >
-            {["HTML5 Canvas 2D", "Web Audio API", "requestAnimationFrame", "localStorage", "Touch + Pointer Events", "Fixed 400x700 Logical Canvas"].map(t => (
-              <TechPill key={t}>{t}</TechPill>
+            {[
+              { href: "/how-to-play",            icon: "📖", label: "Game Guide",  desc: "Controls, power-ups & pro tips",     color: "127 49% 60%"  },
+              { href: "/how-to-play#bestiary",   icon: "🐛", label: "Bestiary",    desc: "All enemies, HP & strategies",       color: "215 100% 65%" },
+              { href: "/roadmap",                icon: "🗺", label: "Roadmap",     desc: "Mobile, Web3 & Multiplayer plans",   color: "263 44% 56%"  },
+            ].map(item => (
+              <motion.div
+                key={item.href}
+                variants={{ hidden: { opacity: 0, y: 20 }, show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.22,1,0.36,1] } } }}
+                whileHover={{ y: -4, scale: 1.02 }}
+              >
+                <Link
+                  href={item.href}
+                  className="flex items-center gap-4 p-5 rounded-xl border bg-card/60 backdrop-blur-sm hover:border-opacity-60 transition-all group block"
+                  style={{ borderColor: `hsl(${item.color} / 0.22)` }}
+                >
+                  <div className="text-2xl w-12 h-12 rounded-xl flex items-center justify-center shrink-0" style={{ backgroundColor: `hsl(${item.color} / 0.1)`, boxShadow: `0 0 14px hsl(${item.color} / 0.18)` }}>
+                    {item.icon}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <span className="font-display font-bold text-sm block mb-0.5" style={{ color: `hsl(${item.color})` }}>{item.label}</span>
+                    <span className="text-xs text-muted-foreground">{item.desc}</span>
+                  </div>
+                  <span className="text-muted-foreground/50 group-hover:text-muted-foreground group-hover:translate-x-1 transition-all shrink-0">→</span>
+                </Link>
+              </motion.div>
             ))}
           </motion.div>
         </div>
       </section>
 
-      {/* ── Roadmap Teaser ───────────────────────────────────────────────── */}
-      <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 90% 70% at 50% 50%, hsla(263,44%,56%,0.08), transparent)" }} />
-
+      {/* ── Compact Roadmap Strip ─────────────────────────────────────────── */}
+      <section className="py-14 relative overflow-hidden border-b border-white/5">
+        <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 90% 100% at 50% 50%, hsla(263,44%,56%,0.06), transparent)" }} />
         <div className="container mx-auto px-4 relative z-10">
           <motion.div
-            className="max-w-3xl mx-auto text-center"
-            initial={{ opacity: 0, y: 36 }}
+            className="max-w-2xl mx-auto flex flex-col items-center gap-5"
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-80px" }}
-            transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-secondary/40 bg-secondary/10 text-secondary text-xs font-mono tracking-widest uppercase mb-6">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-secondary/40 bg-secondary/10 text-secondary text-xs font-mono tracking-widest uppercase">
               <motion.span animate={{ opacity: [1, 0.4, 1] }} transition={{ duration: 1.8, repeat: Infinity }} className="w-1.5 h-1.5 rounded-full bg-secondary inline-block" />
               Coming Soon
             </div>
-
-            <h2 className="text-3xl md:text-4xl font-display font-bold mb-6 text-white">
-              MOBILE + WEB3 + MULTIPLAYER
-            </h2>
-            <p className="text-lg text-muted-foreground mb-10 max-w-xl mx-auto">
-              iOS & Android in progress for June. On-chain Solana leaderboards, $SQUISH token, and NFT blob skins in Q3. Multiplayer coming soon.
-            </p>
-
-            <div className="flex flex-wrap justify-center gap-4 mb-10">
+            <h2 className="text-2xl font-display font-bold text-white text-center">MOBILE + WEB3 + MULTIPLAYER</h2>
+            <div className="flex flex-wrap justify-center gap-3">
               {[
-                { label: "PHASE 1", status: "LIVE NOW", color: "127 49% 60%" },
-                { label: "PHASE 2", status: "MOBILE / JUNE 2026", color: "48 100% 62%" },
-                { label: "PHASE 3", status: "SOLANA + MULTIPLAYER / Q3 2026", color: "263 44% 56%" },
+                { label: "PHASE 1", status: "LIVE NOW",                          color: "127 49% 60%" },
+                { label: "PHASE 2", status: "MOBILE / JUNE 2026",                color: "48 100% 62%" },
+                { label: "PHASE 3", status: "SOLANA + MULTIPLAYER / Q3 2026",    color: "263 44% 56%" },
               ].map((p, i) => (
                 <motion.div
                   key={p.label}
                   initial={{ opacity: 0, scale: 0.9 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
-                  transition={{ delay: i * 0.1, duration: 0.4 }}
-                  className="flex items-center gap-3 px-5 py-3 rounded-lg border bg-background/50 backdrop-blur-sm"
+                  transition={{ delay: i * 0.08, duration: 0.4 }}
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg border bg-background/50 backdrop-blur-sm"
                   style={{ borderColor: `hsl(${p.color} / 0.3)` }}
                 >
-                  <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: `hsl(${p.color})`, boxShadow: `0 0 8px hsl(${p.color} / 0.6)` }} />
-                  <div>
-                    <span className="font-mono text-xs block" style={{ color: `hsl(${p.color})` }}>{p.label}</span>
-                    <span className="font-mono text-xs text-muted-foreground">{p.status}</span>
-                  </div>
+                  <div className="w-2 h-2 rounded-full" style={{ backgroundColor: `hsl(${p.color})`, boxShadow: `0 0 6px hsl(${p.color} / 0.6)` }} />
+                  <span className="font-mono text-xs" style={{ color: `hsl(${p.color})` }}>{p.label}</span>
+                  <span className="font-mono text-xs text-muted-foreground">{p.status}</span>
                 </motion.div>
               ))}
             </div>
-
             <Link
               href="/roadmap"
-              className="inline-flex items-center gap-2 px-8 py-3 rounded border border-secondary/40 bg-secondary/10 text-secondary font-display font-bold text-sm tracking-wider hover:bg-secondary/20 hover:border-secondary/60 transition-all hover:-translate-y-0.5"
+              className="text-sm font-mono text-secondary/60 hover:text-secondary transition-colors flex items-center gap-1"
             >
               VIEW MASTER PLAN →
             </Link>
