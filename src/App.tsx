@@ -11,6 +11,7 @@ import NotFound from "@/pages/not-found";
 
 import { Nav } from "@/components/nav";
 import { Footer } from "@/components/footer";
+import { PwaPrompt } from "@/components/pwa-prompt";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ function Layout({ children }: { children: React.ReactNode }) {
         {children}
       </div>
       <Footer />
+      <PwaPrompt />
     </div>
   );
 }
