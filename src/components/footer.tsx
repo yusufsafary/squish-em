@@ -16,7 +16,7 @@ export function Footer() {
                 <span className="font-display font-bold text-lg">SQUISH 'EM!</span>
               </div>
               <p className="text-xs text-muted-foreground leading-relaxed max-w-[180px]">
-                HTML5 Canvas arcade shooter. No download, no login. Pure blobs.
+                AI-powered arcade shooter on Solana. Squish blobs, chain combos, and let the RL agent mine $SQUISH for you.
               </p>
             </div>
             <div>
