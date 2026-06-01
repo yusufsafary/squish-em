@@ -1,6 +1,416 @@
 {
-  "generated": "2026-05-31T08:34:12.297Z",
+  "generated": "2026-06-01T12:52:55.371Z",
   "builds": [
+    {
+      "date": "2026-06-01",
+      "commits": [
+        {
+          "sha": "6e7bf6c",
+          "message": "docs(blockchain): update README — all programs + docs",
+          "timestamp": "2026-06-01T12:36:24Z"
+        },
+        {
+          "sha": "3cf7c1b",
+          "message": "chore(blockchain): add leaderboard to Anchor workspace",
+          "timestamp": "2026-06-01T12:36:23Z"
+        },
+        {
+          "sha": "e10bb9a",
+          "message": "feat(sdk): export staking and wallet modules",
+          "timestamp": "2026-06-01T12:36:22Z"
+        },
+        {
+          "sha": "a27a99b",
+          "message": "feat(sdk): extend types — SessionResult, PlayerStats",
+          "timestamp": "2026-06-01T12:36:21Z"
+        },
+        {
+          "sha": "643b1c0",
+          "message": "feat(sdk): add staking SDK with tier multipliers",
+          "timestamp": "2026-06-01T12:36:20Z"
+        },
+        {
+          "sha": "b10472a",
+          "message": "feat(sdk): add wallet connection utilities",
+          "timestamp": "2026-06-01T12:36:18Z"
+        },
+        {
+          "sha": "e7aa046",
+          "message": "feat(blockchain): on-chain leaderboard program",
+          "timestamp": "2026-06-01T12:36:17Z"
+        },
+        {
+          "sha": "dfb8d12",
+          "message": "feat(blockchain): add squish-leaderboard Cargo.toml",
+          "timestamp": "2026-06-01T12:36:16Z"
+        },
+        {
+          "sha": "d02acf9",
+          "message": "docs(blockchain): add blockchain architecture strategy",
+          "timestamp": "2026-06-01T12:36:15Z"
+        },
+        {
+          "sha": "2fa76de",
+          "message": "docs(blockchain): add token economics & utility strategy",
+          "timestamp": "2026-06-01T12:36:14Z"
+        },
+        {
+          "sha": "5f13edc",
+          "message": "chore(blockchain): add squish-leaderboard to Cargo workspace",
+          "timestamp": "2026-06-01T12:35:29Z"
+        },
+        {
+          "sha": "ef4bf13",
+          "message": "feat(nav): add Changelog link",
+          "timestamp": "2026-06-01T12:29:24Z"
+        },
+        {
+          "sha": "16c71bd",
+          "message": "feat(footer): add Changelog link to Discover section",
+          "timestamp": "2026-06-01T12:19:35Z"
+        },
+        {
+          "sha": "24ba945",
+          "message": "feat(changelog): restore /changelog route",
+          "timestamp": "2026-06-01T12:19:15Z"
+        }
+      ]
+    },
+    {
+      "date": "2026-05-31",
+      "commits": [
+        {
+          "sha": "3877bdf",
+          "message": "feat(footer): add Terms of Service link",
+          "timestamp": "2026-05-31T18:09:51Z"
+        },
+        {
+          "sha": "1c70d02",
+          "message": "feat(router): add /legal route",
+          "timestamp": "2026-05-31T18:09:48Z"
+        },
+        {
+          "sha": "11f4664",
+          "message": "feat(cookies): rewrite as comprehensive standard cookie policy",
+          "timestamp": "2026-05-31T18:08:55Z"
+        },
+        {
+          "sha": "e12c589",
+          "message": "feat(legal): add Terms of Service page",
+          "timestamp": "2026-05-31T18:08:52Z"
+        },
+        {
+          "sha": "23672cc",
+          "message": "fix(cookies): remove real name, keep @oroimho only",
+          "timestamp": "2026-05-31T18:04:58Z"
+        },
+        {
+          "sha": "49f6337",
+          "message": "fix(about): remove real name, keep @oroimho only",
+          "timestamp": "2026-05-31T18:04:55Z"
+        },
+        {
+          "sha": "9912750",
+          "message": "fix(cookies): remove geographic reference",
+          "timestamp": "2026-05-31T18:04:03Z"
+        },
+        {
+          "sha": "e440350",
+          "message": "fix(about): remove all geographic/Indonesia references",
+          "timestamp": "2026-05-31T18:03:34Z"
+        },
+        {
+          "sha": "aef5ec5",
+          "message": "feat(router): register /about and /cookies routes",
+          "timestamp": "2026-05-31T18:01:28Z"
+        },
+        {
+          "sha": "30c445b",
+          "message": "feat(footer): add About and Cookie Policy links",
+          "timestamp": "2026-05-31T18:01:26Z"
+        },
+        {
+          "sha": "94d1043",
+          "message": "feat(legal): add Cookie Policy page",
+          "timestamp": "2026-05-31T18:01:24Z"
+        },
+        {
+          "sha": "15c1640",
+          "message": "feat(about): add About page - Bandung, @oroimho, @orynth",
+          "timestamp": "2026-05-31T18:01:22Z"
+        },
+        {
+          "sha": "c7b6c9f",
+          "message": "fix(beta): remove em dashes",
+          "timestamp": "2026-05-31T17:37:28Z"
+        },
+        {
+          "sha": "1bb8513",
+          "message": "fix(roadmap): remove em dashes",
+          "timestamp": "2026-05-31T17:37:27Z"
+        },
+        {
+          "sha": "f3086b5",
+          "message": "fix(home): remove em dashes",
+          "timestamp": "2026-05-31T17:37:25Z"
+        },
+        {
+          "sha": "ca64506",
+          "message": "fix(feedback): remove em dashes",
+          "timestamp": "2026-05-31T17:37:23Z"
+        },
+        {
+          "sha": "1373388",
+          "message": "fix(footer): remove em dashes",
+          "timestamp": "2026-05-31T17:37:19Z"
+        },
+        {
+          "sha": "c81008a",
+          "message": "fix(nav): replace dot with blob icon, remove em dashes",
+          "timestamp": "2026-05-31T17:37:18Z"
+        },
+        {
+          "sha": "1054268",
+          "message": "fix(beta): remove testers card, fix all dim text readability",
+          "timestamp": "2026-05-31T17:32:13Z"
+        },
+        {
+          "sha": "91bb001",
+          "message": "feat(router): add /feedback route",
+          "timestamp": "2026-05-31T17:14:11Z"
+        },
+        {
+          "sha": "9a64559",
+          "message": "feat(beta): add feedback CTA linking to /feedback page",
+          "timestamp": "2026-05-31T17:13:53Z"
+        },
+        {
+          "sha": "471c27c",
+          "message": "feat(feedback): add /feedback route with auto device info, tweet & DM to @oroimho",
+          "timestamp": "2026-05-31T17:13:49Z"
+        },
+        {
+          "sha": "47c1410",
+          "message": "fix(beta): clean banner, personal tweets @oroimho/@orynth/$SQUISH, feedback CTA",
+          "timestamp": "2026-05-31T17:08:01Z"
+        },
+        {
+          "sha": "df829f2",
+          "message": "feat: rewrite beta page - testing phase banner, clean tweet, counter",
+          "timestamp": "2026-05-31T16:55:02Z"
+        },
+        {
+          "sha": "602a3c7",
+          "message": "fix: allow countapi.xyz in CSP connect-src",
+          "timestamp": "2026-05-31T16:54:10Z"
+        },
+        {
+          "sha": "b229292",
+          "message": "feat: register /beta route in router",
+          "timestamp": "2026-05-31T16:36:56Z"
+        },
+        {
+          "sha": "7feb055",
+          "message": "feat: add Beta App link to nav (desktop + mobile)",
+          "timestamp": "2026-05-31T16:36:39Z"
+        },
+        {
+          "sha": "fbf0ac2",
+          "message": "feat: add Beta App page with tweet-to-download flow",
+          "timestamp": "2026-05-31T16:36:27Z"
+        },
+        {
+          "sha": "94bb24c",
+          "message": "fix: add contents:write permission so GITHUB_TOKEN can create releases",
+          "timestamp": "2026-05-31T15:26:29Z"
+        },
+        {
+          "sha": "c4d2dfe",
+          "message": "fix: write strings.xml directly to avoid invalid unicode escape in app_name",
+          "timestamp": "2026-05-31T15:22:13Z"
+        },
+        {
+          "sha": "499f297",
+          "message": "fix: remove duplicate ic_launcher_background resource",
+          "timestamp": "2026-05-31T15:19:15Z"
+        },
+        {
+          "sha": "2c9e0b1",
+          "message": "feat: add BETA APK button (top-right) to game.html",
+          "timestamp": "2026-05-31T15:04:25Z"
+        },
+        {
+          "sha": "d6b244a",
+          "message": "feat: add BETA APK badge to navbar (desktop + mobile)",
+          "timestamp": "2026-05-31T15:04:23Z"
+        },
+        {
+          "sha": "9999dcf",
+          "message": "feat: add /download route to vercel.json",
+          "timestamp": "2026-05-31T14:57:43Z"
+        },
+        {
+          "sha": "0ba2285",
+          "message": "feat: add Capacitor APK build workflow via GitHub Actions",
+          "timestamp": "2026-05-31T14:57:05Z"
+        },
+        {
+          "sha": "8bbbf6d",
+          "message": "feat: add download page with Twitter share gate",
+          "timestamp": "2026-05-31T14:57:03Z"
+        },
+        {
+          "sha": "76dc533",
+          "message": "feat: smoother gameplay, 3D blob effects, upgraded level-up cards",
+          "timestamp": "2026-05-31T13:29:29Z"
+        },
+        {
+          "sha": "9d1f235",
+          "message": "feat: add PNG icons to manifest.json for PWA compatibility",
+          "timestamp": "2026-05-31T13:07:44Z"
+        },
+        {
+          "sha": "71bb636",
+          "message": "feat: add PWA icon 512x512 PNG",
+          "timestamp": "2026-05-31T13:07:28Z"
+        },
+        {
+          "sha": "bf310d4",
+          "message": "feat: add PWA icon 192x192 PNG",
+          "timestamp": "2026-05-31T13:07:02Z"
+        },
+        {
+          "sha": "da29ba3",
+          "message": "fix: add routes for about.html howtoplay.html creator.html in vercel.json",
+          "timestamp": "2026-05-31T13:02:38Z"
+        },
+        {
+          "sha": "30278f0",
+          "message": "fix: add about.html howtoplay.html creator.html to vite build inputs",
+          "timestamp": "2026-05-31T13:02:36Z"
+        },
+        {
+          "sha": "2c719be",
+          "message": "fix: update meta CSP connect-src to allow blockchain/mining APIs",
+          "timestamp": "2026-05-31T13:02:25Z"
+        },
+        {
+          "sha": "4247fc4",
+          "message": "feat: roguelite upgrade system — fire rate, double/triple shot, big bullet, fast bullet, pierce, explosive on level-up",
+          "timestamp": "2026-05-31T10:21:52Z"
+        },
+        {
+          "sha": "9da88c6",
+          "message": "feat: upgrade blob rendering — glossy 3D gradients, surface bumps, bigger googly eyes, Pixar sheen",
+          "timestamp": "2026-05-31T09:57:11Z"
+        },
+        {
+          "sha": "c1254bb",
+          "message": "polish: smoother hero animations, marquee fade edges, tighter motion curves",
+          "timestamp": "2026-05-31T09:45:14Z"
+        },
+        {
+          "sha": "12bbfe3",
+          "message": "fix: clean up footer brand section, remove dead changelog link, tidy layout",
+          "timestamp": "2026-05-31T09:45:13Z"
+        },
+        {
+          "sha": "7986c8f",
+          "message": "fix: clean up roadmap layout, fix text alignment and spacing",
+          "timestamp": "2026-05-31T09:45:12Z"
+        },
+        {
+          "sha": "feeac05",
+          "message": "chore: hide changelog from nav",
+          "timestamp": "2026-05-31T09:37:50Z"
+        },
+        {
+          "sha": "6df67a7",
+          "message": "chore: hide changelog page (route + nav link removed)",
+          "timestamp": "2026-05-31T09:37:49Z"
+        },
+        {
+          "sha": "d0dec52",
+          "message": "fix: replace Indonesian text with English + i18n support",
+          "timestamp": "2026-05-31T09:31:50Z"
+        },
+        {
+          "sha": "88aef17",
+          "message": "fix: replace Indonesian text with English + i18n support",
+          "timestamp": "2026-05-31T09:31:49Z"
+        },
+        {
+          "sha": "21a5ff7",
+          "message": "fix: add EN/JA language toggle, translate nav labels",
+          "timestamp": "2026-05-31T09:31:48Z"
+        },
+        {
+          "sha": "57677e5",
+          "message": "feat: add EN/JA i18n language context",
+          "timestamp": "2026-05-31T09:31:47Z"
+        },
+        {
+          "sha": "e953706",
+          "message": "fix: wrap app with LangProvider for i18n",
+          "timestamp": "2026-05-31T09:31:18Z"
+        },
+        {
+          "sha": "c6eeb91",
+          "message": "fix: remove all em dashes from user-visible text across all pages",
+          "timestamp": "2026-05-31T09:14:03Z"
+        },
+        {
+          "sha": "bbbc15a",
+          "message": "fix: update footer about text to describe Squish Em properly",
+          "timestamp": "2026-05-31T09:12:21Z"
+        },
+        {
+          "sha": "59a89dc",
+          "message": "feat: add particle burst on blob hit in homepage AI agent simulator",
+          "timestamp": "2026-05-31T09:10:38Z"
+        },
+        {
+          "sha": "5fe2c58",
+          "message": "feat: embed AI agent simulator on homepage, remove Built With tags from footer",
+          "timestamp": "2026-05-31T09:06:30Z"
+        },
+        {
+          "sha": "9f4f850",
+          "message": "feat: add /ai-agent interactive simulator — live DQN decisions, state vector, Q-values, decision log",
+          "timestamp": "2026-05-31T08:59:01Z"
+        },
+        {
+          "sha": "c8e7331",
+          "message": "feat: add /tech page — AI agent architecture, DQN model, WebSocket protocol, Solana session proofs",
+          "timestamp": "2026-05-31T08:55:11Z"
+        },
+        {
+          "sha": "eec8c33",
+          "message": "feat: add Built With section to homepage + changelog category filters (Gameplay/UI/Blockchain/Fixes)",
+          "timestamp": "2026-05-31T08:46:58Z"
+        },
+        {
+          "sha": "71364ff",
+          "message": "refactor: redesign changelog as paragraph summaries instead of per-commit list",
+          "timestamp": "2026-05-31T08:42:36Z"
+        },
+        {
+          "sha": "bebf72b",
+          "message": "revert: restore original roadmap — THE MASTER PLAN (Phase 1 Beta, Phase 2 Mobile, Phase 3 Solana)",
+          "timestamp": "2026-05-31T08:39:55Z"
+        },
+        {
+          "sha": "87065a1",
+          "message": "fix: revert roadmap to clean version, fix changelog on mobile (vercel routes + sw cache bypass + fresh json)",
+          "timestamp": "2026-05-31T08:35:41Z"
+        },
+        {
+          "sha": "f5415dc",
+          "message": "chore: add initial changelog.json",
+          "timestamp": "2026-05-31T07:56:47Z"
+        }
+      ]
+    },
     {
       "date": "2026-05-31",
       "commits": [
