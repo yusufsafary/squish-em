@@ -43,23 +43,6 @@ export function Nav() {
                 {link.label}
               </Link>
             ))}
-            {/* Beta App - special amber link */}
-            <Link
-              href="/beta"
-              className={`text-sm font-medium transition-colors flex items-center gap-1.5 ${
-                location === "/beta"
-                  ? "text-amber-400"
-                  : "text-amber-400/70 hover:text-amber-300"
-              }`}
-            >
-              <motion.span
-                animate={{ opacity: [1, 0.2, 1], scale: [1, 1.4, 1] }}
-                transition={{ repeat: Infinity, duration: 1.6, ease: "easeInOut" }}
-                className="w-1.5 h-1.5 rounded-full bg-amber-400 inline-block flex-shrink-0"
-                style={{ boxShadow: "0 0 6px #f59e0b" }}
-              />
-              BETA APP
-            </Link>
           </div>
 
           {/* Language toggle */}
@@ -122,22 +105,6 @@ export function Nav() {
                   {link.label}
                 </Link>
               ))}
-
-              {/* Mobile: Beta App */}
-              <Link
-                href="/beta"
-                onClick={() => setOpen(false)}
-                className="flex items-center gap-3 py-3 border-b border-white/5 text-amber-400 hover:text-amber-300 transition-colors"
-              >
-                <motion.span
-                  animate={{ opacity: [1, 0.25, 1] }}
-                  transition={{ repeat: Infinity, duration: 1.5 }}
-                  className="w-2 h-2 rounded-full bg-amber-400 inline-block flex-shrink-0"
-                  style={{ boxShadow: "0 0 8px #f59e0b" }}
-                />
-                <span className="text-sm font-display font-bold tracking-wider">BETA APP</span>
-                <span className="ml-auto bg-amber-500 text-black text-[8px] font-black px-1.5 py-0.5 rounded leading-none">NEW</span>
-              </Link>
 
               {/* Mobile language toggle */}
               <div className="flex gap-2 py-3 border-b border-white/5">
