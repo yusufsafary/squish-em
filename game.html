@@ -115,6 +115,9 @@ const ACH={
   speed_run:       {label:'SPEED RUN!',       icon:'💨'},
   untouchable:     {label:'UNTOUCHABLE!',     icon:'🛡'},
   powerup_hoarder: {label:'POWERUP HOARDER!', icon:'💎'},
+  crystal_slayer:  {label:'CRYSTAL SLAYER!',  icon:'💎'},
+  ninja_slayer:    {label:'NINJA SLAYER!',    icon:'🥷'},
+  combo_20:        {label:'UNSTOPPABLE!',     icon:'🌪'},
 };
 let lives=3, level=1, kills=0, lvlKills=0;
 let combo=0, comboTimer=0, comboMult=1;
@@ -139,7 +142,7 @@ const _dcKey='squish_daily_'+new Date().toDateString();
 let dailyDone=localStorage.getItem(_dcKey)==='1';
 let bossPresent=false, boss=null;
 let blobs=[], bullets=[], particles=[], powerups=[], popups=[], bossShots=[];
-let cannonX=W/2, recoil=0, shootTimer=0;
+let cannonX=W/2, cannonXTarget=W/2, recoil=0, shootTimer=0;
 let muzzleFlash=0;
 let sfxFlashColor='#fff', sfxFlashAlpha=0;
 let titleBlobY=305, titleBlobD=1, titleBlink=0;
@@ -198,16 +201,16 @@ const NEBULAE = [
 ];
 
 // ─── Blob smooth shape helpers ───────────────────────────────────────────────
-function makeBlobPts(n=8) {
+function makeBlobPts(n=8, fast=false) {
   return Array.from({length:n},(_,i)=>{
     const r=0.85+Math.random()*0.3;
-    return {angle:(i/n)*Math.PI*2, r, rTarget:r, rSpeed:0.01+Math.random()*0.018};
+    return {angle:(i/n)*Math.PI*2, r, rTarget:r, rSpeed:(fast?0.06:0.028)+Math.random()*(fast?0.06:0.038)};
   });
 }
-function updateBlobPts(pts) {
+function updateBlobPts(pts, speedMult=1) {
   pts.forEach(p=>{
-    p.r += (p.rTarget - p.r)*p.rSpeed;
-    if(Math.abs(p.r-p.rTarget)<0.012) p.rTarget=0.72+Math.random()*0.56;
+    p.r += (p.rTarget - p.r)*p.rSpeed*speedMult;
+    if(Math.abs(p.r-p.rTarget)<0.008) p.rTarget=0.62+Math.random()*0.72;
   });
 }
 function pathBlob(cx,cy,pts,rot,rx,ry){
@@ -252,13 +255,15 @@ function spawnPopup(x,y,txt,col='#FFD93D'){
 
 // ─── Blob Types ──────────────────────────────────────────────────────────────
 const BT = {
-  green:  {col:'#22c55e',glow:'rgba(34,197,94,.75)',  hp:1,spd:.72, pts:10, sz:25,expr:'happy', sw:.52},
-  blue:   {col:'#3b82f6',glow:'rgba(59,130,246,.75)', hp:2,spd:.42, pts:20, sz:30,expr:'sleepy',sw:.22},
-  red:    {col:'#ef4444',glow:'rgba(239,68,68,.75)',  hp:1,spd:1.45,pts:30, sz:20,expr:'angry', sw:.18},
-  gold:   {col:'#eab308',glow:'rgba(234,179,8,.75)',  hp:1,spd:.95, pts:100,sz:25,expr:'smug',  sw:.04},
-  phantom: {col:'#a855f7',glow:'rgba(168,85,247,.85)', hp:2,spd:1.1, pts:50, sz:23,expr:'smug',  sw:.09},
-  tank:    {col:'#06b6d4',glow:'rgba(6,182,212,.85)',  hp:4,spd:.30, pts:200,sz:40,expr:'sleepy',sw:.05},
-  splitter:{col:'#f97316',glow:'rgba(249,115,22,.8)',  hp:2,spd:.82, pts:75, sz:22,expr:'angry', sw:.07},
+  green:   {col:'#22c55e',glow:'rgba(34,197,94,.75)',   hp:1,spd:.72, pts:10,  sz:25,expr:'happy',   sw:.46},
+  blue:    {col:'#3b82f6',glow:'rgba(59,130,246,.75)',  hp:2,spd:.42, pts:20,  sz:30,expr:'sleepy',  sw:.20},
+  red:     {col:'#ef4444',glow:'rgba(239,68,68,.75)',   hp:1,spd:1.45,pts:30,  sz:20,expr:'angry',   sw:.16},
+  gold:    {col:'#eab308',glow:'rgba(234,179,8,.75)',   hp:1,spd:.95, pts:100, sz:25,expr:'smug',    sw:.04},
+  phantom: {col:'#a855f7',glow:'rgba(168,85,247,.85)',  hp:2,spd:1.1, pts:50,  sz:23,expr:'smug',   sw:.08},
+  tank:    {col:'#06b6d4',glow:'rgba(6,182,212,.85)',   hp:4,spd:.30, pts:200, sz:40,expr:'sleepy',  sw:.05},
+  splitter:{col:'#f97316',glow:'rgba(249,115,22,.8)',   hp:2,spd:.82, pts:75,  sz:22,expr:'angry',   sw:.06},
+  crystal: {col:'#67e8f9',glow:'rgba(103,232,249,.95)', hp:3,spd:.46, pts:150, sz:30,expr:'smug',    sw:.05},
+  ninja:   {col:'#cbd5e1',glow:'rgba(203,213,225,.8)',  hp:1,spd:2.10,pts:80,  sz:17,expr:'angry',   sw:.07},
 };
 
 function availTypes(){
@@ -266,9 +271,10 @@ function availTypes(){
   if(level>=3)t.push('blue');
   if(level>=4)t.push('phantom');
   if(level>=5)t.push('red');
-  if(level>=7)t.push('gold');
-  if(level>=8)t.push('tank');
   if(level>=6)t.push('splitter');
+  if(level>=7)t.push('gold','ninja');
+  if(level>=8)t.push('tank');
+  if(level>=9)t.push('crystal');
   return t;
 }
 
@@ -284,6 +290,8 @@ function spawnBlob(){
   const bt=BT[chosen];
   const spdScale=1+Math.floor(kills/10)*.1;
   const spd=Math.min(bt.spd*spdScale,bt.spd*3)*DIFF_SPD[difficulty];
+  const isNinja=chosen==='ninja';
+  const isCrystal=chosen==='crystal';
   blobs.push({
     x:bt.sz+Math.random()*(W-bt.sz*2), y:-bt.sz-20,
     type:chosen,col:bt.col,glow:bt.glow,hp:bt.hp,maxHp:bt.hp,
@@ -291,11 +299,19 @@ function spawnBlob(){
     wobble:Math.random()*Math.PI*2, rot:Math.random()*Math.PI*2,
     zz:chosen==='gold'?1:0, zzPhase:0,
     dying:false,dTimer:0,dScale:1,flash:0,
-    blobPts:makeBlobPts(8),
+    squashY:1, squashTimer:0,            // hit squash-stretch
+    blobPts:makeBlobPts(8, isNinja||isCrystal),
     trail:[],
     driftPhase:Math.random()*Math.PI*2,
-    driftAmp:0.18+Math.random()*0.28,
+    driftAmp:isNinja?0:0.18+Math.random()*0.28,
     driftSpeed:0.018+Math.random()*0.012,
+    // Ninja
+    dashTimer:isNinja?1.2+Math.random():9999,
+    dashVx:0,
+    dashActive:false,
+    // Crystal
+    sparklePhase:Math.random()*Math.PI*2,
+    reflected:false,
   });
 }
 
@@ -432,6 +448,7 @@ function addKill(pts,x,y,player=1){
   // Achievements
   if(kills===1) unlockAch('first_blood');
   if(comboMult>=4) unlockAch('combo_god');
+  if(combo>=20) unlockAch('combo_20');
   if(score>=1000) unlockAch('centurion');
   if(level>=5&&lvlKills===0&&!bossPresent) unlockAch('speed_run');
 
@@ -493,7 +510,7 @@ function pDown(x,y){
   dragOn=true;dragOff=x-cannonX;
 }
 function pMove(x){
-  if(dragOn) cannonX=Math.max(22,Math.min(gameMode===1?W/2-22:W-22,x-dragOff));
+  if(dragOn) cannonXTarget=Math.max(22,Math.min(gameMode===1?W/2-22:W-22,x-dragOff));
   if(p2DragOn) cannonX2=Math.max(gameMode===1?W/2+22:22,Math.min(W-22,x-p2DragOff));
 }
 function pUp(){dragOn=false;leftBtn=false;rightBtn=false;p2DragOn=false;p2LeftBtn=false;p2RightBtn=false;}
@@ -543,7 +560,7 @@ function startGame(){
   combo=0;comboTimer=0;comboMult=1;
   blobs=[];bullets=[];particles=[];powerups=[];popups=[];bossShots=[];
   boss=null;bossPresent=false;
-  cannonX=gameMode===1?W/4:W/2;shootTimer=0;frame=0;muzzleFlash=0;
+  cannonX=gameMode===1?W/4:W/2;cannonXTarget=cannonX;shootTimer=0;frame=0;muzzleFlash=0;
   sfxFlashAlpha=0;
   tutorialTimer=180;
   streakCount=0;streakTimer=0;
@@ -631,8 +648,9 @@ function drawBg(){
 // ─── Draw blob ────────────────────────────────────────────────────────────────
 function drawBlob(b, isTitle=false){
   const s=b.sz;
-  const pulse=1+0.07*Math.sin(b.wobble);
-  const rx=s*(b.dying?b.dScale:1);
+  const pulse=b.squashY!==undefined?b.squashY:(1+0.07*Math.sin(b.wobble));
+  const squashXScale=b.squashY!==undefined?(2-b.squashY):1;
+  const rx=s*(b.dying?b.dScale:squashXScale);
   const ry=s*(b.dying?1/Math.max(b.dScale,0.1):pulse);
   const col=b.flash>0?'#ffffff':b.col;
 
@@ -652,12 +670,15 @@ function drawBlob(b, isTitle=false){
   }
 
   const isPhantom=b.type==='phantom';
+  const isNinjaBlob=b.type==='ninja';
+  const isCrystalBlob=b.type==='crystal';
   if(isPhantom){ctx.save();ctx.globalAlpha=0.7+0.18*Math.sin(b.wobble*2.2);}
+  if(isNinjaBlob){ctx.save();ctx.globalAlpha=0.55+0.25*Math.abs(Math.sin(b.wobble*0.8));}
 
   // ── Outer ambient glow ──────────────────────────────────────────────────────
   ctx.save();
   ctx.shadowColor=b.glow||b.col;
-  ctx.shadowBlur=b.type==='gold'?40:isPhantom?52:30;
+  ctx.shadowBlur=b.type==='gold'?40:isPhantom?52:isCrystalBlob?50:isNinjaBlob?20:30;
 
   // ── Main body gradient (deep 3D shading) ────────────────────────────────────
   pathBlob(b.x,b.y,b.blobPts,b.rot,rx,ry);
@@ -727,7 +748,37 @@ function drawBlob(b, isTitle=false){
   }
 
   drawBlobFace(b.x,b.y,s,rx,ry,b.flash>0.15?"hurt":b.expr,b.wobble,col);
+
+  // ── Crystal sparkles ────────────────────────────────────────────────────────
+  if(isCrystalBlob&&!b.dying){
+    const sp=b.sparklePhase||0;
+    for(let _k=0;_k<6;_k++){
+      const _a=(_k/6)*Math.PI*2+sp;
+      const _d=rx*1.1+6*Math.abs(Math.sin(sp+_k));
+      const _sx=b.x+Math.cos(_a)*_d, _sy=b.y+Math.sin(_a)*_d*0.75;
+      const _sa=0.5+0.5*Math.abs(Math.sin(sp*1.4+_k));
+      ctx.save();ctx.globalAlpha=_sa*0.85;
+      ctx.shadowColor='#fff';ctx.shadowBlur=8;
+      ctx.fillStyle='#fff';
+      ctx.beginPath();ctx.arc(_sx,_sy,1.8+1.2*Math.abs(Math.sin(sp+_k*1.3)),0,Math.PI*2);ctx.fill();
+      ctx.restore();
+    }
+  }
+  // ── Ninja speed lines ────────────────────────────────────────────────────────
+  if(isNinjaBlob&&b.dashActive&&!b.dying){
+    ctx.save();ctx.globalAlpha=0.35;
+    ctx.strokeStyle='#cbd5e1';ctx.lineWidth=1.5;
+    for(let _k=0;_k<3;_k++){
+      const _oy=(_k-1)*s*0.4;
+      const _len=18+Math.random()*14;
+      const _dir=b.dashVx>0?-1:1;
+      ctx.beginPath();ctx.moveTo(b.x+_dir*s,b.y+_oy);ctx.lineTo(b.x+_dir*(s+_len),b.y+_oy);ctx.stroke();
+    }
+    ctx.restore();
+  }
+
   if(isPhantom)ctx.restore();
+  if(isNinjaBlob)ctx.restore();
 }
 
 function drawBlobFace(cx,cy,s,rx,ry,expr,wobble,col){
@@ -779,6 +830,19 @@ function drawBlobFace(cx,cy,s,rx,ry,expr,wobble,col){
     });
   }
 
+  // ── Shocked wide eyes override ───────────────────────────────────────────────
+  if(expr==='shocked'){
+    ctx.fillStyle='rgba(255,255,255,.99)';
+    ctx.beginPath();ctx.ellipse(ex1,ey,ew*1.15,eh*1.25,0,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.ellipse(ex2,ey,ew*1.15,eh*1.25,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#0d0d1a';
+    ctx.beginPath();ctx.ellipse(ex1,ey,ew*.5,eh*.6,0,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.ellipse(ex2,ey,ew*.5,eh*.6,0,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.9)';
+    ctx.beginPath();ctx.arc(ex1-ew*.15,ey-eh*.2,ew*.22,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(ex2-ew*.15,ey-eh*.2,ew*.22,0,Math.PI*2);ctx.fill();
+  }
+
   // ── Mouth ───────────────────────────────────────────────────────────────────
   ctx.strokeStyle='#0d0d1a';ctx.lineWidth=2.5;
   ctx.lineCap='round';
@@ -791,6 +855,8 @@ function drawBlobFace(cx,cy,s,rx,ry,expr,wobble,col){
     ctx.moveTo(cx-rx*.3,my+4);ctx.quadraticCurveTo(cx,my-6,cx+rx*.3,my+4);
   } else if(expr==='smug'){
     ctx.moveTo(cx-rx*.2,my);ctx.quadraticCurveTo(cx+rx*.18,my+10,cx+rx*.32,my-3);
+  } else if(expr==='shocked'){
+    ctx.arc(cx,my-2,rx*.2,0,Math.PI*2);
   } else {
     ctx.moveTo(cx-rx*.32,my);ctx.quadraticCurveTo(cx,my+ry*.24,cx+rx*.32,my);
   }
@@ -1338,14 +1404,22 @@ function drawTitle(){
   ctx.restore();
 
   // Blob legend at very bottom
-  const types=[{col:'#6BCB77',label:'10'},{col:'#4D96FF',label:'20'},{col:'#FF6B6B',label:'30'},{col:'#FFD93D',label:'100'},{col:'#9B59B6',label:'50'}];
-  const lw=52, startX=(W-lw*types.length)/2+lw/2;
+  const types=[
+    {col:'#6BCB77',label:'10'},{col:'#4D96FF',label:'20'},
+    {col:'#FF6B6B',label:'30'},{col:'#FFD93D',label:'100'},
+    {col:'#9B59B6',label:'50'},{col:'#67e8f9',label:'150',name:'💎'},{col:'#cbd5e1',label:'80',name:'🥷'},
+  ];
+  const lw=46, startX=(W-lw*types.length)/2+lw/2;
   for(let i=0;i<types.length;i++){
     const tx=startX+i*lw, ty=654;
     ctx.save();
-    ctx.shadowColor=types[i].col;ctx.shadowBlur=8;
+    ctx.shadowColor=types[i].col;ctx.shadowBlur=10;
     ctx.fillStyle=types[i].col;
-    ctx.beginPath();ctx.arc(tx,ty,7,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(tx,ty,types[i].name?6:7,0,Math.PI*2);ctx.fill();
+    if(types[i].name){
+      ctx.shadowBlur=0;ctx.font='10px Arial';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(types[i].name,tx,ty);
+    }
     ctx.shadowBlur=0;
     ctx.fillStyle='rgba(255,255,255,.6)';ctx.font=F.xs;
     ctx.textAlign='center';ctx.textBaseline='top';
@@ -1484,8 +1558,10 @@ function update(d){
     if(shakeTime<=0)shakeMag=0;
   } else {shakeX=0;shakeY=0;}
 
-  if(leftBtn) cannonX=Math.max(22,cannonX-6);
-  if(rightBtn)cannonX=Math.min(gameMode===1?W/2-22:W-22,cannonX+6);
+  if(leftBtn) cannonXTarget=Math.max(22,cannonXTarget-6);
+  if(rightBtn)cannonXTarget=Math.min(gameMode===1?W/2-22:W-22,cannonXTarget+6);
+  // Smooth cannon lerp for buttery feel
+  cannonX += (cannonXTarget - cannonX) * 0.22;
   if(recoil>0)recoil=Math.max(0,recoil-.65);
 
   const rate=rfActive?.14:(0.5*Math.pow(0.82,upgrades.fireRate));
@@ -1530,13 +1606,39 @@ function update(d){
 
   for(let i=blobs.length-1;i>=0;i--){
     const b=blobs[i];
-    b.wobble+=.065; b.rot+=.012;
+    const isNinjaType=b.type==='ninja';
+    const isCrystalType=b.type==='crystal';
+    b.wobble+=isNinjaType?.12:.065; b.rot+=isNinjaType?.022:.012;
     b.flash=Math.max(0,b.flash-dt*6);
-    updateBlobPts(b.blobPts);
+    updateBlobPts(b.blobPts, isNinjaType||isCrystalType?1.6:1);
+    // Squash-stretch on hit
+    if(b.squashTimer>0){
+      b.squashTimer=Math.max(0,b.squashTimer-dt);
+      const t=1-b.squashTimer/0.22;
+      b.squashY=t<0.5?1-0.45*(t*2):1+(0.45*(1-(t-0.5)*2)*0.35);
+    } else { b.squashY=1+0.04*Math.sin(b.wobble); }
     b.driftPhase=(b.driftPhase||0)+(b.driftSpeed||0.022);
     const _drift=Math.sin(b.driftPhase)*(b.driftAmp||0.22);
-    if(!b.dying&&b.type!=='gold'&&b.type!=='phantom')
+    if(!b.dying&&b.type!=='gold'&&b.type!=='phantom'&&!isNinjaType)
       b.x=Math.max(b.sz,Math.min(W-b.sz,b.x+_drift));
+    // Ninja dash
+    if(isNinjaType&&!b.dying){
+      b.dashTimer-=dt;
+      if(b.dashTimer<=0){
+        b.dashVx=(Math.random()>0.5?1:-1)*(60+Math.random()*40);
+        b.dashActive=true;
+        b.dashTimer=1.0+Math.random()*0.8;
+        spawnSparks(b.x,b.y,'#cbd5e1',3);
+      }
+      if(b.dashActive){
+        b.x+=b.dashVx*dt;
+        b.dashVx*=0.78;
+        if(Math.abs(b.dashVx)<2)b.dashActive=false;
+        b.x=Math.max(b.sz,Math.min(W-b.sz,b.x));
+      }
+    }
+    // Crystal sparkle phase
+    if(isCrystalType) b.sparklePhase=(b.sparklePhase||0)+dt*2.8;
     b.trail.push({x:b.x,y:b.y});
     if(b.trail.length>20)b.trail.shift();
 
@@ -1654,7 +1756,19 @@ function update(d){
       const dx=b.x-bl.x,dy=b.y-bl.y;
       if(Math.sqrt(dx*dx+dy*dy)<bl.sz+b.r){
         bl.hp--;bl.flash=.32;
+        // Squash-stretch hit animation
+        bl.squashTimer=0.22; bl.wobble+=0.9;
         spawnSparks(b.x,b.y,bl.col,3);
+        // Crystal reflect: first bullet reflects back toward cannon
+        if(bl.type==='crystal'&&!bl.reflected&&bl.hp>0){
+          bl.reflected=true;
+          const rb={...b,vx:-b.vx*0.7,vy:Math.abs(b.vy)*0.7,pierced:0};
+          bossShots.push({x:b.x,y:b.y,vx:rb.vx,vy:rb.vy,r:b.r*0.7,trail:[],reflected:true});
+          screenFlash(0.2,'#67e8f9');
+          spawnPopup(bl.x,bl.y-20,'REFLECTED!','#67e8f9');
+          beep(880,'sine',0.06,0.15);
+          bullets.splice(i,1); hit=true; break;
+        }
         // Pierce: don't remove bullet until pierced quota used
         if(b.pierce>0&&b.pierced<b.pierce){b.pierced++;}
         else{bullets.splice(i,1);}
@@ -1669,8 +1783,11 @@ function update(d){
         }
         if(bl.hp<=0){
           bl.dying=true; sfxSquish();
-          spawnParticles(bl.x,bl.y,bl.col,10+Math.floor(Math.random()*5));
+          const extraParts=bl.type==='crystal'?16:bl.type==='ninja'?8:bl.type==='tank'?14:10;
+          spawnParticles(bl.x,bl.y,bl.col,extraParts+Math.floor(Math.random()*5));
           spawnRing(bl.x,bl.y,bl.col);
+          if(bl.type==='crystal'){spawnRing(bl.x,bl.y,'#ffffff');screenFlash(0.3,'#67e8f9');unlockAch('crystal_slayer');}
+          if(bl.type==='ninja'){spawnSparks(bl.x,bl.y,'#cbd5e1',10);unlockAch('ninja_slayer');}
           dropPowerup(bl.x,bl.y);
           addKill(bl.pts,bl.x,bl.y);
           // Splitter: burst into 2 faster mini-blobs
