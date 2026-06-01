@@ -3,6 +3,20 @@
 ## Phase 1 — Beta Launch ✅ LIVE
 **May 2026**
 
+### v1.1 — Gameplay Upgrade ✅ DONE
+**June 2026**
+
+- Smoother blob morphing (faster shape deformation, organic feel)
+- Hit squash-stretch animation on all blobs on every bullet hit
+- Smooth cannon lerp (silky drag response, no snap)
+- Crystal blob new: HP 3, reflects bullets, sparkle aura (unlocks lv.9)
+- Ninja blob new: HP 1, super fast, periodic dash attack (unlocks lv.7)
+- New shocked expression for boss-surprise moments
+- Crystal death flash + double ring shockwave
+- New achievements: Crystal Slayer, Ninja Slayer, Unstoppable (20x combo)
+- Updated title screen legend with new blob types
+
+
 - HTML5 canvas blob shooter game
 - Web deployment via GitHub Pages
 - React + Vite + TypeScript frontend
