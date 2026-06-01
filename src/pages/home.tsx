@@ -97,7 +97,7 @@ function BlobCounter() {
 }
 
 // ── $SQUISH Contract Address Card ──────────────────────────────────────────
-const CA = "TBA"; // will be updated on token launch Q3 2026
+const CA = "314yiE7VgKbBozCpAqyGaLk8EZzKdzDShtwzAyRBqory";
 
 function SquishTokenCA() {
   const [copied, setCopied] = useState(false);
