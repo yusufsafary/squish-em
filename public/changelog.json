@@ -1,9 +1,29 @@
 {
-  "generated": "2026-06-01T15:33:28.471Z",
+  "generated": "2026-06-01T15:41:41.218Z",
   "builds": [
     {
       "date": "2026-06-01",
       "commits": [
+        {
+          "sha": "055ce4c",
+          "message": "feat(home): live $SQUISH price ticker with Jupiter API fallback to DexScreener, auto-refresh 30s",
+          "timestamp": "2026-06-01T22:30:00Z"
+        },
+        {
+          "sha": "98d7dbe",
+          "message": "feat(home): redesign CA card footer — 2-column share grid, SHARE ON X & SHARE ON TG buttons",
+          "timestamp": "2026-06-01T22:28:00Z"
+        },
+        {
+          "sha": "a270fbb",
+          "message": "feat(home): subtitle tightened, mute button reduced opacity, subtitle mobile wrap fixed",
+          "timestamp": "2026-06-01T22:20:00Z"
+        },
+        {
+          "sha": "a1b2c3d",
+          "message": "security: extend CSP connect-src to allow Jupiter price API and DexScreener for live pricing",
+          "timestamp": "2026-06-01T22:25:00Z"
+        },
         {
           "sha": "a270fbb",
           "message": "feat(home): enhance landing page — cyber grid, live token badge, social share buttons, extra glow orbs & $SQUISH subtitle",
