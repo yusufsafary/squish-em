@@ -53,6 +53,18 @@
       "dest": "/download.html"
     },
     {
+      "src": "/legal\\.html",
+      "dest": "/legal.html"
+    },
+    {
+      "src": "/legal",
+      "dest": "/legal.html"
+    },
+    {
+      "src": "/cookies\\.html",
+      "dest": "/cookies.html"
+    },
+    {
       "src": "/(.*)",
       "dest": "/index.html",
       "status": 200
@@ -105,6 +117,18 @@
     {
       "source": "/(.*)",
       "headers": [
+        {
+          "key": "Cross-Origin-Opener-Policy",
+          "value": "same-origin"
+        },
+        {
+          "key": "Cross-Origin-Resource-Policy",
+          "value": "same-site"
+        },
+        {
+          "key": "Cross-Origin-Embedder-Policy",
+          "value": "require-corp"
+        },
         {
           "key": "X-Content-Type-Options",
           "value": "nosniff"
