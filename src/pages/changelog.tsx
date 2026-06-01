@@ -6,19 +6,22 @@ interface CommitEntry { sha: string; message: string; timestamp: string; }
 interface BuildEntry { date: string; commits: CommitEntry[]; }
 interface ChangelogData { generated: string; builds: BuildEntry[]; }
 
-type Category = "all" | "gameplay" | "ui" | "blockchain" | "fixes";
+type Category = "all" | "gameplay" | "ui" | "blockchain" | "security" | "fixes";
 
 const GAMEPLAY_KW   = /blob|boss|enemy|power.?up|squish|game|level|combo|shoot|leaderboard|difficulty|cannon|score|wave|nuke|freeze|crit|frenzy|mining.?agent|2p|multiplayer|powerup|kill|bullet|projectile|spawn|health/i;
 const UI_KW         = /nav|footer|hero|homepage|home.?page|landing|animation|visual|design|layout|banner|marquee|badge|font|style|icon|button|dark|ui|ux|responsive|mobile.?menu|hamburger|scroll|glassmorphic|ticker|card/i;
 const BLOCKCHAIN_KW = /solana|blockchain|token|wallet|nft|on.?chain|\$squish|spl|mining|crypto|web3|defi|smart.?contract/i;
+const SECURITY_KW  = /security|csp|xss|csrf|cors|localstorage|sanitiz|validat|tamper|cheat|anti.?cheat|injection|exploit|header|permission.?policy|strict.?transport|content.?security|cross.?origin|form.?action|clickjack|breach|vulnerab|authori|authenticat/i;
 
 function categorize(msg: string): Category[] {
   const cats: Category[] = [];
   const lower = msg.toLowerCase();
   if (/^fix/.test(lower)) cats.push("fixes");
+  if (/(security)/.test(lower) || /^sec/.test(lower) || /^security/.test(lower)) cats.push("security");
   if (GAMEPLAY_KW.test(lower))   cats.push("gameplay");
   if (UI_KW.test(lower))         cats.push("ui");
   if (BLOCKCHAIN_KW.test(lower)) cats.push("blockchain");
+  if (SECURITY_KW.test(lower))  cats.push("security");
   if (cats.length === 0) cats.push("ui");
   return cats;
 }
@@ -67,6 +70,7 @@ export default function Changelog() {
     { id: "gameplay",   label: t.changelogGameplay  },
     { id: "ui",         label: t.changelogUi        },
     { id: "blockchain", label: t.changelogBlockchain },
+    { id: "security",   label: t.changelogSecurity   },
     { id: "fixes",      label: t.changelogFixes     },
   ];
 
@@ -115,7 +119,9 @@ export default function Changelog() {
               onClick={() => setActive(cat.id)}
               className={`px-3 py-1.5 rounded-full font-mono text-[11px] tracking-wide border transition-all duration-200 ${
                 active === cat.id
-                  ? "bg-primary/20 border-primary/50 text-primary"
+                  ? cat.id === "security"
+                    ? "bg-yellow-400/15 border-yellow-400/50 text-yellow-400"
+                    : "bg-primary/20 border-primary/50 text-primary"
                   : "bg-white/4 border-white/10 text-muted-foreground/60 hover:border-white/20 hover:text-white/70"
               }`}
             >
@@ -177,7 +183,7 @@ export default function Changelog() {
                       )}
                       {fixes.length > 0 && (
                         <p className="text-xs text-muted-foreground/50 leading-relaxed">
-                          <span className="text-yellow-400/60 font-mono text-[10px] mr-1.5">FIXED</span>
+                          <span className={active === "security" ? "text-yellow-300/80 font-mono text-[10px] mr-1.5" : "text-yellow-400/60 font-mono text-[10px] mr-1.5"}>FIXED</span>
                           {toSentence(fixes, t.changelogAnd)}
                         </p>
                       )}
