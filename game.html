@@ -6,7 +6,7 @@
 <title>Play — SQUISH 'EM!</title>
 <meta name="description" content="Play SQUISH 'EM! — HTML5 blob shooter. Free, no download, no login.">
 <meta name="theme-color" content="#0d0d1a">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self'; frame-src 'none'; object-src 'none'; base-uri 'self'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: blob:; connect-src 'self' https://api.squishem.io https://api.countapi.xyz; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'none'">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta http-equiv="X-Frame-Options" content="SAMEORIGIN">
 <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -98,9 +98,13 @@ const sfxCombo    = (n) => beep(440+n*80,'sine',0.08,0.14);
 // ─── State ──────────────────────────────────────────────────────────────────
 const SCR = {TITLE:0,GAME:1,PAUSE:2,OVER:3,UPGRADE:4};
 let screen = SCR.TITLE;
-let score=0, hiScore=parseInt(localStorage.getItem('squish_hi')||'0');
-let hofScores=JSON.parse(localStorage.getItem('squish_hof')||'[]');
-let unlockedAch=new Set(JSON.parse(localStorage.getItem('squish_ach')||'[]'));
+// Secure localStorage — validates, caps, and sanitizes against DevTools tampering
+function _ldN(k,d=0){try{const v=+localStorage.getItem(k);return Number.isFinite(v)&&v>=0?Math.min(v,9999999):d;}catch{return d;}}
+function _ldA(k){try{const a=JSON.parse(localStorage.getItem(k)||'[]');return Array.isArray(a)?a.filter(v=>Number.isFinite(+v)&&+v>=0).map(v=>Math.min(Math.round(+v),9999999)).slice(0,20):[];}catch{return[];}}
+function _ldS(k){try{const a=JSON.parse(localStorage.getItem(k)||'[]');return new Set(Array.isArray(a)?a.filter(v=>typeof v==='string'&&/^[a-z_]{1,32}$/.test(v)):[]);}catch{return new Set();}}
+let score=0, hiScore=_ldN('squish_hi');
+let hofScores=_ldA('squish_hof');
+let unlockedAch=_ldS('squish_ach');
 let pendingAch=[],achBannerMsg='',achBannerTimer=0;
 const ACH={
   first_blood:{label:'FIRST BLOOD!',icon:'🩸'},
@@ -108,7 +112,9 @@ const ACH={
   boss_slayer:{label:'BOSS SLAYER!',icon:'👑'},
   centurion:{label:'CENTURION!',icon:'💯'},
   survivor:{label:'SURVIVOR!',icon:'🔥'},
-  speed_run:{label:'SPEED RUN!',icon:'💨'},
+  speed_run:       {label:'SPEED RUN!',       icon:'💨'},
+  untouchable:     {label:'UNTOUCHABLE!',     icon:'🛡'},
+  powerup_hoarder: {label:'POWERUP HOARDER!', icon:'💎'},
 };
 let lives=3, level=1, kills=0, lvlKills=0;
 let combo=0, comboTimer=0, comboMult=1;
@@ -120,6 +126,7 @@ let shActive=false, shTimer=0;
 let mxActive=false, mxTimer=0;
 let fzActive=false, fzTimer=0;
 let lsActive=false, lsTimer=0;
+let mgActive=false, mgTimer=0;
 let difficulty=parseInt(localStorage.getItem('squish_diff')||'1'); // 0=easy,1=normal,2=hard
 const DIFF_SPD=[0.62,1,1.5];
 const DIFF_SPAWN=[0.55,1,1.75];
@@ -140,11 +147,12 @@ let btnRects={};
 let fadeAlpha=0;
 let tutorialTimer = 180; // show drag hint for 3 seconds at game start
 let streakCount=0, streakTimer=0;
+let powerupCollected=0, livesLostThisLevel=0;
 let levelFlashTimer=0, levelFlashNum=1;
 let nukeFlashTimer=0, nukeLines=[];
 let prevScoreMilestone=0;
 
-// ─── Upgrade System ───────────────────────────────────────────────────────────
+// ─── Upgrade System ────────────────────────────────────────���──────────────────
 const UPGRADE_POOL=[
   {id:'fireRate',  icon:'⚡', title:'RAPID FIRE',  desc:'+20% fire rate',       col:'#f59e0b',glow:'rgba(245,158,11,.75)',max:5},
   {id:'bulCount2', icon:'❋❋', title:'DOUBLE SHOT', desc:'Fire 2 bullets',        col:'#8b5cf6',glow:'rgba(139,92,246,.75)', max:1},
@@ -248,7 +256,9 @@ const BT = {
   blue:   {col:'#3b82f6',glow:'rgba(59,130,246,.75)', hp:2,spd:.42, pts:20, sz:30,expr:'sleepy',sw:.22},
   red:    {col:'#ef4444',glow:'rgba(239,68,68,.75)',  hp:1,spd:1.45,pts:30, sz:20,expr:'angry', sw:.18},
   gold:   {col:'#eab308',glow:'rgba(234,179,8,.75)',  hp:1,spd:.95, pts:100,sz:25,expr:'smug',  sw:.04},
-  phantom:{col:'#a855f7',glow:'rgba(168,85,247,.85)', hp:2,spd:1.1, pts:50, sz:23,expr:'smug',  sw:.09},
+  phantom: {col:'#a855f7',glow:'rgba(168,85,247,.85)', hp:2,spd:1.1, pts:50, sz:23,expr:'smug',  sw:.09},
+  tank:    {col:'#06b6d4',glow:'rgba(6,182,212,.85)',  hp:4,spd:.30, pts:200,sz:40,expr:'sleepy',sw:.05},
+  splitter:{col:'#f97316',glow:'rgba(249,115,22,.8)',  hp:2,spd:.82, pts:75, sz:22,expr:'angry', sw:.07},
 };
 
 function availTypes(){
@@ -257,6 +267,8 @@ function availTypes(){
   if(level>=4)t.push('phantom');
   if(level>=5)t.push('red');
   if(level>=7)t.push('gold');
+  if(level>=8)t.push('tank');
+  if(level>=6)t.push('splitter');
   return t;
 }
 
@@ -345,6 +357,7 @@ function dropPowerup(x,y){
     {type:'nuke',  col:'#FF4500',icon:'💣',   glow:'rgba(255,80,0,.8)',   w:0.28},
     {type:'freeze',col:'#00E5FF',icon:'❄',   glow:'rgba(0,229,255,.7)', w:0.75},
     {type:'laser', col:'#FF00FF',icon:'🔴',   glow:'rgba(255,0,255,.8)',  w:0.35},
+    {type:'magnet',col:'#a855f7', icon:'🧲',   glow:'rgba(168,85,247,.8)', w:0.40},
   ];
   const tot=PW.reduce((s,p)=>s+p.w,0);
   let r=Math.random()*tot,c=0,pw=PW[0];
@@ -353,12 +366,15 @@ function dropPowerup(x,y){
 }
 function applyPowerup(t){
   sfxPowerup();
+  powerupCollected++;
+  if(powerupCollected>=5)unlockAch('powerup_hoarder');
   if(t==='rapid') {rfActive=true;rfTimer=8;}
   if(t==='triple'){triActive=true;triTimer=8;}
   if(t==='shield'){shActive=true;shTimer=10;}
   if(t==='mult')  {mxActive=true;mxTimer=10;}
   if(t==='nuke')  {nukeAllBlobs();}
   if(t==='freeze'){fzActive=true;fzTimer=6;screenFlash(0.35,'#00E5FF');}
+  if(t==='magnet'){mgActive=true;mgTimer=3.5;screenFlash(0.4,'#a855f7');[220,330,440,660].forEach((f,i)=>setTimeout(()=>beep(f,'sine',0.1,0.2),i*80));}
   if(t==='laser') {lsActive=true;lsTimer=5;screenFlash(0.5,'#FF00FF');[440,660,880].forEach((f,i)=>setTimeout(()=>beep(f,'sawtooth',0.08,0.28),i*60));}
 }
 function nukeAllBlobs(){
@@ -434,6 +450,8 @@ function addKill(pts,x,y,player=1){
   }
 
   if(lvlKills>=KILLS_PER_LEVEL){
+    if(livesLostThisLevel===0&&level>=3)unlockAch('untouchable');
+    livesLostThisLevel=0;
     level++; lvlKills=0; sfxLevelUp();
     levelFlashTimer=1.8; levelFlashNum=level;
     if(level%5===0&&!bossPresent) spawnBoss();
@@ -529,10 +547,11 @@ function startGame(){
   sfxFlashAlpha=0;
   tutorialTimer=180;
   streakCount=0;streakTimer=0;
+  powerupCollected=0;livesLostThisLevel=0;
   levelFlashTimer=0;levelFlashNum=1;
   achBannerTimer=0;achBannerMsg='';
-  rfActive=triActive=shActive=mxActive=fzActive=lsActive=false;
-  rfTimer=triTimer=shTimer=mxTimer=fzTimer=lsTimer=0;
+  rfActive=triActive=shActive=mxActive=fzActive=lsActive=mgActive=false;
+  rfTimer=triTimer=shTimer=mxTimer=fzTimer=lsTimer=mgTimer=0;
   nukeFlashTimer=0; nukeLines=[];
   prevScoreMilestone=0;
   upgrades={fireRate:0,bulCount:1,bulSize:0,bulSpeed:0,pierce:0,explosive:false};
@@ -543,7 +562,7 @@ function startGame(){
 }
 function gameOver(){
   screen=SCR.OVER;
-  if(score>hiScore){hiScore=score;localStorage.setItem('squish_hi',hiScore);}
+  if(score>hiScore){hiScore=Math.min(Math.round(score),9999999);localStorage.setItem('squish_hi',hiScore);}
   saveHof(score);
   if(level>=10)unlockAch('survivor');
   // Daily challenge check
@@ -554,13 +573,14 @@ function gameOver(){
   sfxGameOver(); shake(14,600); screenFlash(0.8,'#ff0000');
 }
 function saveHof(s){
-  if(s<=0)return;
+  if(!Number.isFinite(s)||s<=0)return;
+  s=Math.min(Math.round(s),9999999);
   hofScores.push(s);
-  hofScores.sort((a,b)=>b-a);
-  hofScores=hofScores.slice(0,5);
+  hofScores=hofScores.filter(v=>Number.isFinite(v)&&v>0).sort((a,b)=>b-a).slice(0,5);
   localStorage.setItem('squish_hof',JSON.stringify(hofScores));
 }
 function unlockAch(id){
+  if(!id||typeof id!=='string'||!/^[a-z_]{1,32}$/.test(id))return;
   if(unlockedAch.has(id))return;
   unlockedAch.add(id);
   localStorage.setItem('squish_ach',JSON.stringify([...unlockedAch]));
@@ -1112,6 +1132,7 @@ function drawHUD(){
   bar('🛡 SHIELD',shTimer,10,'#00BCD4','rgba(0,188,212,.6)');
   bar('× ×2 SCORE',mxTimer,10,'#FFD93D','rgba(255,217,61,.6)');
   bar('❄ FREEZE',fzTimer,6,'#00E5FF','rgba(0,229,255,.6)');
+  bar('🧲 MAGNET',mgTimer,3.5,'#a855f7','rgba(168,85,247,.6)');
   bar('🔴 LASER',lsTimer,5,'#FF00FF','rgba(255,0,255,.6)');
 
   // ── Boss HP bar (below HUD bar, full width) ──
@@ -1486,6 +1507,7 @@ function update(d){
   if(shActive){shTimer-=dt;if(shTimer<=0)shActive=false;}
   if(mxActive){mxTimer-=dt;if(mxTimer<=0)mxActive=false;}
   if(fzActive){fzTimer-=dt;if(fzTimer<=0)fzActive=false;}
+  if(mgActive){mgTimer-=dt;if(mgTimer<=0){mgActive=false;nukeAllBlobs();spawnPopup(W/2,H/2-60,'🧲 MAGNETIC PULL!','#a855f7');}}
   if(lsActive){
     lsTimer-=dt;if(lsTimer<=0)lsActive=false;
     for(let i=blobs.length-1;i>=0;i--){
@@ -1524,13 +1546,14 @@ function update(d){
       continue;
     }
     const fzMult=fzActive?0.12:1;
+    if(mgActive){const mf=0.05+mgTimer*0.018;b.x+=(cannonX-b.x)*mf;b.y+=(RAIL_Y-80-b.y)*mf*0.45;}
     b.y+=b.spd*fzMult;
     if(b.zz){b.zzPhase+=.045*fzMult;b.x+=Math.sin(b.zzPhase)*2*fzMult;b.x=Math.max(b.sz,Math.min(W-b.sz,b.x));}
     if(b.type==='phantom'){b.zzPhase=(b.zzPhase||0)+0.08*fzMult;b.x+=Math.sin(b.zzPhase)*3*fzMult;b.x=Math.max(b.sz,Math.min(W-b.sz,b.x));}
     if(b.y>H-56){
       blobs.splice(i,1);
       if(shActive){shActive=false;shTimer=0;spawnPopup(W/2,H/2,'BLOCKED!','#00BCD4');}
-      else{lives--;sfxLoseLife();if(lives<=0)gameOver();}
+      else{lives--;livesLostThisLevel++;sfxLoseLife();if(lives<=0)gameOver();}
     }
   }
 
@@ -1552,10 +1575,19 @@ function update(d){
         boss.spd=Math.min(3,.5+((boss.maxHp-boss.hp)/boss.maxHp)*2.5);
       }
       const bPhase2=boss.hp<boss.maxHp*0.5;
+      const bPhase3=boss.hp<boss.maxHp*0.25;
       boss.sTimer-=dt;
       if(boss.sTimer<=0){
-        boss.sTimer=bPhase2?1.0+(Math.random()-.5)*.3:2.4+(Math.random()-.5)*.6;
-        if(bPhase2){
+        boss.sTimer=bPhase3?0.55+(Math.random()-.5)*.1:bPhase2?1.0+(Math.random()-.5)*.3:2.4+(Math.random()-.5)*.6;
+        if(bPhase3){
+          // ⚠ PHASE 3: radial burst — 8 shots in all directions
+          for(let _ri=0;_ri<8;_ri++){
+            const _ra=(Math.PI*2/8)*_ri+boss.wobble*.3;
+            bossShots.push({x:boss.x,y:boss.y+boss.sz,vx:Math.sin(_ra)*5.5,vy:Math.cos(_ra)*3+2.2,r:10,trail:[]});
+          }
+          screenFlash(0.18,'#FF0000');
+          beep(55,'sawtooth',0.25,0.35);
+        } else if(bPhase2){
           for(const va of[-2.8,0,2.8])
             bossShots.push({x:boss.x,y:boss.y+boss.sz,vx:va,vy:4.8,r:9,trail:[]});
           if(Math.random()<.5)screenFlash(0.1,'#FF4500');
@@ -1563,8 +1595,9 @@ function update(d){
           bossShots.push({x:boss.x,y:boss.y+boss.sz,vx:(Math.random()-.5)*3.5,vy:4,r:9,trail:[]});
         }
       }
-      // phase 2 glow on boss
-      if(bPhase2&&!boss.dying){boss.glow='rgba(255,80,0,.9)';}
+      // phase glow on boss
+      if(bPhase3&&!boss.dying){boss.glow='rgba(255,0,0,1)';boss.spd=Math.min(4.5,.5+((boss.maxHp-boss.hp)/boss.maxHp)*4.0);}
+      else if(bPhase2&&!boss.dying){boss.glow='rgba(255,80,0,.9)';}
       if(boss.y>H-80){
         bossPresent=false;boss=null;
         if(shActive){shActive=false;shTimer=0;}
@@ -1640,6 +1673,21 @@ function update(d){
           spawnRing(bl.x,bl.y,bl.col);
           dropPowerup(bl.x,bl.y);
           addKill(bl.pts,bl.x,bl.y);
+          // Splitter: burst into 2 faster mini-blobs
+          if(bl.type==='splitter'){
+            for(let _s=0;_s<2;_s++){
+              blobs.push({
+                x:bl.x+(_s?14:-14),y:bl.y,type:'splitter_mini',
+                col:'#fb923c',glow:'rgba(251,146,60,.75)',hp:1,maxHp:1,
+                spd:bl.spd*1.5,pts:25,sz:11,expr:'angry',
+                wobble:Math.random()*Math.PI*2,rot:Math.random()*Math.PI*2,
+                zz:0,zzPhase:0,dying:false,dTimer:0,dScale:1,flash:0,
+                blobPts:makeBlobPts(6),trail:[],
+                driftPhase:Math.random()*Math.PI*2,driftAmp:0.4,driftSpeed:0.032,
+              });
+            }
+            spawnPopup(bl.x,bl.y-18,'💥 SPLIT!','#f97316');
+          }
           // Splash damage — deal 1 HP to blobs within 40px
           for(let k=blobs.length-1;k>=0;k--){
             if(blobs[k]===bl||blobs[k].dying)continue;
