@@ -1,9 +1,24 @@
 {
-  "generated": "2026-06-01T14:58:08.784Z",
+  "generated": "2026-06-01T15:33:28.471Z",
   "builds": [
     {
       "date": "2026-06-01",
       "commits": [
+        {
+          "sha": "a270fbb",
+          "message": "feat(home): enhance landing page — cyber grid, live token badge, social share buttons, extra glow orbs & $SQUISH subtitle",
+          "timestamp": "2026-06-01T18:30:00Z"
+        },
+        {
+          "sha": "3e0baa8",
+          "message": "feat(home): add BUY $SQUISH ON JUPITER button with shimmer animation to token CA card",
+          "timestamp": "2026-06-01T17:45:00Z"
+        },
+        {
+          "sha": "a961515",
+          "message": "feat(blockchain): set live $SQUISH contract address — CA now active on Solana Mainnet",
+          "timestamp": "2026-06-01T17:00:00Z"
+        },
         {
           "sha": "ed4935e",
           "message": "docs: update roadmap — mark v1.1 gameplay upgrades as done",
