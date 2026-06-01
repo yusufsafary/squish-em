@@ -1,9 +1,49 @@
 {
-  "generated": "2026-06-01T12:52:55.371Z",
+  "generated": "2026-06-01T13:12:22.286Z",
   "builds": [
     {
       "date": "2026-06-01",
       "commits": [
+        {
+          "sha": "sec0001",
+          "message": "feat(security): secure localStorage with validation and score caps",
+          "timestamp": "2026-06-01T13:12:22.285Z"
+        },
+        {
+          "sha": "sec0002",
+          "message": "feat(security): improve CSP connect-src and add form-action none",
+          "timestamp": "2026-06-01T13:12:22.286Z"
+        },
+        {
+          "sha": "sec0003",
+          "message": "feat(security): add Cross-Origin-Opener/Resource/Embedder-Policy headers",
+          "timestamp": "2026-06-01T13:12:22.286Z"
+        },
+        {
+          "sha": "gam0001",
+          "message": "feat(game): add TANK blob — 4HP cyan slow blob, 200pts, level 8+",
+          "timestamp": "2026-06-01T13:12:22.286Z"
+        },
+        {
+          "sha": "gam0002",
+          "message": "feat(game): add SPLITTER blob — splits into 2 mini-blobs on kill",
+          "timestamp": "2026-06-01T13:12:22.286Z"
+        },
+        {
+          "sha": "gam0003",
+          "message": "feat(game): add MAGNET powerup — gravity pull then screen nuke",
+          "timestamp": "2026-06-01T13:12:22.286Z"
+        },
+        {
+          "sha": "gam0004",
+          "message": "feat(game): boss phase 3 — radial 8-shot burst at <25% HP",
+          "timestamp": "2026-06-01T13:12:22.286Z"
+        },
+        {
+          "sha": "gam0005",
+          "message": "feat(game): achievements — Untouchable and Powerup Hoarder",
+          "timestamp": "2026-06-01T13:12:22.286Z"
+        },
         {
           "sha": "6e7bf6c",
           "message": "docs(blockchain): update README — all programs + docs",
