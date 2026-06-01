@@ -1,0 +1,19 @@
+[package]
+name = "squish-leaderboard"
+version = "0.1.0"
+description = "SQUISH on-chain leaderboard — verifiable global scores"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "squish_leaderboard"
+
+[features]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+cpi = ["no-entrypoint"]
+default = []
+
+[dependencies]
+anchor-lang = "0.30.0"
