@@ -2,7 +2,8 @@
 members = [
   "programs/squish-token",
   "programs/squish-nft",
-  "programs/squish-mining"
+  "programs/squish-mining",
+  "programs/squish-leaderboard",
 ]
 
 [profile.release]
