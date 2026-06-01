@@ -280,9 +280,32 @@ function SquishTokenCA() {
             </>
           )}
 
-          {/* Footer */}
+          {/* Footer — share + roadmap */}
           <div className="mt-3 flex items-center justify-between">
-            <span className="font-mono text-[9px] text-white/20">Earn $SQUISH by squishing blobs</span>
+            <div className="flex items-center gap-1.5">
+              {/* X / Twitter */}
+              <motion.a
+                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent("🎮 SQUISH 'EM! $SQUISH is LIVE on Solana!\n\nPlay & earn — no install needed.\nCA: " + CA + "\n\nhttps://squishem.fun")}`}
+                target="_blank" rel="noopener noreferrer"
+                whileHover={{ scale: 1.12 }} whileTap={{ scale: 0.9 }}
+                className="flex items-center gap-1 px-2 py-1 rounded-md border border-white/8 bg-white/[0.02] hover:border-white/18 hover:bg-white/[0.05] transition-all"
+                title="Share on X"
+              >
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="rgba(255,255,255,0.38)"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.258 5.63 5.906-5.63Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                <span className="font-mono text-[8px] text-white/28 tracking-widest">SHARE</span>
+              </motion.a>
+              {/* Telegram */}
+              <motion.a
+                href={`https://t.me/share/url?url=https://squishem.fun&text=${encodeURIComponent("🎮 $SQUISH is LIVE on Solana!\nPlay SQUISH 'EM & earn tokens — no install.\n\nCA: " + CA)}`}
+                target="_blank" rel="noopener noreferrer"
+                whileHover={{ scale: 1.12 }} whileTap={{ scale: 0.9 }}
+                className="flex items-center gap-1 px-2 py-1 rounded-md border border-white/8 bg-white/[0.02] hover:border-cyan-400/20 hover:bg-cyan-400/[0.04] transition-all"
+                title="Share on Telegram"
+              >
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="rgba(103,232,249,0.42)"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.46 14.02l-2.965-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.693.54z"/></svg>
+                <span className="font-mono text-[8px] text-white/28 tracking-widest">TG</span>
+              </motion.a>
+            </div>
             <Link href="/roadmap"
               className="font-mono text-[9px] text-purple-400/60 hover:text-purple-300 transition-colors tracking-widest">
               ROADMAP →
@@ -298,6 +321,7 @@ const MARQUEE_ITEMS = [
   "SHOOT BLOBS", "CHAIN COMBOS", "SURVIVE BOSSES", "RACK UP POINTS",
   "COLLECT POWER-UPS", "EARN $SQUISH", "SQUISH 'EM ALL",
   "NO INSTALL", "PURE ARCADE", "INFINITE LEVELS", "CRYSTAL BLOBS", "NINJA BLOBS",
+  "$SQUISH NOW LIVE", "BUY ON JUPITER", "SOLANA MAINNET", "1B SUPPLY", "EARN BY PLAYING",
 ];
 
 function MarqueeTicker() {
@@ -578,6 +602,8 @@ export default function Home() {
       <style>{`
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         @keyframes pulse-ring { 0% { transform: scale(1); opacity: 0.45; } 100% { transform: scale(1.85); opacity: 0; } }
+        @keyframes grid-pulse { 0%,100% { opacity: 0.022; } 50% { opacity: 0.055; } }
+        @keyframes ca-sweep { 0% { transform: translateX(-100%) skewX(-15deg); } 100% { transform: translateX(400%) skewX(-15deg); } }
       `}</style>
 
       {/* Sound toggle */}
@@ -611,6 +637,8 @@ export default function Home() {
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section ref={heroRef} className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden border-b border-white/5">
         <div className="absolute inset-0 bg-background z-0" />
+        {/* Cyber grid overlay */}
+        <div className="absolute inset-0 z-0 pointer-events-none" style={{ backgroundImage: "linear-gradient(rgba(34,197,94,0.055) 1px, transparent 1px), linear-gradient(90deg, rgba(34,197,94,0.055) 1px, transparent 1px)", backgroundSize: "48px 48px", animation: "grid-pulse 5s ease-in-out infinite" }} />
         <HeroCanvas />
 
         {/* Reduced orbs — only 2 for performance */}
@@ -622,12 +650,38 @@ export default function Home() {
           style={{ width: 300, height: 300, background: "radial-gradient(circle, hsla(263,68%,58%,0.18), transparent)", left: "66%", top: "50%", filter: "blur(55px)" }}
           animate={{ y: [0, -20, 0], opacity: [0.14, 0.22, 0.14] }}
           transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 1.5 }} />
+        <motion.div className="absolute rounded-full pointer-events-none"
+          style={{ width: 220, height: 220, background: "radial-gradient(circle, hsla(180,100%,60%,0.13), transparent)", right: "3%", top: "20%", filter: "blur(48px)" }}
+          animate={{ y: [0, 18, 0], opacity: [0.09, 0.17, 0.09] }}
+          transition={{ duration: 11, repeat: Infinity, ease: "easeInOut", delay: 3 }} />
+        <motion.div className="absolute rounded-full pointer-events-none"
+          style={{ width: 180, height: 180, background: "radial-gradient(circle, hsla(127,65%,52%,0.14), transparent)", left: "45%", bottom: "15%", filter: "blur(42px)" }}
+          animate={{ x: [0, -14, 0], opacity: [0.08, 0.15, 0.08] }}
+          transition={{ duration: 13, repeat: Infinity, ease: "easeInOut", delay: 5 }} />
 
         <div className="absolute inset-0 scanline z-0 opacity-[0.08] pointer-events-none" />
         <div className="absolute inset-0 z-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%)" }} />
 
         <motion.div style={{ y: springY, opacity: opacityHero }} className="container relative z-10 mx-auto px-4 text-center">
           <motion.div className="max-w-lg mx-auto flex flex-col items-center">
+            {/* ── Live announcement pill ── */}
+            <motion.div
+              initial={{ opacity: 0, y: -14, scale: 0.88 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.65, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
+              className="mb-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-green-500/35 bg-green-500/[0.07] backdrop-blur-sm select-none cursor-default"
+            >
+              <motion.span
+                className="w-1.5 h-1.5 rounded-full bg-green-400 flex-shrink-0"
+                animate={{ opacity: [1, 0.2, 1], scale: [1, 1.45, 1] }}
+                transition={{ duration: 1.35, repeat: Infinity }}
+              />
+              <span className="font-mono text-[10px] tracking-[0.18em] font-bold" style={{ color: "rgba(74,222,128,0.88)" }}>
+                ⚡ $SQUISH NOW LIVE ON SOLANA
+              </span>
+              <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="rgba(74,222,128,0.45)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
+            </motion.div>
+
             <GlitchTitle />
 
             <motion.p
@@ -636,7 +690,9 @@ export default function Home() {
               transition={{ duration: 0.75, delay: 0.36, ease: [0.22, 1, 0.36, 1] }}
               className="text-lg md:text-xl text-muted-foreground mb-8 font-medium"
             >
-              Shoot blobs. Chain combos. Survive the boss waves.
+              Shoot blobs. Chain combos.{" "}
+              Earn{" "}
+              <span style={{ color: "#14f195", fontWeight: 700, textShadow: "0 0 18px rgba(20,241,149,0.45)" }}>$SQUISH</span>.
             </motion.p>
 
             <motion.div
