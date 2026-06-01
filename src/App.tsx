@@ -14,6 +14,7 @@ import Feedback from "@/pages/feedback";
 import About from "@/pages/about";
 import Cookies from "@/pages/cookies";
 import Legal from "@/pages/legal";
+import Changelog from "@/pages/changelog";
 import NotFound from "@/pages/not-found";
 
 import { Nav } from "@/components/nav";
@@ -57,6 +58,7 @@ function Router() {
       <Route path="/about" component={About} />
       <Route path="/cookies" component={Cookies} />
       <Route path="/legal" component={Legal} />
+      <Route path="/changelog" component={Changelog} />
       <Route component={NotFound} />
     </Switch>
   );
