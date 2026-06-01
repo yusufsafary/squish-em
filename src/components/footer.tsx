@@ -44,6 +44,7 @@ export function Footer() {
               <FooterLink href="/roadmap">🗺 Web3 Roadmap</FooterLink>
               <FooterLink href="/tech">🧠 AI Architecture</FooterLink>
               <FooterLink href="/ai-agent">⚡ Live Simulator</FooterLink>
+              <FooterLink href="/changelog">📋 Changelog</FooterLink>
               <li>
                 <motion.a
                   href="https://orynth.dev/projects/squishem"
