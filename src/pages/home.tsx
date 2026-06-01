@@ -242,7 +242,45 @@ function SquishTokenCA() {
             ))}
           </div>
 
-          {/* Footer link */}
+          {/* Buy button — visible only when live */}
+          {isLive && (
+            <>
+              <div className="h-px bg-gradient-to-r from-transparent via-white/8 to-transparent mt-3 mb-2.5" />
+              <motion.a
+                href={`https://jup.ag/swap/SOL-${CA}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.018 }}
+                whileTap={{ scale: 0.975 }}
+                className="relative w-full flex items-center justify-center gap-2 rounded-xl overflow-hidden py-2.5 font-display font-bold text-[12px] tracking-[0.18em] text-white select-none"
+                style={{
+                  background: "linear-gradient(135deg, rgba(168,85,247,0.18) 0%, rgba(103,232,249,0.12) 50%, rgba(20,241,149,0.16) 100%)",
+                  border: "1px solid rgba(103,232,249,0.22)",
+                }}
+              >
+                {/* Shimmer */}
+                <motion.span
+                  className="absolute inset-0 pointer-events-none"
+                  animate={{ x: ["-100%", "220%"] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", repeatDelay: 1.5 }}
+                  style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.055), transparent)", width: "55%" }}
+                />
+                {/* Jupiter icon */}
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" stroke="rgba(103,232,249,0.75)" className="flex-shrink-0">
+                  <circle cx="12" cy="12" r="10" /><path d="M8 12h8M12 8l4 4-4 4" />
+                </svg>
+                <span style={{ background: "linear-gradient(90deg, #a855f7, #67e8f9, #14f195)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>
+                  BUY $SQUISH ON JUPITER
+                </span>
+                {/* External arrow */}
+                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" stroke="rgba(103,232,249,0.45)" className="flex-shrink-0">
+                  <path d="M7 17L17 7M7 7h10v10" />
+                </svg>
+              </motion.a>
+            </>
+          )}
+
+          {/* Footer */}
           <div className="mt-3 flex items-center justify-between">
             <span className="font-mono text-[9px] text-white/20">Earn $SQUISH by squishing blobs</span>
             <Link href="/roadmap"
