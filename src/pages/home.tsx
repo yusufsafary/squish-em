@@ -96,12 +96,59 @@ function BlobCounter() {
   );
 }
 
+
+// ── $SQUISH live price hook ──────────────────────────────────────────────
+function useSquishPrice() {
+  const [price, setPrice] = useState<number | null>(null);
+  const [change24h, setChange24h] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    const ADDR = "314yiE7VgKbBozCpAqyGaLk8EZzKdzDShtwzAyRBqory";
+    const load = async () => {
+      try {
+        const r = await fetch(
+          "https://price.jup.ag/v6/price?ids=" + ADDR,
+          { signal: AbortSignal.timeout(6000) }
+        );
+        if (r.ok && !cancelled) {
+          const d = await r.json();
+          const p = d.data?.[ADDR]?.price;
+          if (p) { setPrice(p); setLoading(false); return; }
+        }
+      } catch {}
+      try {
+        const r = await fetch(
+          "https://api.dexscreener.com/latest/dex/tokens/" + ADDR,
+          { signal: AbortSignal.timeout(6000) }
+        );
+        if (r.ok && !cancelled) {
+          const d = await r.json();
+          const pair = d.pairs?.[0];
+          if (pair?.priceUsd) {
+            setPrice(parseFloat(pair.priceUsd));
+            setChange24h(pair.priceChange?.h24 ?? null);
+          }
+        }
+      } catch {}
+      if (!cancelled) setLoading(false);
+    };
+    load();
+    const id = setInterval(load, 30_000);
+    return () => { cancelled = true; clearInterval(id); };
+  }, []);
+
+  return { price, change24h, loading };
+}
+
 // ── $SQUISH Contract Address Card ──────────────────────────────────────────
 const CA = "314yiE7VgKbBozCpAqyGaLk8EZzKdzDShtwzAyRBqory";
 
 function SquishTokenCA() {
   const [copied, setCopied] = useState(false);
   const [hover, setHover] = useState(false);
+  const { price, change24h, loading: priceLoading } = useSquishPrice();
 
   const handleCopy = () => {
     if (CA === "TBA") return;
@@ -242,6 +289,40 @@ function SquishTokenCA() {
             ))}
           </div>
 
+          {/* Price ticker row */}
+          {isLive && (
+            <div className="mt-2 flex items-center justify-between px-3 py-2 rounded-lg border border-white/5 bg-white/[0.02]">
+              <span className="font-mono text-[8px] text-white/25 tracking-widest">PRICE</span>
+              <div className="flex items-center gap-2">
+                {priceLoading ? (
+                  <div className="h-2 w-14 rounded-full animate-pulse" style={{ background: "rgba(255,255,255,0.08)" }} />
+                ) : price !== null ? (
+                  <>
+                    <span className="font-mono text-[11px] font-bold" style={{ color: "rgba(103,232,249,0.92)" }}>
+                      {price < 0.0001
+                        ? "$" + price.toExponential(2)
+                        : price < 0.01
+                        ? "$" + price.toFixed(5)
+                        : "$" + price.toFixed(4)}
+                    </span>
+                    {change24h !== null && (
+                      <span className="font-mono text-[9px] font-bold" style={{ color: change24h >= 0 ? "rgba(74,222,128,0.85)" : "rgba(248,113,113,0.8)" }}>
+                        {change24h >= 0 ? "▲" : "▼"}{Math.abs(change24h).toFixed(1)}%
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <span className="font-mono text-[10px] text-white/20">—</span>
+                )}
+                <a
+                  href={"https://dexscreener.com/solana/" + CA}
+                  target="_blank" rel="noopener noreferrer"
+                  className="font-mono text-[8px] text-white/20 hover:text-cyan-400/60 tracking-widest transition-colors"
+                >CHART ↗</a>
+              </div>
+            </div>
+          )}
+
           {/* Buy button — visible only when live */}
           {isLive && (
             <>
@@ -280,36 +361,26 @@ function SquishTokenCA() {
             </>
           )}
 
-          {/* Footer — share + roadmap */}
-          <div className="mt-3 flex items-center justify-between">
-            <div className="flex items-center gap-1.5">
-              {/* X / Twitter */}
-              <motion.a
-                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent("🎮 SQUISH 'EM! $SQUISH is LIVE on Solana!\n\nPlay & earn — no install needed.\nCA: " + CA + "\n\nhttps://squishem.fun")}`}
-                target="_blank" rel="noopener noreferrer"
-                whileHover={{ scale: 1.12 }} whileTap={{ scale: 0.9 }}
-                className="flex items-center gap-1 px-2 py-1 rounded-md border border-white/8 bg-white/[0.02] hover:border-white/18 hover:bg-white/[0.05] transition-all"
-                title="Share on X"
-              >
-                <svg width="9" height="9" viewBox="0 0 24 24" fill="rgba(255,255,255,0.38)"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.258 5.63 5.906-5.63Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
-                <span className="font-mono text-[8px] text-white/28 tracking-widest">SHARE</span>
-              </motion.a>
-              {/* Telegram */}
-              <motion.a
-                href={`https://t.me/share/url?url=https://squishem.fun&text=${encodeURIComponent("🎮 $SQUISH is LIVE on Solana!\nPlay SQUISH 'EM & earn tokens — no install.\n\nCA: " + CA)}`}
-                target="_blank" rel="noopener noreferrer"
-                whileHover={{ scale: 1.12 }} whileTap={{ scale: 0.9 }}
-                className="flex items-center gap-1 px-2 py-1 rounded-md border border-white/8 bg-white/[0.02] hover:border-cyan-400/20 hover:bg-cyan-400/[0.04] transition-all"
-                title="Share on Telegram"
-              >
-                <svg width="9" height="9" viewBox="0 0 24 24" fill="rgba(103,232,249,0.42)"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.46 14.02l-2.965-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.693.54z"/></svg>
-                <span className="font-mono text-[8px] text-white/28 tracking-widest">TG</span>
-              </motion.a>
-            </div>
-            <Link href="/roadmap"
-              className="font-mono text-[9px] text-purple-400/60 hover:text-purple-300 transition-colors tracking-widest">
-              ROADMAP →
-            </Link>
+          {/* Footer — 2-col share grid */}
+          <div className="mt-3 grid grid-cols-2 gap-2">
+            <motion.a
+              href={`https://twitter.com/intent/tweet?text=${encodeURIComponent("🎮 SQUISH 'EM! $SQUISH is LIVE on Solana!\n\nPlay & earn — no install.\nCA: " + CA + "\n\nhttps://squishem.fun")}`}
+              target="_blank" rel="noopener noreferrer"
+              whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+              className="flex items-center justify-center gap-1.5 py-2 rounded-lg border border-white/8 bg-white/[0.02] hover:border-white/18 hover:bg-white/[0.05] transition-all"
+            >
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="rgba(255,255,255,0.5)"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.258 5.63 5.906-5.63Zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              <span className="font-mono text-[9px] text-white/45 tracking-widest">SHARE ON X</span>
+            </motion.a>
+            <motion.a
+              href={`https://t.me/share/url?url=https://squishem.fun&text=${encodeURIComponent("🎮 $SQUISH is LIVE on Solana!\nPlay SQUISH 'EM & earn tokens.\n\nCA: " + CA)}`}
+              target="_blank" rel="noopener noreferrer"
+              whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+              className="flex items-center justify-center gap-1.5 py-2 rounded-lg border border-white/8 bg-white/[0.02] hover:border-cyan-400/25 hover:bg-cyan-400/[0.04] transition-all"
+            >
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="rgba(103,232,249,0.55)"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.46 14.02l-2.965-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.693.54z"/></svg>
+              <span className="font-mono text-[9px] text-white/45 tracking-widest">SHARE ON TG</span>
+            </motion.a>
           </div>
         </div>
       </div>
@@ -612,7 +683,7 @@ export default function Home() {
         animate={{ opacity: 1, scale: 1 }}
         transition={{ delay: 1.2, duration: 0.4 }}
         onClick={() => { setMuted(m => !m); playClick(); }}
-        className="fixed bottom-6 right-6 z-50 w-11 h-11 rounded-full border border-primary/40 bg-background/80 backdrop-blur-md flex items-center justify-center text-lg hover:border-primary hover:glow-box-green transition-all group"
+        className="fixed bottom-5 right-4 z-50 w-9 h-9 rounded-full border border-primary/25 bg-background/70 backdrop-blur-md flex items-center justify-center text-sm hover:border-primary/60 transition-all group opacity-50 hover:opacity-100"
         title={muted ? "Unmute" : "Mute"}
       >
         <span className="group-hover:scale-110 transition-transform">{muted ? "🔇" : "🔊"}</span>
@@ -690,9 +761,7 @@ export default function Home() {
               transition={{ duration: 0.75, delay: 0.36, ease: [0.22, 1, 0.36, 1] }}
               className="text-lg md:text-xl text-muted-foreground mb-8 font-medium"
             >
-              Shoot blobs. Chain combos.{" "}
-              Earn{" "}
-              <span style={{ color: "#14f195", fontWeight: 700, textShadow: "0 0 18px rgba(20,241,149,0.45)" }}>$SQUISH</span>.
+              Shoot blobs · Chain combos ·{" "}<span style={{ color: "#14f195", fontWeight: 700, textShadow: "0 0 16px rgba(20,241,149,0.4)" }}>Earn&nbsp;$SQUISH</span>
             </motion.p>
 
             <motion.div
