@@ -1,23 +1,58 @@
 {
-  "generated": "2026-06-01T13:16:46.029Z",
+  "generated": "2026-06-01T14:58:08.784Z",
   "builds": [
     {
       "date": "2026-06-01",
       "commits": [
         {
-          "sha": "sec1001",
-          "message": "feat(security): add Security category to changelog with keyword detection",
-          "timestamp": "2026-06-01T13:16:46.028Z"
+          "sha": "ed4935e",
+          "message": "docs: update roadmap — mark v1.1 gameplay upgrades as done",
+          "timestamp": "2026-06-01T14:53:58Z"
         },
         {
-          "sha": "sec1002",
-          "message": "feat(security): fix CSP on howtoplay, about, creator, download pages — expand connect-src and add form-action none",
-          "timestamp": "2026-06-01T13:16:46.029Z"
+          "sha": "6d0d8a7",
+          "message": "feat: smooth characters, Crystal & Ninja blobs, hit squash, cannon lerp, new achievements",
+          "timestamp": "2026-06-01T14:52:49Z"
         },
         {
-          "sha": "sec1003",
-          "message": "feat(security): i18n changelogSecurity label in EN and JA",
-          "timestamp": "2026-06-01T13:16:46.029Z"
+          "sha": "5b3a16b",
+          "message": "security: add CSP meta tag to download.html",
+          "timestamp": "2026-06-01T13:16:54Z"
+        },
+        {
+          "sha": "a5e61af",
+          "message": "security: strengthen CSP on creator.html — expand connect-src, add form-action none",
+          "timestamp": "2026-06-01T13:16:52Z"
+        },
+        {
+          "sha": "a74e0e7",
+          "message": "security: strengthen CSP on about.html — expand connect-src, add form-action none",
+          "timestamp": "2026-06-01T13:16:50Z"
+        },
+        {
+          "sha": "f1e4b85",
+          "message": "security: strengthen CSP on howtoplay.html — expand connect-src, add form-action none",
+          "timestamp": "2026-06-01T13:16:49Z"
+        },
+        {
+          "sha": "4ab41bb",
+          "message": "feat(i18n): add changelogSecurity label in EN and JA",
+          "timestamp": "2026-06-01T13:16:47Z"
+        },
+        {
+          "sha": "fe5c218",
+          "message": "feat(ui): add Security category to changelog — keyword detection, yellow tab, EN/JA i18n",
+          "timestamp": "2026-06-01T13:16:46Z"
+        },
+        {
+          "sha": "250bf4b",
+          "message": "security: add Cross-Origin-Opener/Resource/Embedder-Policy headers + legal routes",
+          "timestamp": "2026-06-01T13:12:24Z"
+        },
+        {
+          "sha": "033d514",
+          "message": "feat(game): TANK+SPLITTER blobs, MAGNET powerup, boss phase 3, secure localStorage, CSP improvements",
+          "timestamp": "2026-06-01T13:12:23Z"
         },
         {
           "sha": "6e7bf6c",
@@ -335,16 +370,6 @@
           "timestamp": "2026-05-31T09:45:12Z"
         },
         {
-          "sha": "feeac05",
-          "message": "chore: hide changelog from nav",
-          "timestamp": "2026-05-31T09:37:50Z"
-        },
-        {
-          "sha": "6df67a7",
-          "message": "chore: hide changelog page (route + nav link removed)",
-          "timestamp": "2026-05-31T09:37:49Z"
-        },
-        {
           "sha": "d0dec52",
           "message": "fix: replace Indonesian text with English + i18n support",
           "timestamp": "2026-05-31T09:31:50Z"
@@ -358,466 +383,6 @@
           "sha": "21a5ff7",
           "message": "fix: add EN/JA language toggle, translate nav labels",
           "timestamp": "2026-05-31T09:31:48Z"
-        },
-        {
-          "sha": "57677e5",
-          "message": "feat: add EN/JA i18n language context",
-          "timestamp": "2026-05-31T09:31:47Z"
-        },
-        {
-          "sha": "e953706",
-          "message": "fix: wrap app with LangProvider for i18n",
-          "timestamp": "2026-05-31T09:31:18Z"
-        },
-        {
-          "sha": "c6eeb91",
-          "message": "fix: remove all em dashes from user-visible text across all pages",
-          "timestamp": "2026-05-31T09:14:03Z"
-        },
-        {
-          "sha": "bbbc15a",
-          "message": "fix: update footer about text to describe Squish Em properly",
-          "timestamp": "2026-05-31T09:12:21Z"
-        },
-        {
-          "sha": "59a89dc",
-          "message": "feat: add particle burst on blob hit in homepage AI agent simulator",
-          "timestamp": "2026-05-31T09:10:38Z"
-        },
-        {
-          "sha": "5fe2c58",
-          "message": "feat: embed AI agent simulator on homepage, remove Built With tags from footer",
-          "timestamp": "2026-05-31T09:06:30Z"
-        },
-        {
-          "sha": "9f4f850",
-          "message": "feat: add /ai-agent interactive simulator — live DQN decisions, state vector, Q-values, decision log",
-          "timestamp": "2026-05-31T08:59:01Z"
-        },
-        {
-          "sha": "c8e7331",
-          "message": "feat: add /tech page — AI agent architecture, DQN model, WebSocket protocol, Solana session proofs",
-          "timestamp": "2026-05-31T08:55:11Z"
-        },
-        {
-          "sha": "eec8c33",
-          "message": "feat: add Built With section to homepage + changelog category filters (Gameplay/UI/Blockchain/Fixes)",
-          "timestamp": "2026-05-31T08:46:58Z"
-        },
-        {
-          "sha": "71364ff",
-          "message": "refactor: redesign changelog as paragraph summaries instead of per-commit list",
-          "timestamp": "2026-05-31T08:42:36Z"
-        },
-        {
-          "sha": "bebf72b",
-          "message": "revert: restore original roadmap — THE MASTER PLAN (Phase 1 Beta, Phase 2 Mobile, Phase 3 Solana)",
-          "timestamp": "2026-05-31T08:39:55Z"
-        },
-        {
-          "sha": "87065a1",
-          "message": "fix: revert roadmap to clean version, fix changelog on mobile (vercel routes + sw cache bypass + fresh json)",
-          "timestamp": "2026-05-31T08:35:41Z"
-        },
-        {
-          "sha": "f5415dc",
-          "message": "chore: add initial changelog.json",
-          "timestamp": "2026-05-31T07:56:47Z"
-        }
-      ]
-    },
-    {
-      "date": "2026-05-31",
-      "commits": [
-        {
-          "sha": "ef57f83",
-          "message": "feat: add live mini animations to each roadmap phase card",
-          "timestamp": "2026-05-31T08:04:06Z"
-        },
-        {
-          "sha": "3705721",
-          "message": "feat: roadmap page — SQUISH coin phases + AI agent mining",
-          "timestamp": "2026-05-31T08:00:11Z"
-        },
-        {
-          "sha": "9620572",
-          "message": "feat: add Roadmap link to nav",
-          "timestamp": "2026-05-31T08:00:02Z"
-        },
-        {
-          "sha": "b994dcf",
-          "message": "ci: add auto-sync changelog GitHub Action",
-          "timestamp": "2026-05-31T07:57:00Z"
-        },
-        {
-          "sha": "6db02e3",
-          "message": "feat: add SQUISH coin drop per unique enemy type",
-          "timestamp": "2026-05-31T07:56:13Z"
-        },
-        {
-          "sha": "e1e55b1",
-          "message": "feat: changelog page auto-fetches from changelog.json",
-          "timestamp": "2026-05-31T07:55:48Z"
-        },
-        {
-          "sha": "bf3c05b",
-          "message": "feat: add Changelog link to footer",
-          "timestamp": "2026-05-31T07:42:18Z"
-        },
-        {
-          "sha": "067bcf4",
-          "message": "feat: add Changelog link to nav",
-          "timestamp": "2026-05-31T07:42:15Z"
-        },
-        {
-          "sha": "09bd20f",
-          "message": "feat: add /changelog route",
-          "timestamp": "2026-05-31T07:42:11Z"
-        },
-        {
-          "sha": "222b879",
-          "message": "feat: add changelog page",
-          "timestamp": "2026-05-31T07:42:09Z"
-        },
-        {
-          "sha": "8dcbee9",
-          "message": "fix: rewrite PWA prompt as clean install banner only",
-          "timestamp": "2026-05-31T07:29:46Z"
-        },
-        {
-          "sha": "2042bd7",
-          "message": "feat: add boss shoot-back projectiles with warning animation",
-          "timestamp": "2026-05-31T07:27:19Z"
-        },
-        {
-          "sha": "dc5e525",
-          "message": "feat: add PWA meta tags and service worker registration",
-          "timestamp": "2026-05-31T07:27:17Z"
-        },
-        {
-          "sha": "6cfb0e3",
-          "message": "feat: integrate PwaPrompt into app layout",
-          "timestamp": "2026-05-31T07:27:14Z"
-        },
-        {
-          "sha": "5e73852",
-          "message": "feat: add clean PWA notification permission prompt",
-          "timestamp": "2026-05-31T07:27:11Z"
-        },
-        {
-          "sha": "5e49b07",
-          "message": "feat: add service worker with caching and push notifications",
-          "timestamp": "2026-05-31T07:27:09Z"
-        },
-        {
-          "sha": "d987eb2",
-          "message": "feat: add PWA web app manifest",
-          "timestamp": "2026-05-31T07:27:06Z"
-        },
-        {
-          "sha": "094f670",
-          "message": "feat: replace hero background with live game character animation",
-          "timestamp": "2026-05-31T07:19:01Z"
-        },
-        {
-          "sha": "9ac3809",
-          "message": "refactor: remove Core Features and How To Play sections from footer",
-          "timestamp": "2026-05-31T07:18:57Z"
-        },
-        {
-          "sha": "b52b103",
-          "message": "refactor: remove duplicate CTA section from homepage",
-          "timestamp": "2026-05-31T07:18:55Z"
-        },
-        {
-          "sha": "6c525e7",
-          "message": "ci: add Vercel cache purge workflow after each deploy",
-          "timestamp": "2026-05-31T07:10:18Z"
-        },
-        {
-          "sha": "40cfd77",
-          "message": "fix: disable HTML caching, enable immutable asset caching",
-          "timestamp": "2026-05-31T07:09:50Z"
-        },
-        {
-          "sha": "f30fb89",
-          "message": "upgrade: HiDPI smooth text, coin bullets, phantom blob, laser powerup, rage mode, boss phase 2, life recovery, danger warning",
-          "timestamp": "2026-05-31T06:36:27Z"
-        },
-        {
-          "sha": "0693f9b",
-          "message": "fix: remove duplicate Explore More and Roadmap Strip from footer",
-          "timestamp": "2026-05-31T06:21:24Z"
-        },
-        {
-          "sha": "989bf99",
-          "message": "feat: add Core Features & How To Play sections to footer",
-          "timestamp": "2026-05-31T06:19:09Z"
-        },
-        {
-          "sha": "8e16257",
-          "message": "feat: remove badge pill from hero, add blob counter, move Core Features & How To Play to footer",
-          "timestamp": "2026-05-31T06:19:01Z"
-        },
-        {
-          "sha": "09a85d1",
-          "message": "feat: upgrade footer - add Explore More nav cards & roadmap strip sections",
-          "timestamp": "2026-05-31T06:06:01Z"
-        },
-        {
-          "sha": "5fcdaee",
-          "message": "feat: upgrade homepage - move nav cards & roadmap strip to footer, add marquee/stats/steps/CTA",
-          "timestamp": "2026-05-31T06:05:49Z"
-        },
-        {
-          "sha": "899e5f9",
-          "message": "feat: add FREEZE power-up entry + full Bestiary section",
-          "timestamp": "2026-05-31T05:19:22Z"
-        },
-        {
-          "sha": "4360933",
-          "message": "feat: footer 4-column nav with Play/Discover/Tech columns",
-          "timestamp": "2026-05-31T05:19:20Z"
-        },
-        {
-          "sha": "aceb6de",
-          "message": "refactor: streamline homepage - compact nav cards + roadmap strip, 6 power-ups",
-          "timestamp": "2026-05-31T05:19:19Z"
-        },
-        {
-          "sha": "b9df0b6",
-          "message": "feat: FREEZE power-up, Difficulty selector, Daily Challenge, frost overlay, HUD bar",
-          "timestamp": "2026-05-31T05:19:18Z"
-        },
-        {
-          "sha": "4f5b769",
-          "message": "fix: redesign HUD to eliminate overlapping elements",
-          "timestamp": "2026-05-31T05:07:14Z"
-        },
-        {
-          "sha": "ce099b5",
-          "message": "fix: update roadmap copy, move multiplayer to Phase 3",
-          "timestamp": "2026-05-31T04:51:43Z"
-        },
-        {
-          "sha": "3a57cc3",
-          "message": "fix: hide 2P button, upgrade game feel & smoothness",
-          "timestamp": "2026-05-31T04:51:42Z"
-        },
-        {
-          "sha": "0330d5a",
-          "message": "feat: NUKE power-up, CRIT hits, frenzy visual, score milestones",
-          "timestamp": "2026-05-31T04:23:18Z"
-        },
-        {
-          "sha": "b05e7d3",
-          "message": "fix: remove em-dashes in roadmap items",
-          "timestamp": "2026-05-31T04:23:16Z"
-        },
-        {
-          "sha": "8c4829f",
-          "message": "fix: remove em-dashes, add NUKE to guide",
-          "timestamp": "2026-05-31T04:23:15Z"
-        },
-        {
-          "sha": "c0d3492",
-          "message": "fix: remove em-dashes, update power-ups desc",
-          "timestamp": "2026-05-31T04:23:14Z"
-        },
-        {
-          "sha": "547b666",
-          "message": "feat: add mobile hamburger menu to nav",
-          "timestamp": "2026-05-31T04:23:12Z"
-        },
-        {
-          "sha": "7fe9fd9",
-          "message": "fix: play page — redirect to game.html directly, remove broken iframe",
-          "timestamp": "2026-05-31T04:10:12Z"
-        },
-        {
-          "sha": "9d87842",
-          "message": "fix: SPA routing — vercel.json routes + redirect in main.tsx",
-          "timestamp": "2026-05-31T03:55:30Z"
-        },
-        {
-          "sha": "9965c92",
-          "message": "fix: GitHub Pages SPA routing — 404.html redirect trick",
-          "timestamp": "2026-05-31T03:45:35Z"
-        },
-        {
-          "sha": "fa8c7d8",
-          "message": "fix: add SPA rewrites to vercel.json — fix 404 on direct URL navigation",
-          "timestamp": "2026-05-31T03:43:10Z"
-        },
-        {
-          "sha": "b1deea2",
-          "message": "feat: 2P local multiplayer + roadmap update",
-          "timestamp": "2026-05-31T03:40:39Z"
-        }
-      ]
-    },
-    {
-      "date": "2026-05-30",
-      "commits": [
-        {
-          "sha": "7861999",
-          "message": "security: add CSP, X-Frame-Options, Referrer-Policy headers to all HTML pages + vercel.json",
-          "timestamp": "2026-05-30T18:33:39Z"
-        },
-        {
-          "sha": "ff61a7e",
-          "message": "feat: add AI Mining Agent with full game + blockchain + mobile integration",
-          "timestamp": "2026-05-30T18:10:32Z"
-        },
-        {
-          "sha": "f1f5284",
-          "message": "feat: add repo architecture for Phase 2 (Mobile) and Phase 3 (Solana)",
-          "timestamp": "2026-05-30T18:01:01Z"
-        },
-        {
-          "sha": "6b7f031",
-          "message": "feat: Phase 2 — 6 game features + enhanced home page",
-          "timestamp": "2026-05-30T16:52:52Z"
-        },
-        {
-          "sha": "7063ab6",
-          "message": "feat: improve UI/UX — larger controls, level progress bar, boss HP bar, drag hint, better HUD & title",
-          "timestamp": "2026-05-30T16:39:33Z"
-        },
-        {
-          "sha": "6a1e235",
-          "message": "feat: overhaul game.html — smooth blob shapes, nebula bg, trails, spark particles, ring shockwaves, muzzle flash, screen flash, Orbitron HUD, redesigned cannon & title screen",
-          "timestamp": "2026-05-30T13:33:17Z"
-        },
-        {
-          "sha": "05370cc",
-          "message": "feat: move Orynth badge & roadmap to footer; upgrade homepage animations (glitch title, parallax, shooting stars, blob connections, spark particles)",
-          "timestamp": "2026-05-30T13:04:54Z"
-        },
-        {
-          "sha": "20326c5",
-          "message": "fix: replace custom badge with real Orynth badge (orynth.dev)",
-          "timestamp": "2026-05-30T12:52:38Z"
-        },
-        {
-          "sha": "6a99a76",
-          "message": "feat: smooth catmull-rom bezier blob canvas — organic morphing shapes",
-          "timestamp": "2026-05-30T12:51:17Z"
-        },
-        {
-          "sha": "0a73bed",
-          "message": "feat: spectacular morphing blob canvas + bigger Orvyn badge",
-          "timestamp": "2026-05-30T12:49:08Z"
-        },
-        {
-          "sha": "938cf0e",
-          "message": "feat: add 8-bit sound toggle + Orvyn badge below Web3 Roadmap button",
-          "timestamp": "2026-05-30T12:45:52Z"
-        },
-        {
-          "sha": "f2a43ba",
-          "message": "feat: animated blob favicon — morphing shape with blinking eyes",
-          "timestamp": "2026-05-30T12:42:08Z"
-        },
-        {
-          "sha": "88cc6fa",
-          "message": "feat: add OG preview image and update meta tags for social sharing",
-          "timestamp": "2026-05-30T12:39:34Z"
-        },
-        {
-          "sha": "5fe2144",
-          "message": "feat: premium redesign — cinematic dark theme, animated blob canvas, HUD stats, glassmorphic nav, roadmap timeline",
-          "timestamp": "2026-05-30T12:32:47Z"
-        },
-        {
-          "sha": "0345943",
-          "message": "feat: add React website with roadmap, Solana blockchain section",
-          "timestamp": "2026-05-30T10:17:15Z"
-        },
-        {
-          "sha": "28d41f7",
-          "message": "feat: move features to howtoplay, add creator page, fix nav breakpoint, remove GitHub links",
-          "timestamp": "2026-05-30T09:40:56Z"
-        },
-        {
-          "sha": "b5ab0e9",
-          "message": "feat: move features to howtoplay, add creator page, fix nav breakpoint, remove GitHub links",
-          "timestamp": "2026-05-30T09:40:56Z"
-        },
-        {
-          "sha": "801e503",
-          "message": "feat: move features to howtoplay, add creator page, fix nav breakpoint, remove GitHub links",
-          "timestamp": "2026-05-30T09:40:55Z"
-        },
-        {
-          "sha": "f2d3450",
-          "message": "feat: move features to howtoplay, add creator page, fix nav breakpoint, remove GitHub links",
-          "timestamp": "2026-05-30T09:40:54Z"
-        },
-        {
-          "sha": "8300226",
-          "message": "feat: move features to howtoplay, add creator page, fix nav breakpoint, remove GitHub links",
-          "timestamp": "2026-05-30T09:40:53Z"
-        },
-        {
-          "sha": "435d54e",
-          "message": "feat: overhaul site - Orbitron font, hamburger nav, scroll animations, OG meta, remove em-dashes, update dates",
-          "timestamp": "2026-05-30T09:28:26Z"
-        },
-        {
-          "sha": "54b9dde",
-          "message": "feat: overhaul site - Orbitron font, hamburger nav, scroll animations, OG meta, remove em-dashes, update dates",
-          "timestamp": "2026-05-30T09:28:25Z"
-        },
-        {
-          "sha": "632a436",
-          "message": "feat: overhaul site - Orbitron font, hamburger nav, scroll animations, OG meta, remove em-dashes, update dates",
-          "timestamp": "2026-05-30T09:28:24Z"
-        },
-        {
-          "sha": "cdc1b85",
-          "message": "feat: overhaul site - Orbitron font, hamburger nav, scroll animations, OG meta, remove em-dashes, update dates",
-          "timestamp": "2026-05-30T09:28:23Z"
-        },
-        {
-          "sha": "a0e3659",
-          "message": "feat: add Orynth badge to footer",
-          "timestamp": "2026-05-30T09:08:26Z"
-        },
-        {
-          "sha": "6411088",
-          "message": "feat: add Orynth badge to footer",
-          "timestamp": "2026-05-30T09:08:25Z"
-        },
-        {
-          "sha": "deef8b3",
-          "message": "feat: add Orynth badge to footer",
-          "timestamp": "2026-05-30T09:08:23Z"
-        },
-        {
-          "sha": "8db6af7",
-          "message": "feat: about page",
-          "timestamp": "2026-05-30T09:06:07Z"
-        },
-        {
-          "sha": "d568096",
-          "message": "feat: how to play page",
-          "timestamp": "2026-05-30T09:06:06Z"
-        },
-        {
-          "sha": "1424012",
-          "message": "feat: game page with nav",
-          "timestamp": "2026-05-30T09:05:56Z"
-        },
-        {
-          "sha": "5695a88",
-          "message": "feat: new landing page",
-          "timestamp": "2026-05-30T09:05:55Z"
-        },
-        {
-          "sha": "9698802",
-          "message": "Initial commit: SQUISH 'EM! game",
-          "timestamp": "2026-05-30T08:53:46Z"
         }
       ]
     }
