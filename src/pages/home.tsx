@@ -735,24 +735,6 @@ export default function Home() {
 
         <motion.div style={{ y: springY, opacity: opacityHero }} className="container relative z-10 mx-auto px-4 text-center">
           <motion.div className="max-w-lg mx-auto flex flex-col items-center">
-            {/* ── Live announcement pill ── */}
-            <motion.div
-              initial={{ opacity: 0, y: -14, scale: 0.88 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ duration: 0.65, delay: 0.08, ease: [0.22, 1, 0.36, 1] }}
-              className="mb-4 inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-green-500/35 bg-green-500/[0.07] backdrop-blur-sm select-none cursor-default"
-            >
-              <motion.span
-                className="w-1.5 h-1.5 rounded-full bg-green-400 flex-shrink-0"
-                animate={{ opacity: [1, 0.2, 1], scale: [1, 1.45, 1] }}
-                transition={{ duration: 1.35, repeat: Infinity }}
-              />
-              <span className="font-mono text-[10px] tracking-[0.18em] font-bold" style={{ color: "rgba(74,222,128,0.88)" }}>
-                ⚡ $SQUISH NOW LIVE ON SOLANA
-              </span>
-              <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="rgba(74,222,128,0.45)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M7 7h10v10"/></svg>
-            </motion.div>
-
             <GlitchTitle />
 
             <motion.p
@@ -761,7 +743,7 @@ export default function Home() {
               transition={{ duration: 0.75, delay: 0.36, ease: [0.22, 1, 0.36, 1] }}
               className="text-lg md:text-xl text-muted-foreground mb-8 font-medium"
             >
-              Shoot blobs · Chain combos ·{" "}<span style={{ color: "#14f195", fontWeight: 700, textShadow: "0 0 16px rgba(20,241,149,0.4)" }}>Earn&nbsp;$SQUISH</span>
+              Shoot blobs. Chain combos. Survive the boss waves.
             </motion.p>
 
             <motion.div
