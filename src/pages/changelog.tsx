@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLang } from "@/lib/i18n";
 
-interface CommitEntry { sha: string; message: string; timestamp: string; }
+// Support both old format {sha,message,timestamp} and new format {hash,msg,date}
+interface CommitEntry {
+  sha?: string; hash?: string;
+  message?: string; msg?: string;
+  timestamp?: string; date?: string;
+}
 interface BuildEntry { date: string; commits: CommitEntry[]; }
 interface ChangelogData { generated: string; builds: BuildEntry[]; }
 
@@ -12,6 +17,15 @@ const GAMEPLAY_KW   = /blob|boss|enemy|power.?up|squish|game|level|combo|shoot|l
 const UI_KW         = /nav|footer|hero|homepage|home.?page|landing|animation|visual|design|layout|banner|marquee|badge|font|style|icon|button|dark|ui|ux|responsive|mobile.?menu|hamburger|scroll|glassmorphic|ticker|card/i;
 const BLOCKCHAIN_KW = /solana|blockchain|token|wallet|nft|on.?chain|\$squish|spl|mining|crypto|web3|defi|smart.?contract/i;
 const SECURITY_KW  = /security|csp|xss|csrf|cors|localstorage|sanitiz|validat|tamper|cheat|anti.?cheat|injection|exploit|header|permission.?policy|strict.?transport|content.?security|cross.?origin|form.?action|clickjack|breach|vulnerab|authori|authenticat/i;
+
+// Normalize a CommitEntry to always have message/sha/timestamp
+function normalize(c: CommitEntry): { sha: string; message: string; timestamp: string } {
+  return {
+    sha:       c.sha       ?? c.hash      ?? "",
+    message:   c.message   ?? c.msg       ?? "",
+    timestamp: c.timestamp ?? (c.date ? c.date + "T00:00:00Z" : ""),
+  };
+}
 
 function categorize(msg: string): Category[] {
   const cats: Category[] = [];
@@ -42,7 +56,9 @@ function buildSummary(commits: CommitEntry[], activeFilter: Category) {
   const feats: string[] = [];
   const fixes: string[] = [];
 
-  commits.forEach(c => {
+  commits.forEach(raw => {
+    const c = normalize(raw);
+    if (!c.message) return;
     const { type, title } = parseCommit(c.message);
     const cats = categorize(c.message);
     if (activeFilter !== "all" && !cats.includes(activeFilter)) return;
