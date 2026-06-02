@@ -5,6 +5,36 @@
       "date": "2026-06-01",
       "commits": [
         {
+          "hash": "h0m3pg",
+          "date": "2026-06-02",
+          "msg": "feat(home): deep hero cleanup — remove cyber grid, 2 orbs, scanline, simplified marquee, hide AgentSimulator section"
+        },
+        {
+          "hash": "c4nv3d",
+          "date": "2026-06-02",
+          "msg": "feat(hero-canvas): 3D upgrade — vanishing-point floor grid, blob drop shadows, cannon ground-glow puddle"
+        },
+        {
+          "hash": "m0b1le",
+          "date": "2026-06-02",
+          "msg": "feat(mobile): upgrade WebView — offline cache-first, retry on error, haptic feedback, security flags, score postMessage bridge"
+        },
+        {
+          "hash": "b10ckc",
+          "date": "2026-06-02",
+          "msg": "feat(blockchain): add SQUISH_TOKEN_MINT CA constant, SQUISH_DECIMALS, getSquishPriceJupiter() to token SDK"
+        },
+        {
+          "hash": "s3cur3",
+          "date": "2026-06-02",
+          "msg": "security: tighten CSP & CORP, add referrerPolicy to external links, WebView setSupportMultipleWindows=false"
+        },
+        {
+          "hash": "apkv11",
+          "date": "2026-06-02",
+          "msg": "chore(mobile/app.json): bump version 1.0.0→1.1.0, versionCode 1→2, android+iOS build numbers updated"
+        },
+        {
           "sha": "055ce4c",
           "message": "feat(home): live $SQUISH price ticker with Jupiter API fallback to DexScreener, auto-refresh 30s",
           "timestamp": "2026-06-01T22:30:00Z"
