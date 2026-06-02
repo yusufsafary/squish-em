@@ -390,9 +390,9 @@ function SquishTokenCA() {
 
 const MARQUEE_ITEMS = [
   "SHOOT BLOBS", "CHAIN COMBOS", "SURVIVE BOSSES", "RACK UP POINTS",
-  "COLLECT POWER-UPS", "EARN $SQUISH", "SQUISH 'EM ALL",
-  "NO INSTALL", "PURE ARCADE", "INFINITE LEVELS", "CRYSTAL BLOBS", "NINJA BLOBS",
-  "$SQUISH NOW LIVE", "BUY ON JUPITER", "SOLANA MAINNET", "1B SUPPLY", "EARN BY PLAYING",
+  "COLLECT POWER-UPS", "SQUISH 'EM ALL", "NO INSTALL", "PURE ARCADE",
+  "INFINITE LEVELS", "CRYSTAL BLOBS", "NINJA BLOBS", "BOSS WAVES",
+  "PHANTOM BLOBS", "RAPID FIRE", "SHIELD UP", "NUKE POWER",
 ];
 
 function MarqueeTicker() {
@@ -673,7 +673,6 @@ export default function Home() {
       <style>{`
         @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         @keyframes pulse-ring { 0% { transform: scale(1); opacity: 0.45; } 100% { transform: scale(1.85); opacity: 0; } }
-        @keyframes grid-pulse { 0%,100% { opacity: 0.022; } 50% { opacity: 0.055; } }
         @keyframes ca-sweep { 0% { transform: translateX(-100%) skewX(-15deg); } 100% { transform: translateX(400%) skewX(-15deg); } }
       `}</style>
 
@@ -708,11 +707,8 @@ export default function Home() {
       {/* ── Hero ─────────────────────────────────────────────────────────── */}
       <section ref={heroRef} className="relative min-h-[100dvh] flex items-center justify-center overflow-hidden border-b border-white/5">
         <div className="absolute inset-0 bg-background z-0" />
-        {/* Cyber grid overlay */}
-        <div className="absolute inset-0 z-0 pointer-events-none" style={{ backgroundImage: "linear-gradient(rgba(34,197,94,0.055) 1px, transparent 1px), linear-gradient(90deg, rgba(34,197,94,0.055) 1px, transparent 1px)", backgroundSize: "48px 48px", animation: "grid-pulse 5s ease-in-out infinite" }} />
         <HeroCanvas />
 
-        {/* Reduced orbs — only 2 for performance */}
         <motion.div className="absolute rounded-full pointer-events-none"
           style={{ width: 360, height: 360, background: "radial-gradient(circle, hsla(127,65%,52%,0.22), transparent)", left: "6%", top: "15%", filter: "blur(55px)" }}
           animate={{ y: [0, -24, 0], opacity: [0.18, 0.28, 0.18] }}
@@ -721,16 +717,7 @@ export default function Home() {
           style={{ width: 300, height: 300, background: "radial-gradient(circle, hsla(263,68%,58%,0.18), transparent)", left: "66%", top: "50%", filter: "blur(55px)" }}
           animate={{ y: [0, -20, 0], opacity: [0.14, 0.22, 0.14] }}
           transition={{ duration: 9, repeat: Infinity, ease: "easeInOut", delay: 1.5 }} />
-        <motion.div className="absolute rounded-full pointer-events-none"
-          style={{ width: 220, height: 220, background: "radial-gradient(circle, hsla(180,100%,60%,0.13), transparent)", right: "3%", top: "20%", filter: "blur(48px)" }}
-          animate={{ y: [0, 18, 0], opacity: [0.09, 0.17, 0.09] }}
-          transition={{ duration: 11, repeat: Infinity, ease: "easeInOut", delay: 3 }} />
-        <motion.div className="absolute rounded-full pointer-events-none"
-          style={{ width: 180, height: 180, background: "radial-gradient(circle, hsla(127,65%,52%,0.14), transparent)", left: "45%", bottom: "15%", filter: "blur(42px)" }}
-          animate={{ x: [0, -14, 0], opacity: [0.08, 0.15, 0.08] }}
-          transition={{ duration: 13, repeat: Infinity, ease: "easeInOut", delay: 5 }} />
 
-        <div className="absolute inset-0 scanline z-0 opacity-[0.08] pointer-events-none" />
         <div className="absolute inset-0 z-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.6) 100%)" }} />
 
         <motion.div style={{ y: springY, opacity: opacityHero }} className="container relative z-10 mx-auto px-4 text-center">
@@ -798,8 +785,8 @@ export default function Home() {
           <div className="container mx-auto px-4 flex justify-between items-center font-mono text-[11px] text-primary/50">
             <span>[ SYS: ONLINE ]</span>
             <div className="flex gap-6 text-primary/35">
-              <span>ENEMIES: 07</span>
-              <span>POWER-UPS: 06</span>
+              <span>ENEMIES: ∞</span>
+              <span>BOSS WAVES: ∞</span>
               <span>LEVELS: ∞</span>
             </div>
             <motion.span animate={{ opacity: [1, 0.3, 1] }} transition={{ duration: 1.2, repeat: Infinity }}>_WAITING_FOR_INPUT</motion.span>
@@ -809,9 +796,6 @@ export default function Home() {
 
       {/* ── Marquee ──────────────────────────────────────────────────────── */}
       <MarqueeTicker />
-
-      {/* ── AI Agent Simulator ────────────────────────────────────────────── */}
-      <AgentSimulatorSection />
 
       {/* ── Built With ────────────────────────────────────────────────────── */}
       <BuiltWith />
