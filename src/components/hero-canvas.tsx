@@ -148,6 +148,38 @@ function cannon(ctx: CanvasRenderingContext2D, x: number, y: number, recoil: num
   ctx.restore();
 }
 
+
+function floorGrid(ctx: CanvasRenderingContext2D, W: number, H: number, t: number) {
+  const GRID_Y = H - 60;
+  const VP_X = W / 2;
+  const COLS = 12, ROWS = 7;
+  ctx.save();
+  ctx.globalAlpha = 0.06 + 0.02 * Math.sin(t * 0.4);
+  for (let col = 0; col <= COLS; col++) {
+    const xFrac = col / COLS;
+    const x0 = W * xFrac;
+    const x1 = VP_X + (x0 - VP_X) * 0.08;
+    ctx.beginPath();
+    ctx.moveTo(x0, H + 30);
+    ctx.lineTo(x1, GRID_Y);
+    ctx.strokeStyle = "hsla(127,65%,52%,1)";
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+  }
+  for (let row = 0; row <= ROWS; row++) {
+    const tFrac = Math.pow(row / ROWS, 1.7);
+    const y = GRID_Y + (H + 30 - GRID_Y) * tFrac;
+    const xL = VP_X + (0 - VP_X) * (1 - tFrac * 0.92);
+    const xR = VP_X + (W - VP_X) * (1 - tFrac * 0.92);
+    ctx.beginPath();
+    ctx.moveTo(xL, y);
+    ctx.lineTo(xR, y);
+    ctx.globalAlpha = 0.03 + 0.03 * tFrac + 0.015 * Math.sin(t * 0.4);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
 export function HeroCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   useEffect(() => {
@@ -208,6 +240,10 @@ export function HeroCanvas() {
       // Shooting stars
       ssTimer++; if(ssTimer%160===0&&Math.random()<0.7) { const sp=10+Math.random()*8,ag=Math.PI/4+(Math.random()-0.5)*0.4; sstars.push({x:Math.random()*W,y:Math.random()*H*0.4,vx:Math.cos(ag)*sp,vy:Math.sin(ag)*sp,life:1,maxLife:25+Math.random()*20}); }
       for(let i=sstars.length-1;i>=0;i--){const ss=sstars[i];ss.x+=ss.vx;ss.y+=ss.vy;ss.life--;if(ss.life<=0){sstars.splice(i,1);continue;}const tl=ctx.createLinearGradient(ss.x,ss.y,ss.x-ss.vx*8,ss.y-ss.vy*8);tl.addColorStop(0,"rgba(255,255,255,0.9)");tl.addColorStop(1,"rgba(255,255,255,0)");ctx.globalAlpha=(ss.life/ss.maxLife)*0.75;ctx.strokeStyle=tl;ctx.lineWidth=1.5;ctx.beginPath();ctx.moveTo(ss.x,ss.y);ctx.lineTo(ss.x-ss.vx*8,ss.y-ss.vy*8);ctx.stroke();}
+
+
+      // 3D perspective floor grid
+      floorGrid(ctx, W, H, t);
 
       // Spawn
       eTimer++; if(eTimer%90===0&&enemies.length<10) enemies.push(makeEnemy(W));
@@ -280,6 +316,20 @@ export function HeroCanvas() {
 
         if(e.isBoss){const bw=e.r*2.5,bx=e.x-bw/2,by=e.y-e.r-18;ctx.globalAlpha=0.8;ctx.fillStyle="rgba(0,0,0,0.5)";ctx.beginPath();ctx.roundRect(bx,by,bw,6,3);ctx.fill();ctx.fillStyle=`hsl(${e.hue},${e.sat}%,${e.lit}%)`;ctx.beginPath();ctx.roundRect(bx,by,bw*(e.hp/e.maxHp),6,3);ctx.fill();}
 
+        // Floor shadow (depth cue)
+        {
+          const shadowY = Math.min(e.y + e.r * 0.85, H - 65);
+          const shadowAlpha = 0.22 * (1 - Math.max(0, (shadowY - H * 0.55) / (H * 0.45)));
+          const sg2 = ctx.createRadialGradient(e.x, shadowY, 0, e.x, shadowY, e.r * 1.1);
+          sg2.addColorStop(0, `hsla(${e.hue},${e.sat}%,20%,${shadowAlpha})`);
+          sg2.addColorStop(1, `hsla(${e.hue},${e.sat}%,10%,0)`);
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = sg2;
+          ctx.beginPath();
+          ctx.ellipse(e.x, shadowY, e.r * 1.1, e.r * 0.28, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
         const glR=e.r*(e.isBoss?2.8:2.2);
         const gg=ctx.createRadialGradient(e.x,e.y,e.r*0.1,e.x,e.y,glR);
         gg.addColorStop(0,`hsla(${e.hue},${e.sat}%,${e.lit}%,${e.isBoss?0.22:0.15})`);gg.addColorStop(1,`hsla(${e.hue},${e.sat}%,${e.lit}%,0)`);
@@ -348,6 +398,20 @@ export function HeroCanvas() {
       // Cannon draw
       ctx.globalAlpha=1;
       cannon(ctx,canX,CY(),recoil,shield,dodge);
+
+      // Ground glow under cannon
+      {
+        const gy = CY() + 22;
+        const gg2 = ctx.createRadialGradient(canX + dodge, gy, 0, canX + dodge, gy, 55);
+        gg2.addColorStop(0, "hsla(127,65%,52%,0.18)");
+        gg2.addColorStop(0.5, "hsla(127,65%,52%,0.07)");
+        gg2.addColorStop(1, "hsla(127,65%,52%,0)");
+        ctx.globalAlpha = 1;
+        ctx.fillStyle = gg2;
+        ctx.beginPath();
+        ctx.ellipse(canX + dodge, gy, 55, 14, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
 
       // Float texts (combo + coins)
       for(let i=floatTexts.length-1;i>=0;i--){
